@@ -20,7 +20,9 @@ The overall arc is a loop: the universe forms, life evolves, and a civilization 
 | Quirks | Dark Energy (DE) | Expansion Layers produce Expansion |
 | Hindrances | Cosmic Hazards (Hz) | Challenges: Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay |
 
-Endgame: **Habitable Zone** (survive every Cosmic Hazard). A perfect bot takes about 3h25m, so a human should take roughly 5–7 hours.
+Endgame: **Habitable Zone** (survive every Cosmic Hazard and buy every Row 3 upgrade).
+
+**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 134 unlocks. A perfect bot gets one every 36 seconds on average and finishes in about 80 minutes, so a human should take roughly 2 hours.
 
 ## Act 2: Life
 *The Prestige Tree again, this time at biological scale, boosted by the Cosmos.*

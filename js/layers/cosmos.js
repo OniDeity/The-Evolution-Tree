@@ -84,6 +84,12 @@ addLayer("p", {
         if (hasUpgrade("at", 11)) mult = mult.times(upgradeEffect("at", 11))
         if (hasUpgrade("gr", 11)) mult = mult.times(upgradeEffect("gr", 11))
         if (hasUpgrade("bh", 11)) mult = mult.times(upgradeEffect("bh", 11))
+        if (hasUpgrade("p", 14)) mult = mult.times(2)
+        if (hasUpgrade("st", 14)) mult = mult.times(upgradeEffect("st", 14))
+        if (hasUpgrade("gr", 14)) mult = mult.times(upgradeEffect("gr", 14))
+        if (hasUpgrade("fu", 23)) mult = mult.times(upgradeEffect("fu", 23))
+        if (hasUpgrade("ga", 21)) mult = mult.times(upgradeEffect("ga", 21))
+        if (hasUpgrade("de", 23)) mult = mult.times(tmp.de.expansionEffect.sqrt())
         if (player.fu.unlocked) mult = mult.times(buyableEffect("fu", 11).particles)
         if (hasUpgrade("pl", 22)) mult = mult.times(upgradeEffect("pl", 22))
         return mult
@@ -101,9 +107,31 @@ addLayer("p", {
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return
         let keep = []
-        if (layers[resettingLayer].row == 1 && (hasMilestone("at", 0) || hasMilestone("gr", 0))) keep.push("upgrades")
-        if (hasRow2Milestone(1)) keep.push("upgrades")
+        if (layers[resettingLayer].row == 1 && (hasMilestone("at", 0) || hasMilestone("gr", 0))) keep.push("upgrades", "buyables")
+        if (hasRow2Milestone(1)) keep.push("upgrades", "buyables")
         layerDataReset(this.layer, keep)
+    },
+    buyables: {
+        11: {
+            title: "Quark Flavors",
+            cost(x) { return Decimal.pow(100, x).times(1e12) },
+            purchaseLimit: 6,
+            effect(x) { return Decimal.pow(1.5, x) },
+            display() {
+                let x = getBuyableAmount(this.layer, this.id).toNumber()
+                let names = ["Up", "Down", "Strange", "Charm", "Bottom", "Top"]
+                let found = names.slice(0, x).join(", ") || "none yet"
+                let next = x < 6 ? "<br>Next: <b>" + names[x] + "</b> for " + format(this.cost()) + " particles" : "<br><b>All six found!</b>"
+                return "Discover a new kind of quark. Each one multiplies energy gain by 1.5.<br><br>Found: " + found + next +
+                    "<br>Effect: " + format(buyableEffect(this.layer, this.id)) + "x energy"
+            },
+            canAfford() { return player.p.points.gte(this.cost()) },
+            buy() {
+                player.p.points = player.p.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return hasUpgrade("p", 23) },
+        },
     },
     tabFormat: [
         "main-display",
@@ -112,9 +140,39 @@ addLayer("p", {
         "blank",
         lore("In the beginning there was nothing. Then, for no reason anyone has ever been able to explain, there was <b>everything</b>, all at once, unbearably hot and crammed into a space smaller than an atom."),
         "blank",
+        "buyables",
+        "blank",
         "upgrades",
     ],
     upgrades: {
+        14: {
+            title: "Gluon Plasma",
+            description: "Quarks and gluons swim freely in the heat. Double particle gain.",
+            cost: new Decimal(1e13),
+            unlocked() { return hasUpgrade("p", 23) },
+        },
+        24: {
+            title: "Neutrino Decoupling",
+            description: "Ghostly neutrinos fly off and never look back. Atoms and gravity wells boost energy gain.",
+            cost: new Decimal(1e16),
+            unlocked() { return hasUpgrade("p", 14) },
+            effect() {
+                return player.at.points.add(player.gr.points).add(1).sqrt()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        34: {
+            title: "Photon Epoch",
+            description: "<b>Cooling</b> uses a better formula.",
+            cost: new Decimal(1e18),
+            unlocked() { return hasUpgrade("p", 24) },
+        },
+        44: {
+            title: "Electroweak Split",
+            description: "Atoms and gravity wells are 5x cheaper.",
+            cost: new Decimal(1e21),
+            unlocked() { return hasUpgrade("p", 34) },
+        },
         11: {
             title: "Big Bang",
             description: "Generate 1 energy per second.",
@@ -137,7 +195,7 @@ addLayer("p", {
             cost: new Decimal(5),
             unlocked() { return hasUpgrade("p", 12) },
             effect() {
-                return player.points.add(1).log10().pow(0.75).add(1)
+                return player.points.add(1).log10().pow(hasUpgrade("p", 34) ? 0.8 : 0.75).add(1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
         },
@@ -180,7 +238,7 @@ addLayer("p", {
         32: {
             title: "Baryogenesis",
             description: "<b>Inflation</b> uses a better formula.",
-            cost: new Decimal(1e30),
+            cost: new Decimal(1e26),
             unlocked() { return hasUpgrade("p", 31) },
         },
         33: {
@@ -221,6 +279,7 @@ addLayer("at", {
         let mult = new Decimal(1)
         if (hasUpgrade("at", 13)) mult = mult.div(upgradeEffect("at", 13))
         if (hasUpgrade("st", 13)) mult = mult.div(upgradeEffect("st", 13))
+        if (hasUpgrade("p", 44)) mult = mult.div(5)
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -237,6 +296,9 @@ addLayer("at", {
     effectBase() {
         let base = new Decimal(2)
         if (hasUpgrade("at", 12)) base = base.add(upgradeEffect("at", 12))
+        if (hasUpgrade("at", 14)) base = base.add(0.15)
+        if (hasUpgrade("st", 34)) base = base.add(0.1)
+        if (hasUpgrade("hz", 12)) base = base.add(0.5)
         if (hasUpgrade("at", 21)) base = base.add(upgradeEffect("at", 21))
         if (player.st.unlocked) base = base.add(tmp.st.starlightAtomBase)
         if (hasChallenge("hz", 11)) base = base.add(challengeEffect("hz", 11))
@@ -280,6 +342,22 @@ addLayer("at", {
         },
     },
     upgrades: {
+        14: {
+            title: "Deuterium",
+            description: "Heavy hydrogen. Add 0.15 to the Atom base.",
+            cost: new Decimal(17),
+            unlocked() { return hasUpgrade("at", 13) },
+        },
+        24: {
+            title: "Beryllium",
+            description: "Atoms boost Gravitational Force production.",
+            cost: new Decimal(21),
+            unlocked() { return hasUpgrade("at", 14) },
+            effect() {
+                return player.at.points.add(1).sqrt()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
         11: {
             title: "Hydrogen",
             description: "The simplest atom. Atoms boost particle gain.",
@@ -367,6 +445,8 @@ addLayer("gr", {
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade("pl", 13)) mult = mult.div(upgradeEffect("pl", 13))
+        if (hasUpgrade("p", 44)) mult = mult.div(5)
+        if (hasUpgrade("gr", 24)) mult = mult.div(upgradeEffect("gr", 24))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -383,6 +463,7 @@ addLayer("gr", {
     effectBase() {
         let base = new Decimal(2)
         if (hasUpgrade("gr", 12)) base = base.add(1)
+        if (hasUpgrade("st", 23)) base = base.add(upgradeEffect("st", 23))
         return base
     },
     effect() {
@@ -391,6 +472,9 @@ addLayer("gr", {
         if (hasUpgrade("gr", 21)) gain = gain.times(upgradeEffect("gr", 21))
         if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 12))
         if (player.bh.unlocked) gain = gain.times(tmp.bh.radiationEffect)
+        if (hasUpgrade("at", 24)) gain = gain.times(upgradeEffect("at", 24))
+        if (hasUpgrade("st", 22)) gain = gain.times(upgradeEffect("st", 22))
+        if (hasUpgrade("st", 15)) gain = gain.times(10)
         return gain
     },
     effectDescription() {
@@ -440,6 +524,26 @@ addLayer("gr", {
         },
     },
     upgrades: {
+        14: {
+            title: "Tidal Forces",
+            description: "Gravity wells boost particle gain.",
+            cost: new Decimal(17),
+            unlocked() { return hasUpgrade("gr", 13) },
+            effect() {
+                return player.gr.points.add(1).sqrt()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        24: {
+            title: "Roche Limit",
+            description: "Gravitational Force makes gravity wells cheaper.",
+            cost: new Decimal(20),
+            unlocked() { return hasUpgrade("gr", 14) },
+            effect() {
+                return player.gr.force.add(1).log10().add(1).sqrt()
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
         11: {
             title: "Accretion",
             description: "Gravitational Force boosts particle gain.",
@@ -512,7 +616,11 @@ addLayer("st", {
     type: "static",
     base: 1e4,
     exponent: 1.4,
-    gainMult() { return new Decimal(1) },
+    gainMult() {
+        let mult = new Decimal(1)
+        if (hasUpgrade("ga", 23)) mult = mult.div(upgradeEffect("ga", 23))
+        return mult
+    },
     gainExp() { return new Decimal(1) },
     canBuyMax() { return hasMilestone("st", 4) },
     row: 2,
@@ -538,12 +646,16 @@ addLayer("st", {
         if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 13))
         if (hasUpgrade("ga", 11)) gain = gain.times(upgradeEffect("ga", 11))
         if (player.hz.unlocked) gain = gain.times(tmp.hz.effect)
+        if (hasUpgrade("bh", 23)) gain = gain.times(upgradeEffect("bh", 23))
+        if (hasUpgrade("de", 22)) gain = gain.times(upgradeEffect("de", 22))
+        if (hasUpgrade("st", 24)) gain = gain.times(2)
         return gain
     },
     starlightEffect() {
         let exp = hasUpgrade("st", 12) ? 0.4 : 0.3
         if (hasUpgrade("pl", 21)) exp += player.pl.points.toNumber() * 0.01
         if (hasChallenge("hz", 21)) exp += 0.05
+        if (hasUpgrade("hz", 13)) exp += 0.03
         if (inChallenge("hz", 21)) return new Decimal(1)
         return player.st.starlight.add(1).pow(exp)
     },
@@ -577,6 +689,88 @@ addLayer("st", {
         },
     }),
     upgrades: {
+        14: {
+            title: "First Light",
+            description: "Starlight boosts particle gain.",
+            cost: new Decimal(100),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return true },
+            effect() {
+                return player.st.starlight.add(1).log10().add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        24: {
+            title: "Population III",
+            description: "The very first stars, made of pure hydrogen and helium. Double Starlight gain.",
+            cost: new Decimal(250),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 14) },
+        },
+        34: {
+            title: "Population II",
+            description: "Old stars with a dusting of metals. Add 0.1 to the Atom base.",
+            cost: new Decimal(2e6),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 24) },
+        },
+        44: {
+            title: "Population I",
+            description: "Young, metal-rich stars like the Sun. Fusion gain is multiplied by 1.5.",
+            cost: new Decimal(1e10),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 34) },
+        },
+        15: {
+            title: "Blue Supergiant",
+            description: "Gravitational Force production is multiplied by 10.",
+            cost: new Decimal(1e13),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 44) },
+        },
+        25: {
+            title: "Hypergiant",
+            description: "Starlight boosts energy gain.",
+            cost: new Decimal(1e16),
+            currencyDisplayName: "starlight",
+            currencyInternalName: "starlight",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 15) },
+            effect() {
+                return player.st.starlight.add(1).log10().add(1).pow(2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        22: {
+            title: "Neutron Star",
+            description: "A city-sized atomic nucleus. Starlight boosts Gravitational Force production.",
+            cost: new Decimal(8),
+            unlocked() { return hasUpgrade("st", 13) },
+            effect() {
+                return player.st.starlight.add(1).pow(0.05)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        23: {
+            title: "Pulsar",
+            description: "Stars add to the gravity well base.",
+            cost: new Decimal(10),
+            unlocked() { return hasUpgrade("st", 22) },
+            effect() {
+                return player.st.points.div(25)
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) },
+        },
         11: {
             title: "Main Sequence",
             description: "Energy boosts Starlight gain.",
@@ -629,7 +823,7 @@ addLayer("fu", {
         total: new Decimal(0),
     }},
     color: "#ff6b6b",
-    requires: new Decimal(1e20),
+    requires: new Decimal(1e24),
     resource: "fusion power",
     baseResource: "particles",
     baseAmount() { return player.p.points },
@@ -641,6 +835,7 @@ addLayer("fu", {
         if (hasUpgrade("st", 21)) mult = mult.times(upgradeEffect("st", 21))
         if (hasUpgrade("fu", 12)) mult = mult.times(upgradeEffect("fu", 12))
         if (hasUpgrade("ga", 12)) mult = mult.times(upgradeEffect("ga", 12))
+        if (hasUpgrade("st", 44)) mult = mult.times(1.5)
         if (hasUpgrade("bh", 12)) mult = mult.times(upgradeEffect("bh", 12))
         return mult
     },
@@ -695,6 +890,7 @@ addLayer("fu", {
             base() {
                 let b = new Decimal(2)
                 if (hasUpgrade("fu", 11)) b = b.add(upgradeEffect("fu", 11))
+                if (hasUpgrade("fu", 21)) b = b.add(0.25)
                 return b
             },
             effect(x) {
@@ -719,6 +915,32 @@ addLayer("fu", {
         },
     },
     upgrades: {
+        21: {
+            title: "Carbon Burning",
+            description: "Add 0.25 to the Fusion Reactor base.",
+            cost: new Decimal(1000),
+            unlocked() { return hasUpgrade("fu", 13) },
+        },
+        22: {
+            title: "Neon Burning",
+            description: "Fusion power boosts energy gain.",
+            cost: new Decimal(1e5),
+            unlocked() { return hasUpgrade("fu", 21) },
+            effect() {
+                return player.fu.points.add(1).pow(0.2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        23: {
+            title: "Silicon Burning",
+            description: "The last stage before collapse. Fusion power boosts particle gain.",
+            cost: new Decimal(1e7),
+            unlocked() { return hasUpgrade("fu", 22) },
+            effect() {
+                return player.fu.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
         11: {
             title: "Proton-Proton Chain",
             description: "Fusion Reactors are more effective based on your energy.",
@@ -768,7 +990,11 @@ addLayer("pl", {
     type: "static",
     base: 1e4,
     exponent: 1.4,
-    gainMult() { return new Decimal(1) },
+    gainMult() {
+        let mult = new Decimal(1)
+        if (hasUpgrade("bh", 22)) mult = mult.div(upgradeEffect("bh", 22))
+        return mult
+    },
     gainExp() { return new Decimal(1) },
     canBuyMax() { return hasMilestone("pl", 4) },
     row: 2,
@@ -794,6 +1020,8 @@ addLayer("pl", {
         let land = player.pl.best.times(2)
         if (hasUpgrade("pl", 11)) land = land.add(player.pl.best)
         if (hasChallenge("hz", 22)) land = land.add(player.pl.best.times(2))
+        if (hasUpgrade("pl", 34)) land = land.add(player.pl.best)
+        if (hasUpgrade("hz", 14)) land = land.add(player.pl.best)
         return land.floor()
     },
     usedLand() {
@@ -843,7 +1071,7 @@ addLayer("pl", {
         12: {
             title: "Rings",
             cost(x) { return Decimal.pow(1e5, x.pow(1.5)).times(1e42) },
-            effect(x) { return Decimal.pow(10, x) },
+            effect(x) { return Decimal.pow(hasUpgrade("pl", 14) ? 15 : 10, x) },
             display() {
                 return "Debris spirals into a halo. Multiply Gravitational Force production.<br><br>" + buildingText(this)
             },
@@ -853,7 +1081,7 @@ addLayer("pl", {
         13: {
             title: "Atmosphere",
             cost(x) { return Decimal.pow(1e6, x.pow(1.5)).times(1e45) },
-            effect(x) { return Decimal.pow(4, x) },
+            effect(x) { return Decimal.pow(hasUpgrade("pl", 24) ? 5 : 4, x) },
             display() {
                 return "A blanket of gas catches the light. Multiply Starlight gain.<br><br>" + buildingText(this)
             },
@@ -862,6 +1090,24 @@ addLayer("pl", {
         },
     },
     upgrades: {
+        14: {
+            title: "Gas Giants",
+            description: "Rings are much stronger.",
+            cost: new Decimal(6),
+            unlocked() { return hasUpgrade("pl", 13) },
+        },
+        24: {
+            title: "Ice Line",
+            description: "Atmospheres are much stronger.",
+            cost: new Decimal(8),
+            unlocked() { return hasUpgrade("pl", 14) },
+        },
+        34: {
+            title: "Late Heavy Bombardment",
+            description: "Comets deliver water and rock. Each of your best planets gives 1 more Land.",
+            cost: new Decimal(9),
+            unlocked() { return hasUpgrade("pl", 24) },
+        },
         11: {
             title: "Plate Tectonics",
             description: "Each of your best planets gives 1 more Land.",
@@ -901,10 +1147,10 @@ addLayer("pl", {
         },
         23: {
             title: "Habitable Zone",
-            description: "A world where life might begin. <b>Finish Act 1.</b><br>Requires surviving every Cosmic Hazard.",
+            description: "A world where life might begin. <b>Finish Act 1.</b><br>Requires surviving every Cosmic Hazard and buying every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.",
             cost: new Decimal(10),
             unlocked() { return hasUpgrade("pl", 22) },
-            canAfford() { return ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) },
+            canAfford() { return ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
         },
     },
 })

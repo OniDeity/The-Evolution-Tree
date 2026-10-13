@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "The Cosmic Web",
+	num: "0.3",
+	name: "Every Minute Counts",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.3 - Every Minute Counts</h3><br>
+		- Pacing pass: something new to buy roughly every minute.<br>
+		- Added Quark Flavors (Up, Down, Strange, Charm, Bottom, Top).<br>
+		- Added Stellar Population upgrades, bought with Starlight.<br>
+		- Added 30+ upgrades across every layer, including Cosmic Hazard upgrades.<br>
+		- Habitable Zone now also requires every Row 3 upgrade.<br>
+		- Rebalanced challenge goals, Galaxies and Black Holes.<br><br>
 	<h3>v0.2 - The Cosmic Web</h3><br>
 		- Act 1 is complete!<br>
 		- Added Row 3: Galaxies, Black Holes, Dark Energy and Cosmic Hazards.<br>
@@ -62,6 +69,11 @@ function getPointGen() {
 	if (player.st.unlocked) gain = gain.times(tmp.st.starlightEffect)
 	if (player.fu.unlocked) gain = gain.times(buyableEffect("fu", 11).energy)
 	if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 11))
+	gain = gain.times(buyableEffect("p", 11))
+	if (hasUpgrade("p", 24)) gain = gain.times(upgradeEffect("p", 24))
+	if (hasUpgrade("fu", 22)) gain = gain.times(upgradeEffect("fu", 22))
+	if (hasUpgrade("st", 25)) gain = gain.times(upgradeEffect("st", 25))
+	if (hasUpgrade("hz", 11)) gain = gain.times(upgradeEffect("hz", 11))
 	if (player.de.unlocked) gain = gain.times(tmp.de.expansionEffect)
 	if (hasChallenge("hz", 12)) gain = gain.times(challengeEffect("hz", 12))
 	if (inChallenge("hz", 12)) gain = gain.max(1).pow(0.5)

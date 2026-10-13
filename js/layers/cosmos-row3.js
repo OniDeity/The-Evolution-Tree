@@ -11,6 +11,10 @@ function hasRow3Milestone(id) {
     return hasMilestone("ga", id) || hasMilestone("bh", id) || hasMilestone("de", id) || hasMilestone("hz", id)
 }
 
+function row3UpgradesDone() {
+    return ["ga", "bh", "de", "hz"].every(l => Object.keys(layers[l].upgrades).filter(id => !isNaN(id)).every(id => hasUpgrade(l, id)))
+}
+
 function row3Milestones(resource, extra) {
     let shared = [
         [1, "Keep Row 2 milestones on all resets."],
@@ -42,13 +46,13 @@ addLayer("ga", {
         total: new Decimal(0),
     }},
     color: "#d48cff",
-    requires: new Decimal(65),
+    requires: new Decimal(58),
     resource: "galaxies",
     baseResource: "atoms",
     baseAmount() { return player.at.points },
     type: "static",
-    base: 1.05,
-    exponent: 1.25,
+    base: 1.04,
+    exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
     canBuyMax() { return hasMilestone("ga", 3) },
@@ -59,7 +63,7 @@ addLayer("ga", {
     ],
     layerShown() { return player.st.unlocked },
     effect() {
-        return player.ga.points.times(0.2).add(1)
+        return player.ga.points.times(hasUpgrade("ga", 22) ? 0.25 : 0.2).add(1)
     },
     effectDescription() {
         return "which multiply the Atom base by " + format(tmp.ga.effect)
@@ -82,6 +86,32 @@ addLayer("ga", {
         },
     }),
     upgrades: {
+        21: {
+            title: "Andromeda",
+            description: "Our nearest neighbor, on a collision course. Galaxies boost particle gain.",
+            cost: new Decimal(4),
+            unlocked() { return hasUpgrade("ga", 13) },
+            effect() {
+                return Decimal.pow(2, player.ga.points)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        22: {
+            title: "Dwarf Galaxies",
+            description: "Galaxies are more effective.",
+            cost: new Decimal(5),
+            unlocked() { return hasUpgrade("ga", 21) },
+        },
+        23: {
+            title: "Galaxy Cluster",
+            description: "Galaxies make stars cheaper.",
+            cost: new Decimal(6),
+            unlocked() { return hasUpgrade("ga", 22) },
+            effect() {
+                return Decimal.pow(10, player.ga.points)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
         11: {
             title: "Spiral Arms",
             description: "Galaxies boost Starlight gain.",
@@ -129,13 +159,13 @@ addLayer("bh", {
         radiation: new Decimal(0),
     }},
     color: "#5b5b8f",
-    requires: new Decimal(65),
+    requires: new Decimal(58),
     resource: "black holes",
     baseResource: "gravity wells",
     baseAmount() { return player.gr.points },
     type: "static",
-    base: 1.05,
-    exponent: 1.25,
+    base: 1.04,
+    exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
     canBuyMax() { return hasMilestone("bh", 3) },
@@ -152,7 +182,7 @@ addLayer("bh", {
         return "which are emitting " + format(tmp.bh.effect) + " Hawking Radiation/sec"
     },
     radiationEffect() {
-        return player.bh.radiation.add(1).pow(1.5)
+        return player.bh.radiation.add(1).pow(hasUpgrade("bh", 21) ? 1.75 : 1.5)
     },
     update(diff) {
         if (player.bh.unlocked) player.bh.radiation = player.bh.radiation.add(tmp.bh.effect.times(diff))
@@ -176,6 +206,32 @@ addLayer("bh", {
         },
     }),
     upgrades: {
+        21: {
+            title: "Accretion Disk",
+            description: "Hawking Radiation's effect is stronger.",
+            cost: new Decimal(4),
+            unlocked() { return hasUpgrade("bh", 13) },
+        },
+        22: {
+            title: "Kugelblitz",
+            description: "A black hole made of pure light. Black holes make planets cheaper.",
+            cost: new Decimal(5),
+            unlocked() { return hasUpgrade("bh", 21) },
+            effect() {
+                return Decimal.pow(10, player.bh.points)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
+        23: {
+            title: "Supermassive",
+            description: "Hawking Radiation boosts Starlight gain.",
+            cost: new Decimal(6),
+            unlocked() { return hasUpgrade("bh", 22) },
+            effect() {
+                return player.bh.radiation.add(1).pow(0.2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
         11: {
             title: "Spaghettification",
             description: "Hawking Radiation boosts particle gain.",
@@ -233,6 +289,7 @@ addLayer("de", {
         let mult = new Decimal(1)
         if (hasUpgrade("ga", 13)) mult = mult.times(upgradeEffect("ga", 13))
         if (hasUpgrade("bh", 13)) mult = mult.times(upgradeEffect("bh", 13))
+        if (hasUpgrade("de", 21)) mult = mult.times(upgradeEffect("de", 21))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -302,21 +359,47 @@ addLayer("de", {
         },
     },
     upgrades: {
+        21: {
+            title: "Phantom Energy",
+            description: "Expansion boosts Dark Energy gain.",
+            cost: new Decimal(30),
+            unlocked() { return hasUpgrade("de", 13) },
+            effect() {
+                return player.de.expansion.add(1).log10().add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        22: {
+            title: "Quintessence",
+            description: "Expansion boosts Starlight gain.",
+            cost: new Decimal(80),
+            unlocked() { return hasUpgrade("de", 21) },
+            effect() {
+                return player.de.expansion.add(1).pow(0.2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        23: {
+            title: "Big Rip",
+            description: "Expansion also boosts particle gain.",
+            cost: new Decimal(200),
+            unlocked() { return hasUpgrade("de", 22) },
+        },
         11: {
             title: "Eternal Inflation",
             description: "<b>Inflation</b>'s softcap starts much later.",
-            cost: new Decimal(5),
+            cost: new Decimal(3),
         },
         12: {
             title: "Accelerating Universe",
             description: "Expansion's effect is stronger.",
-            cost: new Decimal(25),
+            cost: new Decimal(6),
             unlocked() { return hasUpgrade("de", 11) },
         },
         13: {
             title: "Dark Flow",
             description: "Expansion makes Expansion Layers cheaper.",
-            cost: new Decimal(250),
+            cost: new Decimal(15),
             unlocked() { return hasUpgrade("de", 12) },
             effect() {
                 return player.de.expansion.add(1).log10().add(1)
@@ -369,21 +452,51 @@ addLayer("hz", {
         lore("The universe is not a safe place. Gamma-ray bursts sterilize whole galaxies. Somewhere, the vacuum itself might be unstable. A world that hopes to carry life must survive all of it."),
         "blank",
         "milestones",
+        "upgrades",
         "challenges",
     ],
+    upgrades: {
+        11: {
+            title: "Shielding",
+            description: "Resilience boosts energy gain.",
+            cost: new Decimal(1),
+            effect() {
+                return player.hz.points.add(1).pow(2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        },
+        12: {
+            title: "Ozone Layer",
+            description: "Add 0.5 to the Atom base.",
+            cost: new Decimal(3),
+            unlocked() { return hasUpgrade("hz", 11) },
+        },
+        13: {
+            title: "Deep Crust",
+            description: "Starlight's energy effect is stronger.",
+            cost: new Decimal(6),
+            unlocked() { return hasUpgrade("hz", 12) },
+        },
+        14: {
+            title: "Iron Core",
+            description: "Each of your best planets gives 1 more Land.",
+            cost: new Decimal(10),
+            unlocked() { return hasUpgrade("hz", 13) },
+        },
+    },
     milestones: row3Milestones("resilience", {
         3: {
-            requirementDescription: "1,000 resilience",
+            requirementDescription: "10 resilience",
             effectDescription: "Gain 10% of your Resilience gain every second.",
-            done() { return player.hz.best.gte(1000) },
+            done() { return player.hz.best.gte(10) },
         },
     }),
     challenges: {
         11: {
             name: "Gamma-Ray Burst",
             challengeDescription: "Atoms do nothing.",
-            goalDescription: "1e80 energy",
-            canComplete() { return player.points.gte(1e80) },
+            goalDescription: "1e88 energy",
+            canComplete() { return player.points.gte(1e88) },
             rewardDescription: "Add 1 to the Atom base.",
             rewardEffect() { return new Decimal(1) },
             unlocked() { return player.hz.unlocked },
@@ -391,8 +504,8 @@ addLayer("hz", {
         12: {
             name: "Big Crunch",
             challengeDescription: "Energy gain is square-rooted.",
-            goalDescription: "1e45 energy",
-            canComplete() { return player.points.gte(1e45) },
+            goalDescription: "1e55 energy",
+            canComplete() { return player.points.gte(1e55) },
             rewardDescription: "Stars boost energy gain.",
             rewardEffect() { return player.st.points.add(1).pow(5) },
             rewardDisplay() { return format(challengeEffect(this.layer, this.id)) + "x" },
@@ -401,16 +514,16 @@ addLayer("hz", {
         21: {
             name: "Heat Death",
             challengeDescription: "Starlight and Gravitational Force do nothing.",
-            goalDescription: "1e111 energy",
-            canComplete() { return player.points.gte(1e111) },
+            goalDescription: "1e128 energy",
+            canComplete() { return player.points.gte(1e128) },
             rewardDescription: "Starlight's energy effect is stronger.",
             unlocked() { return hasChallenge("hz", 12) },
         },
         22: {
             name: "Vacuum Decay",
             challengeDescription: "Particle gain is square-rooted.",
-            goalDescription: "1e180 energy",
-            canComplete() { return player.points.gte(1e180) },
+            goalDescription: "1e210 energy",
+            canComplete() { return player.points.gte(1e210) },
             rewardDescription: "Each of your best planets gives 2 more Land.",
             unlocked() { return hasChallenge("hz", 21) },
         },
