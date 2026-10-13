@@ -10,6 +10,11 @@
 //  Space      -> Planets   (pl)
 // ============================================================
 
+function addSpin(amount) {
+    if (player.p.spin == "fermion") player.p.fermions = player.p.fermions.add(amount)
+    else player.p.bosons = player.p.bosons.add(amount)
+}
+
 function inflationSoftcap() {
     return new Decimal(hasUpgrade("de", 11) ? 1e30 : 1e15)
 }
@@ -69,6 +74,9 @@ addLayer("p", {
         points: new Decimal(0),
         best: new Decimal(0),
         total: new Decimal(0),
+        spin: "fermion",
+        fermions: new Decimal(0),
+        bosons: new Decimal(0),
     }},
     color: "#9be7ff",
     requires: new Decimal(10),
@@ -85,6 +93,8 @@ addLayer("p", {
         if (hasUpgrade("gr", 11)) mult = mult.times(upgradeEffect("gr", 11))
         if (hasUpgrade("bh", 11)) mult = mult.times(upgradeEffect("bh", 11))
         if (hasUpgrade("p", 14)) mult = mult.times(2)
+        mult = mult.times(tmp.p.fermionEffect)
+        if (player.ga.unlocked) mult = mult.times(galaxyShapeEffect("irregular"))
         if (hasUpgrade("st", 14)) mult = mult.times(upgradeEffect("st", 14))
         if (hasUpgrade("gr", 14)) mult = mult.times(upgradeEffect("gr", 14))
         if (hasUpgrade("fu", 23)) mult = mult.times(upgradeEffect("fu", 23))
@@ -104,12 +114,38 @@ addLayer("p", {
     ],
     layerShown() { return true },
     passiveGeneration() { return hasRow2Milestone(2) ? 1 : 0 },
+    // Every particle you make is either a fermion (matter) or a boson (a force carrier). You choose which.
+    onPrestige(gain) {
+        addSpin(gain)
+    },
+    update(diff) {
+        if (tmp.p.passiveGeneration > 0) addSpin(tmp.p.resetGain.times(tmp.p.passiveGeneration).times(diff))
+    },
+    fermionEffect() {
+        return player.p.fermions.add(1).pow(0.04)
+    },
+    bosonEffect() {
+        return player.p.bosons.add(1).pow(0.06)
+    },
+    clickables: {
+        11: {
+            title() { return player.p.spin == "fermion" ? "Making: Fermions" : "Making: Bosons" },
+            display() {
+                return player.p.spin == "fermion"
+                    ? "Matter: quarks and electrons. They boost particle gain.<br><br>Click to make Bosons instead."
+                    : "Force carriers: photons and gluons. They boost energy gain.<br><br>Click to make Fermions instead."
+            },
+            canClick() { return true },
+            onClick() { player.p.spin = player.p.spin == "fermion" ? "boson" : "fermion" },
+            style() { return { width: "220px", height: "110px", "background-color": player.p.spin == "fermion" ? "#9be7ff" : "#ffe08a" } },
+        },
+    },
     autoUpgrade() { return hasRow2Milestone(1) },
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return
         let keep = []
-        if (layers[resettingLayer].row == 1 && (hasMilestone("at", 0) || hasMilestone("gr", 0))) keep.push("upgrades", "buyables")
-        if (hasRow2Milestone(1)) keep.push("upgrades", "buyables")
+        if (layers[resettingLayer].row == 1 && (hasMilestone("at", 0) || hasMilestone("gr", 0))) keep.push("upgrades", "buyables", "fermions", "bosons", "spin")
+        if (hasRow2Milestone(1)) keep.push("upgrades", "buyables", "fermions", "bosons", "spin")
         layerDataReset(this.layer, keep)
     },
     buyables: {
@@ -140,6 +176,12 @@ addLayer("p", {
         "resource-display",
         "blank",
         lore("In the beginning there was nothing. Then, for no reason anyone has ever been able to explain, there was <b>everything</b>, all at once, unbearably hot and crammed into a space smaller than an atom."),
+        "blank",
+        ["display-text", function() { return "Every particle you make is either a <b>fermion</b> or a <b>boson</b>.<br>" +
+            "Fermions: <b>" + format(player.p.fermions) + "</b>, multiplying particle gain by " + format(tmp.p.fermionEffect) + "<br>" +
+            "Bosons: <b>" + format(player.p.bosons) + "</b>, multiplying energy gain by " + format(tmp.p.bosonEffect) }],
+        "blank",
+        "clickables",
         "blank",
         "buyables",
         "blank",
@@ -304,6 +346,7 @@ addLayer("at", {
         if (hasUpgrade("at", 21)) base = base.add(upgradeEffect("at", 21))
         if (player.st.unlocked) base = base.add(tmp.st.starlightAtomBase)
         if (hasChallenge("hz", 11)) base = base.add(challengeEffect("hz", 11))
+        if (player.ga.unlocked) base = base.add(galaxyShapeEffect("elliptical"))
         if (player.ga.unlocked) base = base.times(tmp.ga.effect)
         return base
     },
@@ -701,7 +744,7 @@ addLayer("st", {
     // Supernova: blow up all of your stars for Heavy Elements, which are permanent.
     // Stars get cheap again afterwards, so it's a trade between Starlight now and Heavy Elements forever.
     supernovaGain() {
-        return player.st.points.pow(2).floor()
+        return player.st.points.pow(2).times(hasChallenge("hz", 31) ? 3 : 1).floor()
     },
     heavyStarlightEffect() {
         return player.st.heavy.add(1).sqrt()
@@ -740,6 +783,7 @@ addLayer("st", {
         if (hasUpgrade("bh", 23)) gain = gain.times(upgradeEffect("bh", 23))
         if (hasUpgrade("de", 22)) gain = gain.times(upgradeEffect("de", 22))
         if (hasUpgrade("st", 24)) gain = gain.times(2)
+        if (player.ga.unlocked) gain = gain.times(galaxyShapeEffect("spiral"))
         return gain
     },
     starlightEffect() {
@@ -924,6 +968,7 @@ addLayer("fu", {
         points: new Decimal(0),
         best: new Decimal(0),
         total: new Decimal(0),
+        temp: 5,
     }},
     color: "#ff6b6b",
     requires: new Decimal(1e24),
@@ -941,6 +986,7 @@ addLayer("fu", {
         if (hasUpgrade("st", 44)) mult = mult.times(1.5)
         if (player.st.heavy.gt(0)) mult = mult.times(tmp.st.heavyFusionEffect)
         if (hasUpgrade("bh", 12)) mult = mult.times(upgradeEffect("bh", 12))
+        mult = mult.times(plasmaFuelFactor())
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -964,6 +1010,9 @@ addLayer("fu", {
         "resource-display",
         "blank",
         lore("Inside the stars, hydrogen is crushed into helium, helium into carbon, carbon into oxygen... every element heavier than lithium in your body was cooked in a stellar core."),
+        "blank",
+        ["display-text", function() { return "<h3>Plasma Temperature: " + plasmaTemp() + "</h3><br>Hotter plasma makes Fusion Reactors stronger (effects ^" + format(plasmaHeatFactor()) + "), but burns through fuel, so you gain less Fusion power (x" + format(plasmaFuelFactor()) + ")." }],
+        ["slider", ["temp", 1, 10]],
         "blank",
         "milestones",
         "buyables",
@@ -999,9 +1048,10 @@ addLayer("fu", {
             },
             effect(x) {
                 let base = this.base()
+                let heat = plasmaHeatFactor()
                 return {
-                    particles: Decimal.pow(base, x),
-                    energy: x.add(1).pow(hasUpgrade("fu", 13) ? 4 : 2),
+                    particles: Decimal.pow(base, x).pow(heat),
+                    energy: x.add(1).pow(hasUpgrade("fu", 13) ? 4 : 2).pow(heat),
                 }
             },
             display() {
@@ -1116,6 +1166,7 @@ addLayer("pl", {
     update() {
         // If you lose planets (to a Row 3 reset), take them back out of orbit, outermost first
         let extra = placedPlanets() - player.pl.points.toNumber()
+        if (extra <= 0) return
         for (let o of ["outer", "frost", "hab", "inner"]) {
             let take = Math.min(extra, player.pl.orbits[o])
             player.pl.orbits[o] -= take
@@ -1219,7 +1270,7 @@ addLayer("pl", {
         }),
         23: planetUpgrade("Habitable Zone", "A world where life might begin. <b>Finish Act 1.</b><br>Also requires 3 planets in the Habitable orbit, surviving every Cosmic Hazard, and every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.", 10, {
             unlocked() { return hasUpgrade("pl", 22) },
-            extraReq() { return player.pl.orbits.hab >= 3 && ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
+            extraReq() { return player.pl.orbits.hab >= 3 && ["11", "12", "21", "22", "31", "32"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
         }),
         24: planetUpgrade("Ice Giants", "Worlds in the Outer orbit are stronger.", 8, {
             unlocked() { return hasUpgrade("pl", 14) },
@@ -1245,10 +1296,10 @@ function orbitBonus(o) {
 }
 
 function orbitBase(o) {
-    if (o == "inner") return new Decimal(hasUpgrade("pl", 11) ? 100 : 30).times(hasUpgrade("hz", 14) ? 3 : 1)
-    if (o == "hab") return new Decimal(hasUpgrade("pl", 34) ? 30 : 10)
-    if (o == "frost") return new Decimal(hasUpgrade("pl", 14) ? 1e5 : 1e3)
-    return new Decimal(hasUpgrade("pl", 24) ? 100 : 10)
+    if (o == "inner") return new Decimal(hasUpgrade("pl", 11) ? 30 : 10).times(hasUpgrade("hz", 14) ? 3 : 1)
+    if (o == "hab") return new Decimal(hasUpgrade("pl", 34) ? 15 : 5)
+    if (o == "frost") return new Decimal(hasUpgrade("pl", 14) ? 1e4 : 100)
+    return new Decimal(hasUpgrade("pl", 24) ? 20 : 4)
 }
 
 // Each orbit's effect grows with (planets ^ 0.75), so piling everything into one orbit has diminishing returns
@@ -1288,4 +1339,18 @@ function planetUpgrade(title, description, planets, extra = {}) {
             return text
         },
     }, extra)
+}
+
+// Fusion's plasma temperature slider (1 to 10). The slider stores text, so read it as a number.
+function plasmaTemp() {
+    let t = Number(player.fu.temp)
+    return isNaN(t) ? 5 : Math.min(10, Math.max(1, t))
+}
+
+function plasmaHeatFactor() {
+    return 0.5 + plasmaTemp() / 10
+}
+
+function plasmaFuelFactor() {
+    return Math.pow(6 / (plasmaTemp() + 1), 2)
 }

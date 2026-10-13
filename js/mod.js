@@ -13,11 +13,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "Signature Twists",
+	num: "0.5",
+	name: "Every Layer Its Own",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.5 - Every Layer Its Own</h3><br>
+		- Particles: choose to make Fermions (boost particles) or Bosons (boost energy).<br>
+		- Fusion: a Plasma Temperature slider. Hotter reactors are stronger but burn more fuel.<br>
+		- Galaxies: pick each galaxy's shape (Spiral, Elliptical, Irregular) before it forms.<br>
+		- Black Holes: they spin up the longer you leave them alone.<br>
+		- Dark Energy: the Fate of the Universe meter. Keep it flat for the strongest Expansion.<br>
+		- Cosmic Hazards: two Combined Hazards, Cosmic Winter and Doomsday.<br>
+		- Galaxy and Black Hole upgrades no longer spend galaxies or black holes.<br>
+		- Fixed unplaced planets jumping into the Outer orbit on their own.<br>
+		- Rebalanced all of Act 1 around the new mechanics.<br><br>
 	<h3>v0.4 - Signature Twists</h3><br>
 		- Atoms: the Periodic Table. Fuse elements you own into heavier ones.<br>
 		- Gravity: merge 3 wells into a Massive Well for Gravitational Force.<br>
@@ -63,6 +73,8 @@ function canGenPoints(){
 	return hasUpgrade("p", 11)
 }
 
+const ENERGY_PACING = 0.92
+
 // Calculate points/sec!
 function getPointGen() {
 	if(!canGenPoints())
@@ -79,12 +91,15 @@ function getPointGen() {
 	if (player.fu.unlocked) gain = gain.times(buyableEffect("fu", 11).energy)
 	gain = gain.times(orbitEffect("inner"))
 	gain = gain.times(buyableEffect("p", 11))
+	gain = gain.times(tmp.p.bosonEffect)
 	if (hasUpgrade("p", 24)) gain = gain.times(upgradeEffect("p", 24))
 	if (hasUpgrade("fu", 22)) gain = gain.times(upgradeEffect("fu", 22))
 	if (hasUpgrade("st", 25)) gain = gain.times(upgradeEffect("st", 25))
 	if (hasUpgrade("hz", 11)) gain = gain.times(upgradeEffect("hz", 11))
 	if (player.de.unlocked) gain = gain.times(tmp.de.expansionEffect)
 	if (hasChallenge("hz", 12)) gain = gain.times(challengeEffect("hz", 12))
+	// Pacing: stretches the whole act evenly so something new unlocks about once a minute
+	gain = gain.max(1).pow(ENERGY_PACING)
 	if (inChallenge("hz", 12)) gain = gain.max(1).pow(0.5)
 	return gain
 }

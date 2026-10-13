@@ -3,26 +3,26 @@
 Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
 The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
 
-## Act 1: The Cosmos ✅ (v0.2)
+## Act 1: The Cosmos ✅ (v0.5)
 *The Prestige Tree, retold from the Big Bang to the first habitable world.*
 
 | Prestige Tree | Cosmos | Notes |
 |---|---|---|
 | Points | Energy | |
-| Prestige | Particles (P) | |
+| Prestige | Particles (P) | **Twist: Fermions vs. Bosons.** Choose which kind of particle to make |
 | Boosters | Atoms (At) | **Twist: Periodic Table.** Elements are fused from elements you own |
 | Generators | Gravity (G) | **Twist: Merging.** Spend Force to merge 3 wells into a Massive Well |
 | Time | Stars (St) | **Twist: Supernova.** Trade all stars for permanent Heavy Elements |
-| Enhance | Fusion (F) | Fusion Reactors (buyable) |
+| Enhance | Fusion (F) | **Twist: Plasma Temperature.** Slider trades reactor strength for fuel |
 | Space | Planets (Pl) | **Twist: Orbits.** Place each planet in Inner, Habitable, Frost Line or Outer orbit |
-| Super-Boosters | Galaxies (Ga) | Multiply the Atom base |
-| Super-Generators | Black Holes (BH) | Hawking Radiation boosts Gravitational Force |
-| Quirks | Dark Energy (DE) | Expansion Layers produce Expansion |
-| Hindrances | Cosmic Hazards (Hz) | Challenges: Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay |
+| Super-Boosters | Galaxies (Ga) | **Twist: Galaxy Shapes.** Spiral, Elliptical or Irregular, chosen before each galaxy forms |
+| Super-Generators | Black Holes (BH) | **Twist: Spin.** Black holes spin up the longer you leave them alone |
+| Quirks | Dark Energy (DE) | **Twist: Fate of the Universe.** Balance Expansion against Gravity to stay flat |
+| Hindrances | Cosmic Hazards (Hz) | **Twist: Combined Hazards.** Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay, plus Cosmic Winter and Doomsday |
 
 Endgame: **Habitable Zone** (survive every Cosmic Hazard and buy every Row 3 upgrade).
 
-**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 133 unlocks. A perfect bot gets one every 41 seconds on average and finishes in about 90 minutes, so a human should take roughly 2–2.5 hours.
+**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 32 seconds on average and finishes in about 72 minutes; with all the choices involved, a human should take roughly 2 hours.
 
 ## Act 2: Life
 *The Prestige Tree again, this time at biological scale, boosted by the Cosmos.*
