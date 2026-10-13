@@ -1,9 +1,9 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	name: "The Evolution Tree",
+	id: "evolutiontree",
+	author: "OniDeity",
+	pointsName: "energy",
+	modFiles: ["layers/cosmos.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,20 +13,24 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Let There Be Light",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.1 - Let There Be Light</h3><br>
+		- Act 1: The Cosmos.<br>
+		- Added Particles, Atoms, Gravity, Stars, Fusion and Planets.<br>
+		- Added achievements.<br>
+		- Endgame: a habitable world.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `A small, wet, rocky world settles into orbit around a quiet star.<br>
+	Somewhere in its oceans, a molecule copies itself for the very first time.<br><br>
+	<b>Act 2: Life</b> is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = []
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -34,7 +38,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return hasUpgrade("p", 11)
 }
 
 // Calculate points/sec!
@@ -43,6 +47,15 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade("p", 12)) gain = gain.times(upgradeEffect("p", 12))
+	if (hasUpgrade("p", 13)) gain = gain.times(upgradeEffect("p", 13))
+	if (hasUpgrade("p", 22)) gain = gain.times(upgradeEffect("p", 22))
+	if (hasUpgrade("p", 33)) gain = gain.times(upgradeEffect("p", 33))
+	if (player.at.unlocked) gain = gain.times(tmp.at.effect)
+	if (player.gr.unlocked) gain = gain.times(tmp.gr.forceEffect)
+	if (player.st.unlocked) gain = gain.times(tmp.st.starlightEffect)
+	if (player.fu.unlocked) gain = gain.times(buyableEffect("fu", 11).energy)
+	if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 11))
 	return gain
 }
 
@@ -52,11 +65,22 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	function() { return cosmicEra() },
 ]
+
+function cosmicEra() {
+	let e = player.points
+	if (player.pl.unlocked) return "Era: Planetary Formation"
+	if (player.st.unlocked || player.fu.unlocked) return "Era: The First Stars"
+	if (player.at.unlocked || player.gr.unlocked) return "Era: Recombination"
+	if (player.p.unlocked) return "Era: The Quark Epoch"
+	if (e.gt(0)) return "Era: Planck Epoch"
+	return ""
+}
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return hasUpgrade("pl", 23)
 }
 
 
