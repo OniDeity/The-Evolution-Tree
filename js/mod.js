@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5",
+	num: "0.5.1",
 	name: "Every Layer Its Own",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.5.1</h3><br>
+		- Game files now always refresh after an update, so old cached files can't mix with new ones.<br><br>
 	<h3>v0.5 - Every Layer Its Own</h3><br>
 		- Particles: choose to make Fermions (boost particles) or Bosons (boost energy).<br>
 		- Fusion: a Plasma Temperature slider. Hotter reactors are stronger but burn more fuel.<br>
