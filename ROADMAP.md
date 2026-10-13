@@ -10,11 +10,11 @@ The overall arc is a loop: the universe forms, life evolves, and a civilization 
 |---|---|---|
 | Points | Energy | |
 | Prestige | Particles (P) | |
-| Boosters | Atoms (At) | Static. Hydrogen → Iron upgrades |
-| Generators | Gravity (G) | Wells produce Gravitational Force |
-| Time | Stars (St) | Stars produce Starlight |
+| Boosters | Atoms (At) | **Twist: Periodic Table.** Elements are fused from elements you own |
+| Generators | Gravity (G) | **Twist: Merging.** Spend Force to merge 3 wells into a Massive Well |
+| Time | Stars (St) | **Twist: Supernova.** Trade all stars for permanent Heavy Elements |
 | Enhance | Fusion (F) | Fusion Reactors (buyable) |
-| Space | Planets (Pl) | Land, plus Moons / Rings / Atmosphere |
+| Space | Planets (Pl) | **Twist: Orbits.** Place each planet in Inner, Habitable, Frost Line or Outer orbit |
 | Super-Boosters | Galaxies (Ga) | Multiply the Atom base |
 | Super-Generators | Black Holes (BH) | Hawking Radiation boosts Gravitational Force |
 | Quirks | Dark Energy (DE) | Expansion Layers produce Expansion |
@@ -22,7 +22,7 @@ The overall arc is a loop: the universe forms, life evolves, and a civilization 
 
 Endgame: **Habitable Zone** (survive every Cosmic Hazard and buy every Row 3 upgrade).
 
-**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 134 unlocks. A perfect bot gets one every 36 seconds on average and finishes in about 80 minutes, so a human should take roughly 2 hours.
+**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 133 unlocks. A perfect bot gets one every 41 seconds on average and finishes in about 90 minutes, so a human should take roughly 2–2.5 hours.
 
 ## Act 2: Life
 *The Prestige Tree again, this time at biological scale, boosted by the Cosmos.*

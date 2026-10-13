@@ -92,6 +92,7 @@ addLayer("p", {
         if (hasUpgrade("de", 23)) mult = mult.times(tmp.de.expansionEffect.sqrt())
         if (player.fu.unlocked) mult = mult.times(buyableEffect("fu", 11).particles)
         if (hasUpgrade("pl", 22)) mult = mult.times(upgradeEffect("pl", 22))
+        mult = mult.times(orbitEffect("outer"))
         return mult
     },
     gainExp() {
@@ -202,7 +203,7 @@ addLayer("p", {
         21: {
             title: "Matter-Antimatter Asymmetry",
             description: "For every billion antiparticles, a billion and one particles. Gain 1.8x more particles.",
-            cost: new Decimal(20),
+            cost: new Decimal(10),
             unlocked() { return player.at.unlocked || player.gr.unlocked },
         },
         22: {
@@ -269,7 +270,7 @@ addLayer("at", {
         unlockOrder: 0,
     }},
     color: "#ffd166",
-    requires() { return new Decimal(200).times(player.at.unlockOrder > 0 ? 5000 : 1) },
+    requires() { return new Decimal(200).times(player.at.unlockOrder > 0 ? 20 : 1) },
     resource: "atoms",
     baseResource: "energy",
     baseAmount() { return player.points },
@@ -328,7 +329,12 @@ addLayer("at", {
         lore("Three hundred and eighty thousand years after the beginning, the universe cools enough for electrons to settle around nuclei. For the first time, light can travel freely. The cosmos becomes transparent."),
         "blank",
         "milestones",
-        "upgrades",
+        "blank",
+        ["display-text", "<h3>Periodic Table</h3><br>Fuse elements you already own to make heavier ones."],
+        "blank",
+        ["display-text", function() { return periodicTableHTML() }],
+        "blank",
+        ["row", [11, 12, 13, 14, 24, 21, 22, 23].map(id => ["upgrade", id])],
     ],
     milestones: {
         0: {
@@ -343,83 +349,104 @@ addLayer("at", {
         },
     },
     upgrades: {
-        14: {
-            title: "Deuterium",
-            description: "Heavy hydrogen. Add 0.15 to the Atom base.",
-            cost: new Decimal(17),
-            unlocked() { return hasUpgrade("at", 13) },
-        },
-        24: {
-            title: "Beryllium",
-            description: "Atoms boost Gravitational Force production.",
-            cost: new Decimal(21),
-            unlocked() { return hasUpgrade("at", 14) },
-            effect() {
-                return player.at.points.add(1).sqrt()
-            },
+        11: element(1, "H", "Hydrogen", "Atoms boost particle gain.", 3, [], {
+            effect() { return player.at.points.add(1).pow(1.5) },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-        },
-        11: {
-            title: "Hydrogen",
-            description: "The simplest atom. Atoms boost particle gain.",
-            cost: new Decimal(3),
-            effect() {
-                return player.at.points.add(1).pow(1.5)
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-        },
-        12: {
-            title: "Helium",
-            description: "Particles add to the Atom base.",
-            cost: new Decimal(6),
-            unlocked() { return hasUpgrade("at", 11) },
-            effect() {
-                return player.p.points.add(1).log10().sqrt().div(3)
-            },
+        }),
+        12: element(2, "He", "Helium", "Particles add to the Atom base.", 6, [11, 11], {
+            effect() { return player.p.points.add(1).log10().sqrt().div(3) },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) },
-        },
-        13: {
-            title: "Lithium",
-            description: "Atoms are cheaper based on your energy.",
-            cost: new Decimal(8),
-            unlocked() { return hasUpgrade("at", 12) },
-            effect() {
-                return player.points.add(1).log10().add(1).pow(1.5)
-            },
+        }),
+        13: element(3, "Li", "Lithium", "Atoms are cheaper based on your energy.", 8, [12, 11], {
+            effect() { return player.points.add(1).log10().add(1).pow(1.5) },
             effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
-        },
-        21: {
-            title: "Carbon",
-            description: "Forged in stars, the backbone of everything to come. Stars add to the Atom base.",
-            cost: new Decimal(25),
-            unlocked() { return player.st.unlocked && hasUpgrade("at", 13) },
-            effect() {
-                return player.st.points.div(4)
-            },
+        }),
+        14: element(4, "Be", "Beryllium", "Add 0.15 to the Atom base.", 17, [12, 12]),
+        24: element(5, "B", "Boron", "Atoms boost Gravitational Force production.", 21, [14, 11], {
+            effect() { return player.at.points.add(1).sqrt() },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+        }),
+        21: element(6, "C", "Carbon", "The backbone of life. Stars add to the Atom base.", 25, [12, 12, 12], {
+            needs: { text: "a star", met() { return player.st.unlocked } },
+            effect() { return player.st.points.div(4) },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) },
-        },
-        22: {
-            title: "Oxygen",
-            description: "Atoms boost Starlight gain.",
-            cost: new Decimal(30),
-            unlocked() { return hasUpgrade("at", 21) },
-            effect() {
-                return player.at.points.add(1).pow(2)
-            },
+        }),
+        22: element(8, "O", "Oxygen", "Atoms boost Starlight gain.", 30, [21, 12], {
+            effect() { return player.at.points.add(1).pow(2) },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-        },
-        23: {
-            title: "Iron",
-            description: "The end of the line for fusion. Atoms boost Fusion gain.",
-            cost: new Decimal(40),
-            unlocked() { return hasUpgrade("at", 22) && player.fu.unlocked },
-            effect() {
-                return player.at.points.add(1).pow(0.25)
-            },
+        }),
+        23: element(26, "Fe", "Iron", "The end of fusion. Atoms boost Fusion gain.", 40, [22, 22], {
+            needs: { text: "fusion", met() { return player.fu.unlocked } },
+            effect() { return player.at.points.add(1).pow(0.25) },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-        },
+        }),
     },
 })
+
+// The Atoms layer's upgrades are laid out as a periodic table. Each element has to be fused from
+// elements you already own, so they unlock in the order they were really made in the universe.
+const ELEMENT_SYMBOLS = { 11: "H", 12: "He", 13: "Li", 14: "Be", 24: "B", 21: "C", 22: "O", 23: "Fe" }
+
+// A small, phone-sized periodic table at the top of the Atoms tab. Gaps are elements that don't exist yet.
+const PERIODIC_LAYOUT = [
+    [11, null, null, null, null, 12],
+    [13, 14, 24, 21, "N", 22],
+    [null, null, null, null, null, 23],
+]
+
+function periodicTableHTML() {
+    let html = "<table style='margin:auto;border-spacing:4px'>"
+    for (let row of PERIODIC_LAYOUT) {
+        html += "<tr>"
+        for (let id of row) {
+            let cell = "width:48px;height:48px;border-radius:6px;text-align:center;font-weight:bold;font-size:18px;"
+            if (id === null) { html += "<td style='" + cell + "'></td>"; continue }
+            let sym = typeof id == "string" ? id : ELEMENT_SYMBOLS[id]
+            let style
+            if (typeof id == "string") style = "border:1px dashed #555;color:#555"
+            else if (hasUpgrade("at", id)) style = "background:#ffd166;color:#222"
+            else if (tmp.at.upgrades[id] && tmp.at.upgrades[id].canAfford) style = "border:2px solid #ffd166;color:#ffd166;box-shadow:0 0 8px #ffd166"
+            else style = "border:1px solid #666;color:#777"
+            html += "<td style='" + cell + style + "'>" + sym + "</td>"
+        }
+        html += "</tr>"
+    }
+    return html + "</table><span style='font-size:11px;opacity:0.7'>Lit: fused. Glowing: ready to fuse. Dashed: not discovered yet.</span>"
+}
+
+function recipeText(recipe) {
+    let counts = {}
+    for (let id of recipe) counts[id] = (counts[id] || 0) + 1
+    return Object.keys(counts).map(id => {
+        let sym = (counts[id] > 1 ? counts[id] : "") + ELEMENT_SYMBOLS[id]
+        return hasUpgrade("at", id) ? sym : "<span style='color:#c0392b'>" + sym + "</span>"
+    }).join(" + ")
+}
+
+function element(number, symbol, name, description, cost, recipe, extra = {}) {
+    return Object.assign({
+        cost: new Decimal(cost),
+        canAfford() {
+            return recipe.every(id => hasUpgrade("at", id)) && (!this.needs || this.needs.met())
+        },
+        fullDisplay() {
+            let owned = hasUpgrade(this.layer, this.id)
+            let text = "<div style='text-align:left;font-size:10px'>" + number + "</div>" +
+                "<div style='font-size:28px;font-weight:bold;line-height:30px'>" + symbol + "</div>" +
+                "<div style='font-size:11px'>" + name + "</div>" +
+                "<div style='font-size:10px;margin-top:4px'>" + description + "</div>"
+            if (this.effectDisplay) text += "<div style='font-size:10px'>Currently: " + this.effectDisplay() + "</div>"
+            if (!owned) {
+                text += "<div style='font-size:10px;margin-top:4px'>"
+                if (recipe.length) text += "Fuse: " + recipeText(recipe) + "<br>"
+                if (this.needs) text += (this.needs.met() ? "" : "<span style='color:#c0392b'>") + "Needs " + this.needs.text + (this.needs.met() ? "" : "</span>") + "<br>"
+                text += "Cost: " + formatWhole(cost) + " atoms</div>"
+            }
+            return text
+        },
+        style() { return { width: "120px", height: "150px", "border-radius": "6px", padding: "4px" } },
+    }, extra)
+}
 
 // ------------------------------------------------------------
 //  ROW 1: GRAVITY (Generators)
@@ -435,9 +462,10 @@ addLayer("gr", {
         total: new Decimal(0),
         unlockOrder: 0,
         force: new Decimal(0),
+        massive: 0,
     }},
     color: "#a28bff",
-    requires() { return new Decimal(200).times(player.gr.unlockOrder > 0 ? 5000 : 1) },
+    requires() { return new Decimal(200).times(player.gr.unlockOrder > 0 ? 20 : 1) },
     resource: "gravity wells",
     baseResource: "energy",
     baseAmount() { return player.points },
@@ -469,10 +497,10 @@ addLayer("gr", {
         return base
     },
     effect() {
-        let gain = Decimal.pow(tmp.gr.effectBase, player.gr.points).sub(1)
+        let gain = Decimal.pow(tmp.gr.effectBase, player.gr.points.add(player.gr.massive)).sub(1)
         if (hasUpgrade("p", 31)) gain = gain.times(upgradeEffect("p", 31))
         if (hasUpgrade("gr", 21)) gain = gain.times(upgradeEffect("gr", 21))
-        if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 12))
+        gain = gain.times(orbitEffect("frost"))
         if (player.bh.unlocked) gain = gain.times(tmp.bh.radiationEffect)
         if (hasUpgrade("at", 24)) gain = gain.times(upgradeEffect("at", 24))
         if (hasUpgrade("st", 22)) gain = gain.times(upgradeEffect("st", 22))
@@ -492,6 +520,32 @@ addLayer("gr", {
         if (inChallenge("hz", 21)) return new Decimal(1)
         return player.gr.force.add(1).pow(tmp.gr.forceExp)
     },
+    // Merging: three ordinary wells collapse into one Massive Well, which pulls like four.
+    // It costs Gravitational Force, so you trade some energy now for faster Force later.
+    freeWells() {
+        return player.gr.points.sub(player.gr.massive * 3).max(0)
+    },
+    mergeCost() {
+        return Decimal.pow(100, player.gr.massive).times(1e3)
+    },
+    clickables: {
+        11: {
+            title: "Merge Wells",
+            display() {
+                return "Collapse 3 gravity wells into 1 Massive Well. A Massive Well pulls like 4 wells, and keeps your well count (and its cost) the same.<br><br>" +
+                    "Cost: " + format(tmp.gr.mergeCost) + " Gravitational Force"
+            },
+            canClick() { return tmp.gr.freeWells.gte(3) && player.gr.force.gte(tmp.gr.mergeCost) },
+            onClick() {
+                player.gr.force = player.gr.force.sub(tmp.gr.mergeCost)
+                player.gr.massive++
+            },
+            style() { return { width: "220px", height: "130px" } },
+        },
+    },
+    automate() {
+        if (hasMilestone("pl", 3) && layers.gr.clickables[11].canClick()) layers.gr.clickables[11].onClick()
+    },
     update(diff) {
         if (player.gr.unlocked) player.gr.force = player.gr.force.add(tmp.gr.effect.times(diff))
     },
@@ -506,9 +560,12 @@ addLayer("gr", {
         "main-display",
         "prestige-button",
         ["display-text", function() { return "You have <h2 style='color:#a28bff;text-shadow:0 0 10px #a28bff'>" + format(player.gr.force) + "</h2> Gravitational Force, which multiplies energy gain by " + format(tmp.gr.forceEffect) }],
+        ["display-text", function() { return player.gr.massive > 0 ? formatWhole(player.gr.massive) + " of your wells are Massive Wells, so they pull like " + formatWhole(player.gr.points.add(player.gr.massive)) + " wells." : "" }],
         "resource-display",
         "blank",
         lore("Tiny ripples in the young universe, slightly denser than their surroundings, begin to pull. Slowly, patiently, matter falls together."),
+        "blank",
+        "clickables",
         "blank",
         "milestones",
         "upgrades",
@@ -609,6 +666,7 @@ addLayer("st", {
         best: new Decimal(0),
         total: new Decimal(0),
         starlight: new Decimal(0),
+        heavy: new Decimal(0),
     }},
     color: "#ffb347",
     requires: new Decimal(1e30),
@@ -637,15 +695,46 @@ addLayer("st", {
         if (layers[resettingLayer].row <= this.row) return
         let keep = []
         if (hasRow3Milestone(0)) keep.push("milestones")
-        if (hasRow3Milestone(1)) keep.push("upgrades")
+        if (hasRow3Milestone(1)) keep.push("upgrades", "heavy")
         layerDataReset(this.layer, keep)
+    },
+    // Supernova: blow up all of your stars for Heavy Elements, which are permanent.
+    // Stars get cheap again afterwards, so it's a trade between Starlight now and Heavy Elements forever.
+    supernovaGain() {
+        return player.st.points.pow(2).floor()
+    },
+    heavyStarlightEffect() {
+        return player.st.heavy.add(1).sqrt()
+    },
+    heavyFusionEffect() {
+        return player.st.heavy.add(1).pow(0.2)
+    },
+    clickables: {
+        11: {
+            title: "Go Supernova",
+            display() {
+                return "Every star you have explodes, scattering heavy elements across the galaxy. You lose all of your stars, but they get cheap again.<br><br>" +
+                    "Gain " + formatWhole(tmp.st.supernovaGain) + " Heavy Elements (stars squared)" + (player.st.points.lt(3) ? "<br>Needs 3 stars" : "")
+            },
+            canClick() { return player.st.points.gte(3) },
+            onClick() {
+                player.st.heavy = player.st.heavy.add(tmp.st.supernovaGain)
+                player.st.points = new Decimal(0)
+            },
+            style() { return { width: "220px", height: "140px" } },
+        },
+    },
+    automate() {
+        // With Row 3 automation, stars go supernova whenever that would at least double your Heavy Elements
+        if (hasRow3Milestone(2) && player.st.points.gte(3) && tmp.st.supernovaGain.gte(player.st.heavy.max(1))) layers.st.clickables[11].onClick()
     },
     starlightGain() {
         let gain = player.st.points.pow(2)
+        if (player.st.heavy.gt(0)) gain = gain.times(tmp.st.heavyStarlightEffect)
         if (hasUpgrade("st", 11)) gain = gain.times(upgradeEffect("st", 11))
         if (hasUpgrade("at", 22)) gain = gain.times(upgradeEffect("at", 22))
         if (hasUpgrade("gr", 22)) gain = gain.times(upgradeEffect("gr", 22))
-        if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 13))
+        gain = gain.times(orbitEffect("hab"))
         if (hasUpgrade("ga", 11)) gain = gain.times(upgradeEffect("ga", 11))
         if (player.hz.unlocked) gain = gain.times(tmp.hz.effect)
         if (hasUpgrade("bh", 23)) gain = gain.times(upgradeEffect("bh", 23))
@@ -671,9 +760,12 @@ addLayer("st", {
         "main-display",
         "prestige-button",
         ["display-text", function() { return "You have <h2 style='color:#ffb347;text-shadow:0 0 10px #ffb347'>" + format(player.st.starlight) + "</h2> Starlight (+" + format(tmp.st.starlightGain) + "/sec), which multiplies energy gain by " + format(tmp.st.starlightEffect) + " and adds " + format(tmp.st.starlightAtomBase) + " to the Atom base" }],
+        ["display-text", function() { return player.st.heavy.gt(0) ? "You have <h3 style='color:#ff7b54'>" + formatWhole(player.st.heavy) + "</h3> Heavy Elements, which multiply Starlight gain by " + format(tmp.st.heavyStarlightEffect) + " and Fusion gain by " + format(tmp.st.heavyFusionEffect) : "" }],
         "resource-display",
         "blank",
         lore("A hundred million years of darkness end as clouds of hydrogen collapse under their own weight and ignite. The first stars are monsters, hundreds of times heavier than the Sun, and they burn out fast."),
+        "blank",
+        "clickables",
         "blank",
         "milestones",
         "upgrades",
@@ -755,9 +847,12 @@ addLayer("st", {
         },
         22: {
             title: "Neutron Star",
-            description: "A city-sized atomic nucleus. Starlight boosts Gravitational Force production.",
-            cost: new Decimal(8),
-            unlocked() { return hasUpgrade("st", 13) },
+            description: "What a supernova leaves behind: a city-sized atomic nucleus. Starlight boosts Gravitational Force production.",
+            cost: new Decimal(40),
+            currencyDisplayName: "heavy elements",
+            currencyInternalName: "heavy",
+            currencyLayer: "st",
+            unlocked() { return hasUpgrade("st", 21) },
             effect() {
                 return player.st.starlight.add(1).pow(0.05)
             },
@@ -765,8 +860,11 @@ addLayer("st", {
         },
         23: {
             title: "Pulsar",
-            description: "Stars add to the gravity well base.",
-            cost: new Decimal(10),
+            description: "A spinning neutron star, ticking like a clock. Stars add to the gravity well base.",
+            cost: new Decimal(150),
+            currencyDisplayName: "heavy elements",
+            currencyInternalName: "heavy",
+            currencyLayer: "st",
             unlocked() { return hasUpgrade("st", 22) },
             effect() {
                 return player.st.points.div(25)
@@ -799,10 +897,13 @@ addLayer("st", {
             effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
         },
         21: {
-            title: "Supernova",
-            description: "A star dies, and scatters heavy elements across the galaxy. Stars boost Fusion gain.",
-            cost: new Decimal(9),
-            unlocked() { return hasUpgrade("st", 13) && player.fu.unlocked },
+            title: "Supernova Remnant",
+            description: "Glowing clouds of star-stuff. Stars boost Fusion gain.",
+            cost: new Decimal(10),
+            currencyDisplayName: "heavy elements",
+            currencyInternalName: "heavy",
+            currencyLayer: "st",
+            unlocked() { return player.st.heavy.gt(0) || hasUpgrade("st", 21) },
             effect() {
                 return player.st.points.add(1).sqrt()
             },
@@ -838,6 +939,7 @@ addLayer("fu", {
         if (hasUpgrade("fu", 12)) mult = mult.times(upgradeEffect("fu", 12))
         if (hasUpgrade("ga", 12)) mult = mult.times(upgradeEffect("ga", 12))
         if (hasUpgrade("st", 44)) mult = mult.times(1.5)
+        if (player.st.heavy.gt(0)) mult = mult.times(tmp.st.heavyFusionEffect)
         if (hasUpgrade("bh", 12)) mult = mult.times(upgradeEffect("bh", 12))
         return mult
     },
@@ -983,6 +1085,7 @@ addLayer("pl", {
         points: new Decimal(0),
         best: new Decimal(0),
         total: new Decimal(0),
+        orbits: { inner: 0, hab: 0, frost: 0, outer: 0 },
     }},
     color: "#3ddc97",
     requires: new Decimal(1e30),
@@ -1008,7 +1111,16 @@ addLayer("pl", {
     autoPrestige() { return hasRow3Milestone(2) },
     resetsNothing() { return hasRow3Milestone(2) },
     automate() {
-        if (hasRow3Milestone(2)) for (let id of [13, 12, 11]) buyBuyable("pl", id)
+        if (hasRow3Milestone(2)) placePlanetsEvenly()
+    },
+    update() {
+        // If you lose planets (to a Row 3 reset), take them back out of orbit, outermost first
+        let extra = placedPlanets() - player.pl.points.toNumber()
+        for (let o of ["outer", "frost", "hab", "inner"]) {
+            let take = Math.min(extra, player.pl.orbits[o])
+            player.pl.orbits[o] -= take
+            extra -= take
+        }
     },
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return
@@ -1017,40 +1129,27 @@ addLayer("pl", {
         if (hasRow3Milestone(1)) keep.push("upgrades")
         layerDataReset(this.layer, keep)
     },
-    // "Land" works like Space in the Prestige Tree: every planet gives land, and every feature you build uses some.
-    totalLand() {
-        let land = player.pl.best.times(2)
-        if (hasUpgrade("pl", 11)) land = land.add(player.pl.best)
-        if (hasChallenge("hz", 22)) land = land.add(player.pl.best.times(2))
-        if (hasUpgrade("pl", 34)) land = land.add(player.pl.best)
-        if (hasUpgrade("hz", 14)) land = land.add(player.pl.best)
-        return land.floor()
-    },
-    usedLand() {
-        let used = new Decimal(0)
-        for (let id of [11, 12, 13]) used = used.add(getBuyableAmount("pl", id))
-        return used
-    },
-    freeLand() {
-        return tmp.pl.totalLand.sub(tmp.pl.usedLand)
-    },
     tabFormat: [
         "main-display",
         "prestige-button",
-        ["display-text", function() { return "You have <h2 style='color:#3ddc97;text-shadow:0 0 10px #3ddc97'>" + formatWhole(tmp.pl.freeLand) + "</h2> / " + formatWhole(tmp.pl.totalLand) + " Land (based on best planets)" }],
         "resource-display",
         "blank",
-        lore("Around the second and third generations of stars, leftover dust and ice clump into rocks, the rocks into boulders, the boulders into worlds."),
+        lore("Around the second and third generations of stars, leftover dust and ice clump into rocks, the rocks into boulders, the boulders into worlds. Where a world forms decides what it becomes."),
         "blank",
         "milestones",
-        "buyables",
+        "blank",
+        ["display-text", function() { return "<h3>Orbits</h3><br>Place each planet in an orbit. Every orbit gives a different bonus, and each extra planet in the same orbit helps a little less.<br>Unplaced planets: <b>" + formatWhole(unplacedPlanets()) + "</b>" }],
+        "blank",
+        ["row", ["inner", "hab", "frost", "outer"].map((o, n) => ["column", [["clickable", 11 + n], ["row", [["clickable", 31 + n], ["clickable", 21 + n]]]]])],
+        "blank",
+        ["row", [["clickable", 41], ["clickable", 42]]],
         "blank",
         "upgrades",
     ],
     milestones: row2Milestones("pl", "planets", {
         3: {
             requirementDescription: "5 planets",
-            effectDescription: "Automatically gain gravity wells, and gravity wells reset nothing.",
+            effectDescription: "Automatically gain gravity wells, gravity wells reset nothing, and wells merge automatically.",
             done() { return player.pl.best.gte(5) },
         },
         4: {
@@ -1059,111 +1158,134 @@ addLayer("pl", {
             done() { return player.pl.best.gte(8) },
         },
     }),
-    buyables: {
-        11: {
-            title: "Moons",
-            cost(x) { return Decimal.pow(1e4, x.pow(1.5)).times(1e40) },
-            effect(x) { return Decimal.pow(hasUpgrade("pl", 12) ? 6 : 3, x) },
+    clickables: Object.assign({}, ...["inner", "hab", "frost", "outer"].map((o, n) => ({
+        [11 + n]: {
+            title() { return ORBITS[o].name },
             display() {
-                return "Tidal forces stir the planet. Multiply energy gain.<br><br>" + buildingText(this)
+                return "<i>" + ORBITS[o].world + "</i><br><br>" + ORBITS[o].text + "<br><br>Planets here: " + formatWhole(player.pl.orbits[o]) +
+                    (orbitBonus(o) > 0 ? " (+" + orbitBonus(o) + ")" : "") + "<br>Effect: " + format(orbitEffect(o)) + "x"
             },
-            canAfford() { return tmp.pl.freeLand.gte(1) && player.points.gte(this.cost()) },
-            buy() { buyBuilding(this) },
+            canClick() { return false },
+            style() { return { width: "180px", height: "190px", "background-color": ORBITS[o].color, color: "black", cursor: "default" } },
         },
-        12: {
-            title: "Rings",
-            cost(x) { return Decimal.pow(1e5, x.pow(1.5)).times(1e42) },
-            effect(x) { return Decimal.pow(hasUpgrade("pl", 14) ? 15 : 10, x) },
-            display() {
-                return "Debris spirals into a halo. Multiply Gravitational Force production.<br><br>" + buildingText(this)
-            },
-            canAfford() { return tmp.pl.freeLand.gte(1) && player.points.gte(this.cost()) },
-            buy() { buyBuilding(this) },
+        [21 + n]: {
+            display() { return "+1" },
+            canClick() { return unplacedPlanets() >= 1 },
+            onClick() { player.pl.orbits[o]++ },
+            onHold() { if (this.canClick()) this.onClick() },
+            style() { return { width: "88px", "min-height": "40px", height: "40px" } },
         },
-        13: {
-            title: "Atmosphere",
-            cost(x) { return Decimal.pow(1e6, x.pow(1.5)).times(1e45) },
-            effect(x) { return Decimal.pow(hasUpgrade("pl", 24) ? 5 : 4, x) },
-            display() {
-                return "A blanket of gas catches the light. Multiply Starlight gain.<br><br>" + buildingText(this)
-            },
-            canAfford() { return tmp.pl.freeLand.gte(1) && player.points.gte(this.cost()) },
-            buy() { buyBuilding(this) },
+        [31 + n]: {
+            display() { return "-1" },
+            canClick() { return player.pl.orbits[o] > 0 },
+            onClick() { player.pl.orbits[o]-- },
+            onHold() { if (this.canClick()) this.onClick() },
+            style() { return { width: "88px", "min-height": "40px", height: "40px" } },
         },
-    },
+    })), {
+        41: {
+            display() { return "Spread unplaced planets evenly" },
+            canClick() { return unplacedPlanets() >= 1 },
+            onClick() { placePlanetsEvenly() },
+            style() { return { width: "180px", "min-height": "50px", height: "50px" } },
+        },
+        42: {
+            display() { return "Take every planet out of orbit" },
+            canClick() { return placedPlanets() > 0 },
+            onClick() { for (let o in player.pl.orbits) player.pl.orbits[o] = 0 },
+            style() { return { width: "180px", "min-height": "50px", height: "50px" } },
+        },
+    }),
     upgrades: {
-        14: {
-            title: "Gas Giants",
-            description: "Rings are much stronger.",
-            cost: new Decimal(6),
-            unlocked() { return hasUpgrade("pl", 13) },
-        },
-        24: {
-            title: "Ice Line",
-            description: "Atmospheres are much stronger.",
-            cost: new Decimal(8),
-            unlocked() { return hasUpgrade("pl", 14) },
-        },
-        34: {
-            title: "Late Heavy Bombardment",
-            description: "Comets deliver water and rock. Each of your best planets gives 1 more Land.",
-            cost: new Decimal(9),
-            unlocked() { return hasUpgrade("pl", 24) },
-        },
-        11: {
-            title: "Plate Tectonics",
-            description: "Each of your best planets gives 1 more Land.",
-            cost: new Decimal(2),
-        },
-        12: {
-            title: "Tidal Locking",
-            description: "Moons are much stronger.",
-            cost: new Decimal(4),
+        11: planetUpgrade("Plate Tectonics", "Rocky worlds in the Inner orbit are stronger.", 2),
+        12: planetUpgrade("Moons", "Every orbit with at least one planet counts one extra.", 3, {
             unlocked() { return hasUpgrade("pl", 11) },
-        },
-        13: {
-            title: "Asteroid Belt",
-            description: "Planets make gravity wells cheaper.",
-            cost: new Decimal(5),
+        }),
+        13: planetUpgrade("Asteroid Belt", "Planets make gravity wells cheaper.", 5, {
             unlocked() { return hasUpgrade("pl", 12) },
-            effect() {
-                return Decimal.pow(10, player.pl.points)
-            },
+            effect() { return Decimal.pow(10, player.pl.points) },
             effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
-        },
-        21: {
-            title: "Liquid Water",
-            description: "Not too hot, not too cold. Each planet makes Starlight's energy effect stronger.",
-            cost: new Decimal(8),
+        }),
+        14: planetUpgrade("Gas Giants", "Worlds at the Frost Line are stronger.", 6, {
             unlocked() { return hasUpgrade("pl", 13) },
-        },
-        22: {
-            title: "Magnetosphere",
-            description: "A shield against the solar wind. Planets boost particle gain.",
-            cost: new Decimal(9),
+        }),
+        21: planetUpgrade("Liquid Water", "Not too hot, not too cold. Each planet makes Starlight's energy effect stronger.", 8, {
+            unlocked() { return hasUpgrade("pl", 13) },
+        }),
+        22: planetUpgrade("Magnetosphere", "A shield against the solar wind. Planets boost particle gain.", 9, {
             unlocked() { return hasUpgrade("pl", 21) },
-            effect() {
-                return player.pl.points.add(1).pow(2)
-            },
+            effect() { return player.pl.points.add(1).pow(2) },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-        },
-        23: {
-            title: "Habitable Zone",
-            description: "A world where life might begin. <b>Finish Act 1.</b><br>Requires surviving every Cosmic Hazard and buying every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.",
-            cost: new Decimal(10),
+        }),
+        23: planetUpgrade("Habitable Zone", "A world where life might begin. <b>Finish Act 1.</b><br>Also requires 3 planets in the Habitable orbit, surviving every Cosmic Hazard, and every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.", 10, {
             unlocked() { return hasUpgrade("pl", 22) },
-            canAfford() { return ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
-        },
+            extraReq() { return player.pl.orbits.hab >= 3 && ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
+        }),
+        24: planetUpgrade("Ice Giants", "Worlds in the Outer orbit are stronger.", 8, {
+            unlocked() { return hasUpgrade("pl", 14) },
+        }),
+        34: planetUpgrade("Late Heavy Bombardment", "Comets deliver water to young worlds. The Habitable orbit is stronger.", 9, {
+            unlocked() { return hasUpgrade("pl", 24) },
+        }),
     },
 })
 
-function buildingText(buyable) {
-    return "Amount: " + formatWhole(getBuyableAmount(buyable.layer, buyable.id)) + "<br>" +
-        "Cost: " + format(buyable.cost()) + " energy, 1 Land<br>" +
-        "Effect: " + format(buyableEffect(buyable.layer, buyable.id)) + "x"
+const ORBITS = {
+    inner: { name: "Inner Orbit", world: "Rocky, molten worlds", text: "Multiply energy gain.", color: "#e0a458" },
+    hab: { name: "Habitable Orbit", world: "Ocean worlds", text: "Multiply Starlight gain.", color: "#5fd3a0" },
+    frost: { name: "Frost Line", world: "Gas giants", text: "Multiply Gravitational Force production.", color: "#c9a7ff" },
+    outer: { name: "Outer Orbit", world: "Ice giants", text: "Multiply particle gain.", color: "#8fd3ff" },
 }
 
-function buyBuilding(buyable) {
-    player.points = player.points.sub(buyable.cost())
-    setBuyableAmount(buyable.layer, buyable.id, getBuyableAmount(buyable.layer, buyable.id).add(1))
+function orbitBonus(o) {
+    let bonus = 0
+    if (hasUpgrade("pl", 12) && player.pl.orbits[o] > 0) bonus++
+    if (hasChallenge("hz", 22)) bonus++
+    return bonus
+}
+
+function orbitBase(o) {
+    if (o == "inner") return new Decimal(hasUpgrade("pl", 11) ? 100 : 30).times(hasUpgrade("hz", 14) ? 3 : 1)
+    if (o == "hab") return new Decimal(hasUpgrade("pl", 34) ? 30 : 10)
+    if (o == "frost") return new Decimal(hasUpgrade("pl", 14) ? 1e5 : 1e3)
+    return new Decimal(hasUpgrade("pl", 24) ? 100 : 10)
+}
+
+// Each orbit's effect grows with (planets ^ 0.75), so piling everything into one orbit has diminishing returns
+function orbitEffect(o) {
+    if (!player.pl.unlocked) return new Decimal(1)
+    let n = player.pl.orbits[o] + orbitBonus(o)
+    return orbitBase(o).pow(Math.pow(n, 0.75))
+}
+
+function placedPlanets() {
+    let total = 0
+    for (let o in player.pl.orbits) total += player.pl.orbits[o]
+    return total
+}
+
+function unplacedPlanets() {
+    return Math.max(0, player.pl.points.toNumber() - placedPlanets())
+}
+
+function placePlanetsEvenly() {
+    let order = ["inner", "hab", "frost", "outer"]
+    while (unplacedPlanets() >= 1) {
+        let o = order.reduce((a, b) => player.pl.orbits[b] < player.pl.orbits[a] ? b : a)
+        player.pl.orbits[o]++
+    }
+}
+
+// Planet upgrades need a number of planets but don't spend them, since your planets are out in orbit
+function planetUpgrade(title, description, planets, extra = {}) {
+    return Object.assign({
+        cost: new Decimal(0),
+        canAfford() { return player.pl.points.gte(planets) && (!this.extraReq || this.extraReq()) },
+        fullDisplay() {
+            let text = "<h3>" + title + "</h3><br>" + description
+            if (this.effectDisplay) text += "<br>Currently: " + this.effectDisplay()
+            if (!hasUpgrade(this.layer, this.id)) text += "<br><br>Requires " + formatWhole(planets) + " planets"
+            return text
+        },
+    }, extra)
 }

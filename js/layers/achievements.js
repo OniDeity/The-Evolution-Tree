@@ -78,9 +78,9 @@ addLayer("a", {
             tooltip: "Have 1e10 Starlight.",
         },
         33: {
-            name: "Over the Moon",
-            done() { return getBuyableAmount("pl", 11).gte(3) },
-            tooltip: "Have 3 Moons.",
+            name: "Crowded Orbit",
+            done() { return Object.values(player.pl.orbits).some(n => n >= 3) },
+            tooltip: "Have 3 planets in the same orbit.",
         },
         34: {
             name: "Pass the Iron",

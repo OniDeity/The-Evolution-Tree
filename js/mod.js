@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1",
-	name: "Every Minute Counts",
+	num: "0.4",
+	name: "Signature Twists",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.4 - Signature Twists</h3><br>
+		- Atoms: the Periodic Table. Fuse elements you own into heavier ones.<br>
+		- Gravity: merge 3 wells into a Massive Well for Gravitational Force.<br>
+		- Stars: go Supernova to trade your stars for permanent Heavy Elements.<br>
+		- Planets: place each planet in an orbit. Land and buildings are gone.<br>
+		- Habitable Zone now also needs 3 planets in the Habitable orbit.<br>
+		- Choosing Atoms or Gravity first now only makes the other 20x more expensive (was 5000x).<br><br>
 	<h3>v0.3.1</h3><br>
 		- Fixed an "Invalid value: unlockOrder" error when buying your first atom or gravity well.<br><br>
 	<h3>v0.3 - Every Minute Counts</h3><br>
@@ -70,7 +77,7 @@ function getPointGen() {
 	if (player.gr.unlocked) gain = gain.times(tmp.gr.forceEffect)
 	if (player.st.unlocked) gain = gain.times(tmp.st.starlightEffect)
 	if (player.fu.unlocked) gain = gain.times(buyableEffect("fu", 11).energy)
-	if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 11))
+	gain = gain.times(orbitEffect("inner"))
 	gain = gain.times(buyableEffect("p", 11))
 	if (hasUpgrade("p", 24)) gain = gain.times(upgradeEffect("p", 24))
 	if (hasUpgrade("fu", 22)) gain = gain.times(upgradeEffect("fu", 22))

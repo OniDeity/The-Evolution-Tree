@@ -19,7 +19,7 @@ function row3Milestones(resource, extra) {
     let shared = [
         [1, "Keep Row 2 milestones on all resets."],
         [2, "Keep Row 2 upgrades on all resets."],
-        [3, "Automatically gain stars and planets, they reset nothing, and Planet features are built automatically."],
+        [3, "Automatically gain stars and planets, and they reset nothing. Stars go supernova on their own when that would at least double your Heavy Elements."],
     ]
     let m = {}
     shared.forEach(([req, text], id) => {
@@ -423,7 +423,7 @@ addLayer("hz", {
         total: new Decimal(0),
     }},
     color: "#e05d2e",
-    requires: new Decimal(1e20),
+    requires: new Decimal(1e18),
     resource: "resilience",
     baseResource: "starlight",
     baseAmount() { return player.st.starlight },
@@ -479,7 +479,7 @@ addLayer("hz", {
         },
         14: {
             title: "Iron Core",
-            description: "Each of your best planets gives 1 more Land.",
+            description: "Rocky worlds in the Inner orbit are stronger.",
             cost: new Decimal(10),
             unlocked() { return hasUpgrade("hz", 13) },
         },
@@ -524,7 +524,7 @@ addLayer("hz", {
             challengeDescription: "Particle gain is square-rooted.",
             goalDescription: "1e210 energy",
             canComplete() { return player.points.gte(1e210) },
-            rewardDescription: "Each of your best planets gives 2 more Land.",
+            rewardDescription: "Every orbit counts one extra planet.",
             unlocked() { return hasChallenge("hz", 21) },
         },
     },
