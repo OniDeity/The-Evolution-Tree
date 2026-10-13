@@ -108,6 +108,61 @@ addLayer("a", {
             tooltip: "Have 8 planets. (Sorry, Pluto.)",
         },
         44: {
+            name: "Star Stuff",
+            done() { return player.st.points.gte(10) && player.pl.points.gte(10) },
+            tooltip: "Have 10 stars and 10 planets at the same time.",
+        },
+        45: {
+            name: "Pale Blue Dot",
+            done() { return player.points.gte(1e120) },
+            tooltip: "Have 1e120 energy.",
+        },
+        51: {
+            name: "Milky Way",
+            done() { return player.ga.unlocked },
+            tooltip: "Form a galaxy.",
+        },
+        52: {
+            name: "Point of No Return",
+            done() { return player.bh.unlocked },
+            tooltip: "Collapse a black hole.",
+        },
+        53: {
+            name: "Nobody Knows What It Is",
+            done() { return player.de.unlocked },
+            tooltip: "Gain dark energy.",
+        },
+        54: {
+            name: "Survivor",
+            done() { return hasChallenge("hz", 11) },
+            tooltip: "Survive a Gamma-Ray Burst.",
+        },
+        55: {
+            name: "Crunch Time",
+            done() { return hasChallenge("hz", 12) },
+            tooltip: "Survive the Big Crunch.",
+        },
+        61: {
+            name: "Island Universe",
+            done() { return player.ga.points.gte(5) },
+            tooltip: "Have 5 galaxies.",
+        },
+        62: {
+            name: "Evaporating",
+            done() { return player.bh.radiation.gte(1e10) },
+            tooltip: "Have 1e10 Hawking Radiation.",
+        },
+        63: {
+            name: "Big Rip",
+            done() { return player.de.expansion.gte(1e9) },
+            tooltip: "Have 1e9 Expansion.",
+        },
+        64: {
+            name: "Still Here",
+            done() { return hasChallenge("hz", 22) },
+            tooltip: "Survive Vacuum Decay.",
+        },
+        65: {
             name: "Goldilocks",
             done() { return hasUpgrade("pl", 23) },
             tooltip: "Find the Habitable Zone.",

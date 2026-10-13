@@ -3,7 +3,7 @@
 Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
 The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
 
-## Act 1: The Cosmos ✅ (v0.1)
+## Act 1: The Cosmos ✅ (v0.2)
 *The Prestige Tree, retold from the Big Bang to the first habitable world.*
 
 | Prestige Tree | Cosmos | Notes |
@@ -15,10 +15,12 @@ The overall arc is a loop: the universe forms, life evolves, and a civilization 
 | Time | Stars (St) | Stars produce Starlight |
 | Enhance | Fusion (F) | Fusion Reactors (buyable) |
 | Space | Planets (Pl) | Land, plus Moons / Rings / Atmosphere |
+| Super-Boosters | Galaxies (Ga) | Multiply the Atom base |
+| Super-Generators | Black Holes (BH) | Hawking Radiation boosts Gravitational Force |
+| Quirks | Dark Energy (DE) | Expansion Layers produce Expansion |
+| Hindrances | Cosmic Hazards (Hz) | Challenges: Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay |
 
-Endgame: **Habitable Zone** (10 stars, 10 planets, 1e8 fusion power). A perfect bot takes about 2h15m, so a human should take roughly 3–4 hours.
-
-Future Act 1 content (later rows of the Prestige Tree): Galaxies (Super-Boosters), Black Holes (Super-Generators), Dark Energy (Quirks), Cosmic Hazards as challenges (Hindrances).
+Endgame: **Habitable Zone** (survive every Cosmic Hazard). A perfect bot takes about 3h25m, so a human should take roughly 5–7 hours.
 
 ## Act 2: Life
 *The Prestige Tree again, this time at biological scale, boosted by the Cosmos.*

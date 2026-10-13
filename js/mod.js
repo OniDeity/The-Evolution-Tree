@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Let There Be Light",
+	num: "0.2",
+	name: "The Cosmic Web",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2 - The Cosmic Web</h3><br>
+		- Act 1 is complete!<br>
+		- Added Row 3: Galaxies, Black Holes, Dark Energy and Cosmic Hazards.<br>
+		- Added 4 Cosmic Hazards (challenges). Habitable Zone now requires surviving all of them.<br>
+		- Added 11 achievements.<br>
+		- Fixed game files sometimes loading in the wrong order.<br><br>
 	<h3>v0.1 - Let There Be Light</h3><br>
 		- Act 1: The Cosmos.<br>
 		- Added Particles, Atoms, Gravity, Stars, Fusion and Planets.<br>
@@ -56,6 +62,9 @@ function getPointGen() {
 	if (player.st.unlocked) gain = gain.times(tmp.st.starlightEffect)
 	if (player.fu.unlocked) gain = gain.times(buyableEffect("fu", 11).energy)
 	if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 11))
+	if (player.de.unlocked) gain = gain.times(tmp.de.expansionEffect)
+	if (hasChallenge("hz", 12)) gain = gain.times(challengeEffect("hz", 12))
+	if (inChallenge("hz", 12)) gain = gain.max(1).pow(0.5)
 	return gain
 }
 
@@ -70,6 +79,7 @@ var displayThings = [
 
 function cosmicEra() {
 	let e = player.points
+	if (player.ga.unlocked || player.bh.unlocked || player.de.unlocked || player.hz.unlocked) return "Era: The Cosmic Web"
 	if (player.pl.unlocked) return "Era: Planetary Formation"
 	if (player.st.unlocked || player.fu.unlocked) return "Era: The First Stars"
 	if (player.at.unlocked || player.gr.unlocked) return "Era: Recombination"

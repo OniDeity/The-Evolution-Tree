@@ -10,6 +10,10 @@
 //  Space      -> Planets   (pl)
 // ============================================================
 
+function inflationSoftcap() {
+    return new Decimal(hasUpgrade("de", 11) ? 1e30 : 1e15)
+}
+
 function lore(text) {
     return ["display-text", "<i style='opacity:0.75'>" + text + "</i>"]
 }
@@ -79,12 +83,13 @@ addLayer("p", {
         if (hasUpgrade("p", 23)) mult = mult.times(upgradeEffect("p", 23))
         if (hasUpgrade("at", 11)) mult = mult.times(upgradeEffect("at", 11))
         if (hasUpgrade("gr", 11)) mult = mult.times(upgradeEffect("gr", 11))
+        if (hasUpgrade("bh", 11)) mult = mult.times(upgradeEffect("bh", 11))
         if (player.fu.unlocked) mult = mult.times(buyableEffect("fu", 11).particles)
         if (hasUpgrade("pl", 22)) mult = mult.times(upgradeEffect("pl", 22))
         return mult
     },
     gainExp() {
-        return new Decimal(1)
+        return new Decimal(inChallenge("hz", 22) ? 0.5 : 1)
     },
     row: 0,
     hotkeys: [
@@ -122,9 +127,9 @@ addLayer("p", {
             unlocked() { return hasUpgrade("p", 11) },
             effect() {
                 let exp = hasUpgrade("p", 32) ? 0.6 : 0.5
-                return softcap(player.p.points.add(2).pow(exp), new Decimal(1e15), 0.3)
+                return softcap(player.p.points.add(2).pow(exp), inflationSoftcap(), 0.3)
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + (upgradeEffect(this.layer, this.id).gte(1e15) ? " (softcapped)" : "") },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + (upgradeEffect(this.layer, this.id).gte(inflationSoftcap()) ? " (softcapped)" : "") },
         },
         13: {
             title: "Cooling",
@@ -234,9 +239,12 @@ addLayer("at", {
         if (hasUpgrade("at", 12)) base = base.add(upgradeEffect("at", 12))
         if (hasUpgrade("at", 21)) base = base.add(upgradeEffect("at", 21))
         if (player.st.unlocked) base = base.add(tmp.st.starlightAtomBase)
+        if (hasChallenge("hz", 11)) base = base.add(challengeEffect("hz", 11))
+        if (player.ga.unlocked) base = base.times(tmp.ga.effect)
         return base
     },
     effect() {
+        if (inChallenge("hz", 11)) return new Decimal(1)
         return softcap(Decimal.pow(tmp.at.effectBase, player.at.points), new Decimal(1e25), 0.5)
     },
     effectDescription() {
@@ -382,6 +390,7 @@ addLayer("gr", {
         if (hasUpgrade("p", 31)) gain = gain.times(upgradeEffect("p", 31))
         if (hasUpgrade("gr", 21)) gain = gain.times(upgradeEffect("gr", 21))
         if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 12))
+        if (player.bh.unlocked) gain = gain.times(tmp.bh.radiationEffect)
         return gain
     },
     effectDescription() {
@@ -394,6 +403,7 @@ addLayer("gr", {
         return exp
     },
     forceEffect() {
+        if (inChallenge("hz", 21)) return new Decimal(1)
         return player.gr.force.add(1).pow(tmp.gr.forceExp)
     },
     update(diff) {
@@ -511,17 +521,30 @@ addLayer("st", {
         {key: "s", description: "S: Reset for stars", onPress() { if (canReset(this.layer)) doReset(this.layer) }},
     ],
     layerShown() { return player.at.unlocked },
+    autoPrestige() { return hasRow3Milestone(2) },
+    resetsNothing() { return hasRow3Milestone(2) },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return
+        let keep = []
+        if (hasRow3Milestone(0)) keep.push("milestones")
+        if (hasRow3Milestone(1)) keep.push("upgrades")
+        layerDataReset(this.layer, keep)
+    },
     starlightGain() {
         let gain = player.st.points.pow(2)
         if (hasUpgrade("st", 11)) gain = gain.times(upgradeEffect("st", 11))
         if (hasUpgrade("at", 22)) gain = gain.times(upgradeEffect("at", 22))
         if (hasUpgrade("gr", 22)) gain = gain.times(upgradeEffect("gr", 22))
         if (player.pl.unlocked) gain = gain.times(buyableEffect("pl", 13))
+        if (hasUpgrade("ga", 11)) gain = gain.times(upgradeEffect("ga", 11))
+        if (player.hz.unlocked) gain = gain.times(tmp.hz.effect)
         return gain
     },
     starlightEffect() {
         let exp = hasUpgrade("st", 12) ? 0.4 : 0.3
         if (hasUpgrade("pl", 21)) exp += player.pl.points.toNumber() * 0.01
+        if (hasChallenge("hz", 21)) exp += 0.05
+        if (inChallenge("hz", 21)) return new Decimal(1)
         return player.st.starlight.add(1).pow(exp)
     },
     starlightAtomBase() {
@@ -617,6 +640,8 @@ addLayer("fu", {
         if (hasUpgrade("at", 23)) mult = mult.times(upgradeEffect("at", 23))
         if (hasUpgrade("st", 21)) mult = mult.times(upgradeEffect("st", 21))
         if (hasUpgrade("fu", 12)) mult = mult.times(upgradeEffect("fu", 12))
+        if (hasUpgrade("ga", 12)) mult = mult.times(upgradeEffect("ga", 12))
+        if (hasUpgrade("bh", 12)) mult = mult.times(upgradeEffect("bh", 12))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -627,6 +652,13 @@ addLayer("fu", {
         {key: "f", description: "F: Reset for fusion power", onPress() { if (canReset(this.layer)) doReset(this.layer) }},
     ],
     layerShown() { return player.at.unlocked && player.gr.unlocked },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return
+        let keep = []
+        if (hasRow3Milestone(0)) keep.push("milestones")
+        if (hasRow3Milestone(1)) keep.push("upgrades")
+        layerDataReset(this.layer, keep)
+    },
     tabFormat: [
         "main-display",
         "prestige-button",
@@ -745,10 +777,23 @@ addLayer("pl", {
         {key: "l", description: "L: Reset for planets", onPress() { if (canReset(this.layer)) doReset(this.layer) }},
     ],
     layerShown() { return player.gr.unlocked },
+    autoPrestige() { return hasRow3Milestone(2) },
+    resetsNothing() { return hasRow3Milestone(2) },
+    automate() {
+        if (hasRow3Milestone(2)) for (let id of [13, 12, 11]) buyBuyable("pl", id)
+    },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return
+        let keep = []
+        if (hasRow3Milestone(0)) keep.push("milestones")
+        if (hasRow3Milestone(1)) keep.push("upgrades")
+        layerDataReset(this.layer, keep)
+    },
     // "Land" works like Space in the Prestige Tree: every planet gives land, and every feature you build uses some.
     totalLand() {
         let land = player.pl.best.times(2)
         if (hasUpgrade("pl", 11)) land = land.add(player.pl.best)
+        if (hasChallenge("hz", 22)) land = land.add(player.pl.best.times(2))
         return land.floor()
     },
     usedLand() {
@@ -856,10 +901,10 @@ addLayer("pl", {
         },
         23: {
             title: "Habitable Zone",
-            description: "A world where life might begin. <b>Finish Act 1.</b><br>Requires 10 stars and 1e8 fusion power.",
+            description: "A world where life might begin. <b>Finish Act 1.</b><br>Requires surviving every Cosmic Hazard.",
             cost: new Decimal(10),
             unlocked() { return hasUpgrade("pl", 22) },
-            canAfford() { return player.st.best.gte(10) && player.fu.best.gte(1e8) },
+            canAfford() { return ["11", "12", "21", "22"].every(id => hasChallenge("hz", id)) },
         },
     },
 })
