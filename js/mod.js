@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
+	num: "0.3.1",
 	name: "Every Minute Counts",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.3.1</h3><br>
+		- Fixed an "Invalid value: unlockOrder" error when buying your first atom or gravity well.<br><br>
 	<h3>v0.3 - Every Minute Counts</h3><br>
 		- Pacing pass: something new to buy roughly every minute.<br>
 		- Added Quark Flavors (Up, Down, Strange, Charm, Bottom, Top).<br>
