@@ -89,6 +89,10 @@ addLayer("qf", {
         let cap = hasMilestone("qf", 0) ? 2500 : 1000
         player.qf.points = player.qf.points.add(quantaGain().times(diff)).min(cap)
         for (let id in player.qf.spells) player.qf.spells[id].time = Math.max(0, player.qf.spells[id].time - diff)
+        if (hasMilestone("qf", 3)) for (let key in SPELLS) {
+            let s = player.qf.spells[key]
+            if ((!s || s.time <= 0) && layers.qf.clickables[SPELLS[key].id].canClick()) layers.qf.clickables[SPELLS[key].id].onClick()
+        }
     },
     clickables: Object.assign({
         91: {
@@ -119,6 +123,7 @@ addLayer("qf", {
         0: { requirementDescription: "Cast 10 spells", effectDescription: "You can hold 2,500 Quanta instead of 1,000.", done() { return player.qf.casts >= 10 } },
         1: { requirementDescription: "Cast 30 spells", effectDescription: "Spells cost 1.5x less.", done() { return player.qf.casts >= 30 } },
         2: { requirementDescription: "Cast 100 spells", effectDescription: "Spells are 50% stronger.", done() { return player.qf.casts >= 100 } },
+        3: { requirementDescription: "Cast 200 spells", effectDescription: "Spells recast themselves when they run out (if you have the Quanta), measured the way you've chosen.", done() { return player.qf.casts >= 200 } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -350,7 +355,13 @@ addLayer("dm", {
     layerShown() { return row4Unlocked() },
     tooltip() { return player.dm.found ? "Next halo soon" : "A halo to weigh!" },
     update(diff) {
-        if (!row4Unlocked() || !player.dm.found) return
+        if (!row4Unlocked()) return
+        if (!player.dm.found) {
+            if (!hasMilestone("dm", 2)) return
+            player.dm.auto = (player.dm.auto || 0) + diff
+            if (player.dm.auto >= 1) { player.dm.auto = 0; layers.dm.clickables[21].onClick() }
+            return
+        }
         player.dm.timer -= diff
         if (player.dm.timer <= 0) newHalo()
     },
@@ -384,6 +395,7 @@ addLayer("dm", {
     milestones: {
         0: { requirementDescription: "Weigh 5 halos", effectDescription: "A new halo arrives every 30 seconds.", done() { return player.dm.weighed >= 5 } },
         1: { requirementDescription: "Weigh 20 halos", effectDescription: "Halos give twice as much Dark Matter.", done() { return player.dm.weighed >= 20 } },
+        2: { requirementDescription: "Weigh 50 halos", effectDescription: "Halos are weighed on their own, one guess a second.", done() { return player.dm.weighed >= 50 } },
     },
     tabFormat: [
         ["display-text", function() {

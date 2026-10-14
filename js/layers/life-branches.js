@@ -159,6 +159,11 @@ addLayer("gt", {
     tooltip() { return player.gt.plasmids + " plasmids" },
     update(diff) {
         if (!tmp.gt.layerShown) return
+        if (hasMilestone("gt", 3)) {
+            let best = -1
+            player.gt.pool.forEach((id, i) => { if (canAbsorb(i) && (best < 0 || (player.gt.genes[id] || 0) < (player.gt.genes[player.gt.pool[best]] || 0))) best = i })
+            if (best >= 0) layers.gt.clickables[11 + best].onClick()
+        }
         let cap = hasMilestone("gt", 2) ? 5 : 3
         if (player.gt.plasmids >= cap) return
         player.gt.progress += diff / plasmidTime()
@@ -197,6 +202,7 @@ addLayer("gt", {
         0: { requirementDescription: "Absorb 3 traits", effectDescription: "Mutations are 1.25x cheaper.", done() { return player.gt.absorbed >= 3 } },
         1: { requirementDescription: "Absorb 8 traits", effectDescription: "Plasmids form 1.5x faster.", done() { return player.gt.absorbed >= 8 } },
         2: { requirementDescription: "Absorb 15 traits", effectDescription: "You can hold 5 plasmids instead of 3.", done() { return player.gt.absorbed >= 15 } },
+        3: { requirementDescription: "Absorb 12 traits", effectDescription: "Plasmids are spent on their own, on whichever pooled trait you've borrowed least.", done() { return player.gt.absorbed >= 12 } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -367,6 +373,7 @@ addLayer("oc", {
         if (!tmp.oc.layerShown) return
         player.oc.drift = player.oc.drift.add(driftGain().times(diff))
         player.oc.cooldown = Math.max(0, player.oc.cooldown - diff)
+        if (hasMilestone("oc", 4) && layers.oc.clickables[11].canClick() && driftGain().gte(Object.values(player.hb.grid).filter(x => x).length * 0.25 / 2 * (hasMilestone("oc", 2) ? 2 : 1))) layers.oc.clickables[11].onClick()
         if (player.oc.held > 0) { player.oc.held = Math.max(0, player.oc.held - diff); return }
         player.oc.timer += diff
         if (player.oc.timer >= 30) { player.oc.timer = 0; player.oc.dir = (player.oc.dir + 1) % 4 }
@@ -389,6 +396,7 @@ addLayer("oc", {
         1: { requirementDescription: "1,000 Drift", effectDescription: "Drift also boosts DNA gain a little.", done() { return player.oc.drift.gte(1000) } },
         2: { requirementDescription: "5,000 Drift", effectDescription: "Drift gain x2.", done() { return player.oc.drift.gte(5000) } },
         3: { requirementDescription: "20,000 Drift", effectDescription: "Steering is ready again a minute sooner.", done() { return player.oc.drift.gte(20000) } },
+        4: { requirementDescription: "50,000 Drift", effectDescription: "Steer on your own whenever the current flows toward at least half of your tiles.", done() { return player.oc.drift.gte(50000) } },
     },
     tabFormat: [
         ["display-text", function() {

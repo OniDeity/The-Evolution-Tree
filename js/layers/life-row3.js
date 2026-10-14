@@ -312,7 +312,21 @@ addLayer("ad", {
             effectDescription: "Gain 10% of your fitness gain every second.",
             done() { return player.ad.best.gte(25) },
         },
+        4: {
+            requirementDescription: "1e6 fitness",
+            effectDescription: "Adaptations are bought on their own.",
+            done() { return player.ad.best.gte(1e6) },
+        },
     }),
+    automate() {
+        if (!hasMilestone("ad", 4)) return
+        for (let i = 0; i < 20; i++) {
+            let cheapest = [11, 12, 13, 14].reduce((a, b) => tmp.ad.buyables[b].cost.lt(tmp.ad.buyables[a].cost) ? b : a)
+            if (!layers.ad.buyables[cheapest].canAfford()) break
+            layers.ad.buyables[cheapest].buy()
+            updateBuyableTemp("ad")
+        }
+    },
     upgrades: {
         11: {
             title: "Phenotypic Plasticity",
@@ -517,5 +531,19 @@ addLayer("hb", {
             effectDescription: "You can buy max colonists.",
             done() { return player.hb.best.gte(8) },
         },
+        5: {
+            requirementDescription: "10 colonists",
+            effectDescription: "Free colonists settle on their own: the Shoreline once you can reach it, then Reefs, Open Ocean, Vents, Tide Pools and the Deep.",
+            done() { return player.hb.best.gte(10) },
+        },
     }),
+    automate() {
+        if (!hasMilestone("hb", 5) || player.hb.abandon) return
+        let shoreReady = hasUpgrade("ad", 13) && player.ge.best.gte(8)
+        for (let type of ["shore", "reef", "open", "vent", "tide", "deep"]) {
+            // Save up for the Shoreline once it's within reach
+            if (shoreReady && !reachedLand() && type != "shore") return
+            for (let id in player.hb.grid) if (habitatType(Number(id)) == type && canColonize(Number(id))) { player.hb.grid[id] = true; return }
+        }
+    },
 })

@@ -81,7 +81,12 @@ addLayer("pz", {
         if (a && canCompleteChallenge("pz", a)) startChallenge("pz", a)
     },
     automate() {
-        if (speciesUnlocked() && !player.ti.sentient) runInstincts()
+        if (!speciesUnlocked()) return
+        if (!player.ti.sentient) runInstincts()
+        if (hasMilestone("pz", 0)) for (let l of ["ti", "me"]) for (let id in layers[l].upgrades) if (!isNaN(id)) buyUpg(l, id)
+    },
+    milestones: {
+        0: { requirementDescription: "Beat 4 pressures", effectDescription: "Evolutionary milestones and Metabolism upgrades are bought on their own.", done() { return pressuresBeaten() >= 4 } },
     },
     challenges: Object.fromEntries(PRESSURE_IDS.map(id => [id, {
         name: PRESSURES[id].name,
@@ -113,6 +118,8 @@ addLayer("pz", {
         ["display-text", "<h3>Instincts</h3>"],
         "blank",
         "clickables",
+        "blank",
+        "milestones",
         "blank",
         "challenges",
     ],

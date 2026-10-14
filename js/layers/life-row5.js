@@ -63,8 +63,10 @@ function nextStimulus() {
 
 function answerStimulus(h) {
     if (player.ho.stimulus < 0) return
+    player.ho.answered++
     if (STIMULI[player.ho.stimulus][1] == h) {
         player.ho.streak = Math.min(10, player.ho.streak + 1)
+        player.ho.bestStreak = Math.max(player.ho.bestStreak, player.ho.streak)
         player.ho.response = player.ho.response.add(lifeScale().times(player.ho.streak).times(hasMilestone("ho", 1) ? 2 : 1))
         player.ho.correct++
         player.ho.last = "Right! Streak " + player.ho.streak + "."
@@ -82,7 +84,7 @@ addLayer("ho", {
     row: 14,
     position: 1,
     color: "#ff6f91",
-    startData() { return { unlocked: true, points: new Decimal(0), response: new Decimal(0), stimulus: -1, left: 0, wait: 5, streak: 0, correct: 0, last: "" } },
+    startData() { return { unlocked: true, points: new Decimal(0), response: new Decimal(0), stimulus: -1, left: 0, wait: 5, streak: 0, bestStreak: 0, correct: 0, answered: 0, last: "" } },
     type: "none",
     branches: ["in"],
     layerShown() { return lifeUnlocked() && row5Unlocked() },
@@ -119,7 +121,7 @@ addLayer("ho", {
     }])),
     milestones: {
         0: { requirementDescription: "25 right answers", effectDescription: "You have 9 seconds to answer instead of 6.", done() { return player.ho.correct >= 25 } },
-        1: { requirementDescription: "A streak of 10", effectDescription: "Response gain x2.", done() { return player.ho.streak >= 10 } },
+        1: { requirementDescription: "A streak of 10", effectDescription: "Response gain x2.", done() { return player.ho.bestStreak >= 10 } },
         2: { requirementDescription: "150 right answers", effectDescription: "Your body answers on its own.", done() { return player.ho.correct >= 150 } },
     },
     tabFormat: [
@@ -128,6 +130,12 @@ addLayer("ho", {
         }],
         "blank",
         lore("Tiny amounts of chemical messengers, sent through the blood, telling the whole body what to do next."),
+        "blank",
+        ["display-text", function() {
+            let next = [25, 150].find(n => player.ho.correct < n)
+            return "Right answers: <b>" + formatWhole(player.ho.correct) + "</b>" + (player.ho.answered ? " of " + formatWhole(player.ho.answered) + " (" + format(player.ho.correct / player.ho.answered * 100, 0) + "%)" : "") +
+                (next ? ", next milestone at " + next : "") + "<br>Streak: <b>" + player.ho.streak + "</b> (best " + player.ho.bestStreak + ")"
+        }],
         "blank",
         ["display-text", "<b>Fight or flight:</b> every so often something happens. Answer it with the right hormone before the moment passes. Right answers build a streak (up to 10), and each one earns Response equal to your streak."],
         "blank",
@@ -257,6 +265,7 @@ addLayer("te", {
         for (let id of TERRITORY_IDS) {
             let s = player.te.tiles[id]
             if (s != "rival" && s != "lost") continue
+            if (s == "rival" && hasMilestone("te", 2)) { layers.te.clickables[id].onClick(); continue }
             if (isNaN(Number(player.te.timers[id]))) player.te.timers[id] = 5
             player.te.timers[id] -= diff
             if (player.te.timers[id] > 0) continue
@@ -293,6 +302,7 @@ addLayer("te", {
     milestones: {
         0: { requirementDescription: "Chase off 25 rivals", effectDescription: "Rivals show up half as often.", done() { return player.te.chased >= 25 } },
         1: { requirementDescription: "500 Range", effectDescription: "Range gain x2.", done() { return player.te.range.gte(500) } },
+        2: { requirementDescription: "Chase off 100 rivals", effectDescription: "Rivals are chased off on their own.", done() { return player.te.chased >= 100 } },
     },
     tabFormat: [
         ["display-text", function() {

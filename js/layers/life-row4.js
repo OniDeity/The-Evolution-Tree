@@ -112,7 +112,8 @@ addLayer("mc", {
     ],
     layerShown() { return lifeUnlocked() && lifeRow4Unlocked() },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasMilestone("mc", 3) },
+    onPrestige() { if (!hasMilestone("mc", 3)) lifeReset(this.row) },
     effect() { return player.mc.points.times(0.05) },
     effectDescription() { return "which add " + format(tmp.mc.effect) + " to the Mutation base, and let you choose " + formatWhole(player.mc.points) + " tiers of your body plan" },
     tabFormat: [
@@ -165,7 +166,13 @@ addLayer("mc", {
             style() { return { width: "200px", "min-height": "60px", height: "60px" } },
         },
     }),
-    milestones: lifeRow4Milestones("multicellular forms", {}),
+    milestones: lifeRow4Milestones("multicellular forms", {
+        3: {
+            requirementDescription: "6 multicellular forms",
+            effectDescription: "Gain multicellular forms on their own, and they reset nothing. (Body plan choices are still yours.)",
+            done() { return player.mc.best.gte(6) },
+        },
+    }),
     upgrades: {
         11: {
             title: "The Tree of Life",
@@ -260,7 +267,8 @@ addLayer("sy", {
     ],
     layerShown() { return lifeUnlocked() && lifeRow4Unlocked() },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasMilestone("sy", 4) },
+    onPrestige() { if (!hasMilestone("sy", 4)) lifeReset(this.row) },
     update(diff) {
         if (!player.sy.unlocked) return
         let fade = Math.pow(BOND_FADE, diff)
@@ -304,6 +312,11 @@ addLayer("sy", {
             requirementDescription: "3 partners",
             effectDescription: "Your partners are given gifts automatically.",
             done() { return player.sy.best.gte(3) },
+        },
+        4: {
+            requirementDescription: "7 partners",
+            effectDescription: "Gain partners on their own, and they reset nothing.",
+            done() { return player.sy.best.gte(7) },
         },
     }),
 })

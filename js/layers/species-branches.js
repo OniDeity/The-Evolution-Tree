@@ -157,6 +157,7 @@ addLayer("cf", {
         0: { requirementDescription: "500 Coal", effectDescription: "Ready seams are dug up on their own.", done() { return player.cf.coal.gte(500) } },
         1: { requirementDescription: "1,500 Coal", effectDescription: "You can have 5 seams at once.", done() { return player.cf.coal.gte(1500) } },
         2: { requirementDescription: "5,000 Coal", effectDescription: "Seams give 1.5x Coal.", done() { return player.cf.coal.gte(5000) } },
+        3: { requirementDescription: "10,000 Coal", effectDescription: "Right before you speciate or radiate, Biomass is buried on its own in any free seam.", done() { return player.cf.coal.gte(10000) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -212,6 +213,10 @@ addLayer("cv", {
         if (Math.random() < diff / 8) player.cv.push = (Math.random() * 2 - 1) * (hasMilestone("cv", 1) ? 3 : 5)
         player.cv.balance = Math.max(-100, Math.min(100, player.cv.balance + player.cv.push * diff))
         player.cv.fitness = player.cv.fitness.add(coevolutionRate() * diff)
+        if (hasMilestone("cv", 3)) {
+            if (player.cv.balance > 20) layers.cv.clickables[11].onClick()
+            else if (player.cv.balance < -20) layers.cv.clickables[12].onClick()
+        }
     },
     bars: {
         balance: {
@@ -245,6 +250,7 @@ addLayer("cv", {
         0: { requirementDescription: "300 Fitness", effectDescription: "Each nudge moves the balance 25 instead of 15.", done() { return player.cv.fitness.gte(300) } },
         1: { requirementDescription: "1,000 Fitness", effectDescription: "The arms race wanders more slowly.", done() { return player.cv.fitness.gte(1000) } },
         2: { requirementDescription: "3,000 Fitness", effectDescription: "Fitness gain x2.", done() { return player.cv.fitness.gte(3000) } },
+        3: { requirementDescription: "10,000 Fitness", effectDescription: "The balance is nudged back on its own whenever it drifts past 20.", done() { return player.cv.fitness.gte(10000) } },
     },
     tabFormat: [
         ["display-text", function() {

@@ -413,6 +413,18 @@ addLayer("mu", {
             effectDescription: "You can buy max mutations.",
             done() { return player.mu.best.gte(8) },
         },
+        2: {
+            requirementDescription: "40 mutations",
+            effectDescription: "Waiting traits are picked on their own, taking whichever offer you have fewer copies of.",
+            done() { return player.mu.best.gte(40) },
+        },
+    },
+    automate() {
+        if (!hasMilestone("mu", 2)) return
+        for (let i = 0; i < 50 && pendingTraits() > 0; i++) {
+            let o = traitOffers()
+            pickTrait((player.mu.traits[o[1]] || 0) < (player.mu.traits[o[0]] || 0) ? 1 : 0)
+        }
     },
 })
 

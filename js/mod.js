@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.4",
-	name: "Life on Land",
+	num: "1.5",
+	name: "Second Nature",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.5 - Second Nature</h3><br>
+		- Everything you'd otherwise repeat forever can now be automated by a milestone:<br>
+		- Act 1: Galaxies and Black Holes form on their own; Asteroid prospecting, Quantum spells and Dark Matter weighing.<br>
+		- Act 2: the trait draft (picks the trait you have fewer of), Adaptations, settling colonists, Multicellular forms, partners, Gene Transfer, steering Ocean Currents and chasing off rivals in Territory.<br>
+		- Act 3: Evolutionary milestones and Metabolism upgrades (beat 4 Selection Pressures), burying Coal before a reset and balancing Coevolution.<br>
+		- Hormones now shows your right answers, accuracy and best streak.<br><br>
 	<h3>v1.4 - Life on Land</h3><br>
 		- Act 2 bonus content (optional): a new Row 5, unlocked by the Tree of Life. Each layer sends a small gift to Act 3.<br>
 		- Hormones: something happens, and you answer with the right hormone before the moment passes. Streaks pay more.<br>

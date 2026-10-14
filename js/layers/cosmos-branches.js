@@ -232,6 +232,11 @@ addLayer("as", {
     update(diff) {
         if (!tmp.as.layerShown) return
         if (player.as.fields == 0) { newField(); player.as.fields = 1 }
+        if (player.as.picks > 0 && hasMilestone("as", 3)) {
+            let open = [0, 1, 2, 3, 4, 5, 6, 7, 8].filter(i => !player.as.mined[i])
+            let i = open[Math.floor(Math.random() * open.length)]
+            layers.as.clickables[11 + 10 * Math.floor(i / 3) + i % 3].onClick()
+        }
         if (player.as.picks > 0) return
         player.as.timer -= diff
         if (player.as.timer <= 0) { newField(); player.as.fields++ }
@@ -256,6 +261,7 @@ addLayer("as", {
         0: { requirementDescription: "20 ore", effectDescription: "4 picks per field.", done() { return player.as.ore.gte(20) } },
         1: { requirementDescription: "80 ore", effectDescription: "A new field drifts in every 40 seconds.", done() { return player.as.ore.gte(80) } },
         2: { requirementDescription: "250 ore", effectDescription: "Energy gain x1.5.", done() { return player.as.ore.gte(250) } },
+        3: { requirementDescription: "600 ore", effectDescription: "Prospect on your own: picks are made for you.", done() { return player.as.ore.gte(600) } },
     },
     tabFormat: [
         ["display-text", function() {

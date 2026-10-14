@@ -85,6 +85,7 @@ addLayer("ga", {
     exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
+    autoPrestige() { return hasMilestone("ga", 4) && !player.hz.activeChallenge },
     canBuyMax() { return hasMilestone("ga", 3) },
     row: 3,
     branches: ["at", "st"],
@@ -138,6 +139,11 @@ addLayer("ga", {
             requirementDescription: "5 galaxies",
             effectDescription: "You can buy max galaxies.",
             done() { return player.ga.best.gte(5) },
+        },
+        4: {
+            requirementDescription: "10 galaxies",
+            effectDescription: "Galaxies form on their own, in the shape you've chosen (but not during a Cosmic Hazard).",
+            done() { return player.ga.best.gte(10) },
         },
     }),
     upgrades: requireOwned("ga", "galaxies", {
@@ -229,6 +235,7 @@ addLayer("bh", {
     exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
+    autoPrestige() { return hasMilestone("bh", 4) && tmp.bh.spin > 0.7 && !player.hz.activeChallenge },
     canBuyMax() { return hasMilestone("bh", 3) },
     row: 3,
     branches: ["gr", "pl"],
@@ -276,6 +283,11 @@ addLayer("bh", {
             requirementDescription: "5 black holes",
             effectDescription: "You can buy max black holes.",
             done() { return player.bh.best.gte(5) },
+        },
+        4: {
+            requirementDescription: "10 black holes",
+            effectDescription: "Black holes form on their own once your spin passes 70% (but not during a Cosmic Hazard).",
+            done() { return player.bh.best.gte(10) },
         },
     }),
     upgrades: requireOwned("bh", "black holes", {

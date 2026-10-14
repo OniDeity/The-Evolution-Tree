@@ -3,6 +3,30 @@
 Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
 The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
 
+## Automation (v1.5)
+**Rule:** anything you'd otherwise repeat forever gets an automation milestone. It arrives late enough that you've done it by hand for a while, and early enough that it never becomes a chore. One-time choices (body plan, trait draft before the milestone, galaxy shape, keystone, founder, sliders) and challenges (Cosmic Hazards, Predators, Selection Pressures) stay in your hands. Every future act follows the same rule.
+
+| Act | Layer | Repeated action | Automated by |
+|---|---|---|---|
+| 1 | Particles | Gaining particles, buying upgrades | Row 2 milestones |
+| 1 | Atoms, Gravity, Stars, Planets | Resets, merges, supernovae, orbits | Row 2 and Row 3 milestones |
+| 1 | Fusion, Dark Energy, Hazards | Reactors, Expansion, Hazard points | Their own milestones |
+| 1 | Galaxies, Black Holes | Forming them | 10 galaxies / 10 black holes (paused during Hazards) |
+| 1 | Neutrinos, Pulsars, Asteroid Belt | Catching, syncing, prospecting | 150 neutrinos, 2,000 Radio Waves, 600 ore |
+| 1 | Quantum Fluctuations, Stellar Winds, Dark Matter | Casting, sails and flares, weighing | 200 casts; 1e6 Wind and 25 sails; 50 halos |
+| 2 | Cells, Mutations, Reproduction | Gaining them, Fecundity and Longevity | Row 3 milestones, Generations and Habitats milestones |
+| 2 | Mutations | The trait draft | 40 mutations (picks the trait you have fewer of) |
+| 2 | Generations, Habitats | Gaining them | Row 4 milestone |
+| 2 | Adaptation | Fitness, adaptations | 25 fitness (passive), 1e6 fitness (adaptations) |
+| 2 | Habitats | Settling colonists | 10 colonists |
+| 2 | Multicellular, Symbiosis | Gaining them, gifts | 6 forms; 3 partners (gifts), 7 partners |
+| 2 | Instincts | Gaining instincts | 50 instincts (passive) |
+| 2 | Photosynthesis, Gene Transfer, Eggs, Ocean Currents | Venting, absorbing, clutches, steering | 40 Iron, 12 absorbed, 600 hatchlings, 50,000 Drift |
+| 2 | Hormones, Homeostasis, Territory, Seasons | Answering, needs, rivals, foraging | 150 right answers, 5,000 Stability, 100 rivals, 1,000 Fat |
+| 3 | Tiers, Metabolism, Speciation, Competition, Radiation | Everything | Instincts from Selection Pressures |
+| 3 | Evolutionary milestones, Metabolism upgrades | Buying them | Beat 4 Selection Pressures |
+| 3 | Insects, Coal, Coevolution | Harvesting, burying and digging, balancing | 800 Chitin; 500 and 10,000 Coal; 10,000 Fitness |
+
 ## Branches (v1.1)
 Every act's tree has small branch layers further out: modest helpers with a little minigame for when you hit a wall. They never reset and are not part of the retold game.
 

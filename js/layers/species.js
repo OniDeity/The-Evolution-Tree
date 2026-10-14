@@ -326,6 +326,8 @@ function maxAllSpecies() {
 // Every Act 3 reset goes through here. Speciation resets the tiers and Metabolism;
 // Adaptive Radiation also resets speciations.
 function speciesReset(depth) {
+    // Coal milestone: Biomass that's about to be lost goes into any free seams first
+    if (player.cf && hasMilestone("cf", 3)) while (layers.cf.clickables[11].canClick()) layers.cf.clickables[11].onClick()
     player.biomass = new Decimal(10)
     for (let t = 1; t <= 8; t++) {
         player.ti.amounts[t] = new Decimal(0)
