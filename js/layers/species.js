@@ -34,12 +34,12 @@ function tierBought(t) {
 }
 
 function tiersUnlocked() {
-    return Math.min(8, 4 + player.sn.points.toNumber())
+    return Math.min(inPressure(11) ? 4 : 8, 4 + player.sn.points.toNumber())
 }
 
 function tierCost(t, bought) {
     if (bought === undefined) bought = tierBought(t)
-    return Decimal.pow(TIERS[t].step, bought.div(10).floor()).times(TIERS[t].cost)
+    return Decimal.pow(TIERS[t].step * (inPressure(23) ? 10 : 1), bought.div(10).floor()).times(TIERS[t].cost)
 }
 
 // The food pyramid: a tier works at full strength only while the tier below it has more purchases
@@ -48,11 +48,11 @@ function tierStarving(t) {
 }
 
 function tierMult(t) {
-    let m = Decimal.pow(2, tierBought(t).div(10).floor())
+    let m = Decimal.pow(inPressure(14) ? 1.5 : 2, tierBought(t).div(10).floor())
     m = m.times(Decimal.pow(2, player.sn.points))
     m = m.times(Decimal.pow(2, player.sn.keystones[t] || 0))
     m = m.times(player.cu.mults[t])
-    if (tierStarving(t)) m = m.times(hasUpgrade("ti", 14) ? 0.75 : 0.5)
+    if (tierStarving(t)) m = m.times(inPressure(22) ? 0 : hasUpgrade("ti", 14) ? 0.75 : 0.5)
     m = m.times(speciesAchievementBonus())
     m = m.times(evolutionBonus(t))
     m = m.times(coevolutionEffect())
@@ -73,6 +73,7 @@ function metabolismBase() {
 }
 
 function metabolismSpeed() {
+    if (inPressure(13)) return new Decimal(1)
     return Decimal.pow(metabolismBase(), metabolismLevel())
 }
 
@@ -84,6 +85,7 @@ function foodDemandScale() {
     if (hasUpgrade("me", 13)) k /= 2
     if (hasUpgrade("ti", 32)) k *= 0.8
     k /= coalDemandDivider()
+    if (inPressure(12)) k *= 4
     return k
 }
 
@@ -99,8 +101,10 @@ function biomassGain() {
     if (hasUpgrade("ti", 34)) g = g.times(upgradeEffect("ti", 34))
     if (hasUpgrade("ti", 43)) g = g.times(upgradeEffect("ti", 43))
     g = g.times(chitinEffect())
+    g = g.times(specimenBonus())
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
+    if (inPressure(24)) g = g.pow(0.9)
     if (player.ti.amounts[1].eq(0)) g = new Decimal(0)
     return g
 }
@@ -125,7 +129,7 @@ addLayer("species", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#e0c068'>Act 3: Species</h2><br>You have <h2 style='color:#e0c068;text-shadow:0 0 10px #e0c068'>" + format(player.biomass) + "</h2> Biomass (+" + format(biomassGain()) + "/sec)" }],
         "blank",
-        ["tree", [["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar"]]],
+        ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"]]],
     ],
 })
 
@@ -299,6 +303,7 @@ function buyUntil10(t) {
 
 // A Metabolism level is worth buying while its speed-up beats the extra food it eats
 function metabolismWorthIt() {
+    if (inPressure(13)) return false
     let l = metabolismLevel()
     return metabolismBase() * (1 - foodDemandAt(l.add(1))) > 1 - foodDemandAt(l)
 }
@@ -420,8 +425,9 @@ function foodDemandAt(level) {
 // ------------------------------------------------------------
 function speciationReq() {
     let n = player.sn.points.toNumber()
-    if (n < 4) return { tier: n + 4, amount: 20 }
-    return { tier: 8, amount: 20 + 15 * (n - 4) - (hasUpgrade("ti", 33) ? 5 : 0) }
+    let mult = inPressure(21) ? 2 : 1
+    if (n < 4) return { tier: n + 4, amount: 20 * mult }
+    return { tier: 8, amount: (20 + 15 * (n - 4) - (hasUpgrade("ti", 33) ? 5 : 0)) * mult }
 }
 
 addLayer("sn", {
@@ -473,6 +479,7 @@ addLayer("sn", {
             onClick() {
                 player.sn.keystones[player.sn.keystone]++
                 player.sn.points = player.sn.points.add(1)
+                player.sf.speciations++
                 speciesReset(1)
             },
             style() { return { width: "220px", height: "90px" } },
@@ -531,6 +538,7 @@ addLayer("ar", {
             onClick() {
                 let f = player.ar.founder, survivors = player.ti.amounts[f].div(10)
                 player.ar.points = player.ar.points.add(1)
+                player.sf.radiations++
                 speciesReset(2)
                 player.ti.amounts[f] = survivors
             },
@@ -600,6 +608,7 @@ addLayer("cu", {
             onClick() {
                 let w = player.cu.winner
                 player.cu.lost[w] = player.cu.lost[w].add(competitionLoss(w))
+                player.sf.competes++
                 player.cu.mults[w] = competitionMult(player.cu.lost[w])
                 for (let t = 1; t < w; t++) player.ti.amounts[t] = new Decimal(0)
             },

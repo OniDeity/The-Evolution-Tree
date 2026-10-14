@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Branching Out",
+	num: "1.2",
+	name: "Survival of the Fittest",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.2 - Survival of the Fittest</h3><br>
+		- Act 3 bonus content (optional, Sentience doesn't need it), unlocked by your first Adaptive Radiation.<br>
+		- Selection Pressures: 8 challenges that change the rules of a run, like Island, Drought, Ice Age and Famine. Hitting the goal wins straight away.<br>
+		- Each pressure teaches an Instinct: an autobuyer for tiers, Metabolism, Speciation, Competition or Radiation, which you can switch on and off.<br>
+		- Specimen Collection: a museum of 12 famous creatures. Each boosts Biomass.<br>
+		- Field Notes for Act 3.<br>
+		- Updates now show up as soon as you refresh.<br><br>
 	<h3>v1.1 - Branching Out</h3><br>
 		- New branches on every tree: small helper layers with something to do while you wait out a wall. They never reset.<br>
 		- Act 1: Neutrinos (catch bursts), Pulsars (tap on the beat) and the Asteroid Belt (prospect for rich ore).<br>

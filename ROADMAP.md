@@ -82,6 +82,13 @@ Opened from the **Species** node once the Tree of Life is bought. Act 3 layers u
 Plus 16 **Evolutionary milestones** (permanent Biomass upgrades) and 10 achievements (+5% to every tier each).
 A perfect bot takes about 90 minutes, with something new about every 34 seconds (roughly 70 seconds for a human).
 
+**Bonus content (v1.2, optional):** after the first radiation, **Selection Pressures** retell AD's challenges: Island, Drought, Ice Age, Crowded Niche, Fragmented Range, Famine, Invasive Species and Bottleneck. **Twist:** each one teaches an **Instinct** (an autobuyer you can toggle), so automation is earned rather than given. Side layers: **Specimen Collection** (12 creatures, +5% Biomass each) and **Field Notes**.
+
+## Planned expansions (optional bonus content)
+1. ~~Act 3: Selection Pressures, Specimen Collection, Field Notes~~ ✅ v1.2
+2. Act 1: Row 4 (Quantum Fluctuations, Matter vs. Antimatter, Stellar Winds, Dark Matter Halos) plus an Observatory museum and stats
+3. Act 2: Row 5 on land (Hormones, Homeostasis, Territory, Seasons)
+
 ## Act 4: Extinction
 *Antimatter Dimensions' Infinity and Eternity, retold.*
 
