@@ -37,6 +37,8 @@ function inPressure(id) {
 }
 
 function hasInstinct(key) {
+    // Act 4's first extinction teaches the instincts needed to grow the living world back
+    if (player.ex && player.ex.count >= 1 && key != "cu") return true
     return PRESSURE_IDS.some(id => PRESSURES[id].instinct == key && hasChallenge("pz", id))
 }
 

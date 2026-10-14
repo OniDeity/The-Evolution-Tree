@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.6.1",
-	name: "Balancing Act",
+	num: "2.0",
+	name: "The Sixth Extinction",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v2.0 - The Sixth Extinction</h3><br>
+		- Act 4: Extinction has begun! Spark sentience, then open the new Extinction node. It retells Kittens Game and Evolve.<br>
+		- Settlement: gather food, then build Fields, Huts, Libraries and 24 more buildings. Every building leaves a footprint on the biosphere, and a worn-down biosphere grows less food.<br>
+		- Village: people arrive while there's room and food. Give them jobs. Watch the seasons: winter grows a quarter of the food.<br>
+		- Knowledge: 23 techs from Agriculture to Rewilding. Workshop: craft Beams, Slabs, Plates and Books, and buy 18 improvements.<br>
+		- Extinction: once you reach Industrialization, end your civilization (and Act 3's living world) for Strata. Bigger civilizations leave more. Strata make your next civilization stronger and Act 3's tiers grow back faster.<br>
+		- Deep Time: 16 permanent upgrades bought with Strata, plus extinction milestones that automate research and the Workshop.<br>
+		- Trials: 4 optional runs under harder rules.<br>
+		- Branches: Trade (wandering prices), Breeding (keep the best of each litter) and Wonders (built 1% at a time, never lost).<br>
+		- Lost Species: a museum of 12 animals that are gone for good. Chronicle: statistics for Act 4.<br>
+		- New ending: Eternity. Added 10 Act 4 achievements. Each makes your civilization 5% stronger.<br><br>
 	<h3>v1.6.1</h3><br>
 		- Stellar Winds is easier: sails are cheaper (cost x1.3 each instead of x1.5), flares are rarer and tear a tenth of your sails instead of a quarter, and sails are bought automatically at 15 sails instead of 1e6 Wind.<br><br>
 	<h3>v1.6 - Balancing Act</h3><br>
@@ -154,7 +165,9 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Endgame: a habitable world.`
 
 let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid, until one strange ape looked up at the stars and wondered where it all came from.<br><br>
-	<b>Act 3: Species is complete.</b> Act 4: Extinction is coming soon...`
+	<b>Act 3: Species is complete.</b><br><br>
+	Then that ape built fires, and fields, and cities, and very nearly ate the world. It took a few extinctions to learn how to stop.<br><br>
+	<b>Act 4: Extinction is complete.</b> Act 5 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -215,6 +228,7 @@ var displayThings = [
 	function() { return cosmicEra() },
 	function() { return lifeUnlocked() ? "<span style='color:#7ed957'>" + format(player.dna) + " DNA (+" + format(dnaGain()) + "/sec)</span>" : "" },
 	function() { return speciesUnlocked() ? "<span style='color:#e0c068'>" + format(player.biomass) + " Biomass (+" + format(biomassGain()) + "/sec)</span>" : "" },
+	function() { return civUnlocked() ? "<span style='color:#d9774b'>" + formatWhole(player.ex.points) + " Strata, " + formatWhole(player.vg.people) + " people (" + civEra().replace("Era: ", "") + ")</span>" : "" },
 ]
 
 function cosmicEra() {
@@ -230,7 +244,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.ti.sentient
+	return player.ex.eternity
 }
 
 
@@ -250,6 +264,8 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	// Act 4 moved the ending. If you'd chosen to keep playing after Sentience, the Eternity screen should still show
+	if (parseFloat(oldVersion) < 2 && !player.ex.eternity) player.keepGoing = false
 	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
 	try {
 		DISCOVERIES.forEach((d, n) => {

@@ -59,6 +59,8 @@ function tierMult(t) {
     m = m.times(coevolutionEffect())
     m = m.times(cosmicGift("tiers"))
     m = m.times(landGift("tiers"))
+    // Act 4: life grows back faster on top of every extinction's Strata
+    m = m.times(strataTierBoost())
     return m
 }
 
@@ -113,6 +115,8 @@ function biomassGain() {
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)
+    // Act 4: a civilization's footprint wears the living world down
+    if (civUnlocked()) g = g.pow(0.8 + 0.2 * civCache.health)
     if (player.ti.amounts[1].eq(0)) g = new Decimal(0)
     return g
 }
@@ -650,6 +654,6 @@ addLayer("cu", {
 
 // Act 3 achievements each make every tier 5% stronger
 function speciesAchievementBonus() {
-    let n = player.a.achievements.filter(id => Number(id) >= 111).length
+    let n = player.a.achievements.filter(id => Number(id) >= 111 && Number(id) < 131).length
     return new Decimal(1 + 0.05 * n)
 }

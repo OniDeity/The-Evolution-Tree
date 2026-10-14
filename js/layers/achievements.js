@@ -317,5 +317,60 @@ addLayer("a", {
             done() { return player.ti.sentient },
             tooltip: "Spark sentience and finish Act 3.",
         },
+        131: {
+            name: "Settling Down",
+            done() { return civUnlocked() && bld("field") >= 1 },
+            tooltip: "Plant your first Field. Each Act 4 achievement makes your civilization 5% stronger.",
+        },
+        132: {
+            name: "It Takes a Village",
+            done() { return civUnlocked() && player.vg.people >= 10 },
+            tooltip: "Have 10 people.",
+        },
+        133: {
+            name: "The Bronze Age",
+            done() { return civUnlocked() && hasTech("metalworking") },
+            tooltip: "Research Metalworking.",
+        },
+        134: {
+            name: "Know Thyself",
+            done() { return civUnlocked() && hasTech("philosophy") },
+            tooltip: "Research Philosophy.",
+        },
+        135: {
+            name: "Dark Satanic Mills",
+            done() { return civUnlocked() && hasTech("industrialization") },
+            tooltip: "Research Industrialization.",
+        },
+        141: {
+            name: "The Sixth Extinction",
+            done() { return civUnlocked() && player.ex.count >= 1 },
+            tooltip: "Bring on an extinction.",
+        },
+        142: {
+            name: "Written in Stone",
+            done() { return civUnlocked() && player.ex.total.gte(100) },
+            tooltip: "Lay down 100 Strata in all.",
+        },
+        143: {
+            name: "Seven Wonders",
+            done() { return civUnlocked() && wonderLevels() >= 7 },
+            tooltip: "Reach 7 wonder levels.",
+        },
+        144: {
+            name: "Trial by Fire",
+            done() { return civUnlocked() && trialsBeaten() >= 1 },
+            tooltip: "Beat a Trial.",
+        },
+        145: {
+            name: "Eternity",
+            done() { return civUnlocked() && player.ex.eternity },
+            tooltip: "Finish Act 4.",
+        },
     },
 })
+
+// Act 4 achievements each make the civilization 5% stronger
+function civAchievementBonus() {
+    return 1 + 0.05 * player.a.achievements.filter(id => Number(id) >= 131).length
+}
