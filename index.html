@@ -17,7 +17,8 @@
 	<script src="js/technical/break_eternity.js"></script>
 	<script src="js/technical/layerSupport.js"></script>
 
-	<script src="js/mod.js"></script>
+	<!-- mod.js holds the version number, so always fetch it fresh; loader.js then versions every other file -->
+	<script>document.write('<script src="js/mod.js?t=' + Date.now() + '"><\/script>')</script>
 	<script src="js/technical/loader.js"></script>
 
 	<script src="js/technical/temp.js"></script>
