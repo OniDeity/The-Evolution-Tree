@@ -210,7 +210,7 @@ addLayer("ma", {
 
 // ------------------------------------------------------------
 //  STELLAR WINDS. Sails catch the solar wind, which rises and falls over a 2 minute solar cycle.
-//  Near solar maximum, flares tear a quarter of your sails unless you furl them.
+//  Near solar maximum, flares tear a tenth of your sails unless you furl them.
 // ------------------------------------------------------------
 const SOLAR_CYCLE = 120
 
@@ -250,11 +250,11 @@ addLayer("sw", {
         player.sw.cycle = (player.sw.cycle + diff) % SOLAR_CYCLE
         player.sw.wind = player.sw.wind.add(windGain().times(diff))
         player.sw.flare = Math.max(0, player.sw.flare - diff)
-        // Flares: about one every 8 seconds near solar maximum
-        if (solarMax() && Math.random() < diff / 8) {
+        // Flares: about one every 12 seconds near solar maximum
+        if (solarMax() && Math.random() < diff / 12) {
             player.sw.flare = 3
             if (!player.sw.furled && getBuyableAmount("sw", 11).gte(1) && !hasMilestone("sw", 2)) {
-                let lost = getBuyableAmount("sw", 11).div(4).ceil()
+                let lost = getBuyableAmount("sw", 11).div(10).ceil()
                 setBuyableAmount("sw", 11, getBuyableAmount("sw", 11).sub(lost))
                 player.sw.torn += lost.toNumber()
             }
@@ -274,7 +274,7 @@ addLayer("sw", {
     buyables: {
         11: {
             title: "Solar Sail",
-            cost() { return Decimal.pow(1.5, getBuyableAmount(this.layer, this.id)).times(10) },
+            cost() { return Decimal.pow(1.3, getBuyableAmount(this.layer, this.id)).times(10) },
             display() { return "Catch more wind.<br><br>Sails: " + formatWhole(getBuyableAmount(this.layer, this.id)) + "<br>Cost: " + format(this.cost()) + " Wind" },
             canAfford() { return player.sw.wind.gte(this.cost()) },
             buy() {
@@ -295,7 +295,7 @@ addLayer("sw", {
     },
     milestones: {
         0: { requirementDescription: "10 sails", effectDescription: "Wind gain x2.", done() { return getBuyableAmount("sw", 11).gte(10) } },
-        1: { requirementDescription: "1e6 Wind", effectDescription: "Sails are bought automatically.", done() { return player.sw.wind.gte(1e6) } },
+        1: { requirementDescription: "15 sails", effectDescription: "Sails are bought automatically.", done() { return getBuyableAmount("sw", 11).gte(15) } },
         2: { requirementDescription: "25 sails", effectDescription: "Your sails are tough enough to ride out flares.", done() { return getBuyableAmount("sw", 11).gte(25) } },
     },
     automate() {
@@ -308,7 +308,7 @@ addLayer("sw", {
         "blank",
         lore("Stars blow a wind of charged particles out into space. Ride it, and you can sail between worlds."),
         "blank",
-        ["display-text", "<b>The solar cycle:</b> the wind rises and falls every 2 minutes. Near solar maximum, flares tear a quarter of any sails left out. Furl them to stay safe, or gamble on the extra wind."],
+        ["display-text", "<b>The solar cycle:</b> the wind rises and falls every 2 minutes. Near solar maximum, flares tear a tenth of any sails left out. Furl them to stay safe, or gamble on the extra wind."],
         "blank",
         ["bar", "cycle"],
         "blank",

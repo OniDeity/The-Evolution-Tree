@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.6",
+	num: "1.6.1",
 	name: "Balancing Act",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.6.1</h3><br>
+		- Stellar Winds is easier: sails are cheaper (cost x1.3 each instead of x1.5), flares are rarer and tear a tenth of your sails instead of a quarter, and sails are bought automatically at 15 sails instead of 1e6 Wind.<br><br>
 	<h3>v1.6 - Balancing Act</h3><br>
 		- Act 1 rebalance: energy no longer runs away once Galaxies arrive. Galaxies now add to the Atom base instead of multiplying it, and Atoms, Inflation and Gravitational Force have stronger softcaps.<br>
 		- Row 3's last shared milestone (Stars and Planets reset nothing) needs a few more galaxies, black holes, dark energy or resilience.<br>
