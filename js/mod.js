@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2",
-	name: "Survival of the Fittest",
+	num: "1.3",
+	name: "The Wider Universe",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.3 - The Wider Universe</h3><br>
+		- Act 1 bonus content (optional): a new Row 4, unlocked by the Habitable Zone. It keeps the universe evolving alongside life, and sends small gifts to the later acts.<br>
+		- Quantum Fluctuations: cast spells for energy, DNA or Biomass. Uncertainty: they're either strong and brief or weak and long.<br>
+		- Matter vs. Antimatter: set the balance. Where they meet they annihilate into Light; the surplus boosts DNA (matter) or Biomass (antimatter).<br>
+		- Stellar Winds: sails catch the solar wind, but flares near solar maximum tear any left out.<br>
+		- Dark Matter Halos: weigh invisible halos in as few guesses as you can. Dark Matter strengthens Act 3's species tiers.<br>
+		- Observatory: 16 discoveries, each boosting energy. Star Log: statistics for Act 1.<br><br>
 	<h3>v1.2 - Survival of the Fittest</h3><br>
 		- Act 3 bonus content (optional, Sentience doesn't need it), unlocked by your first Adaptive Radiation.<br>
 		- Selection Pressures: 8 challenges that change the rules of a run, like Island, Drought, Ice Age and Famine. Hitting the goal wins straight away.<br>
@@ -162,6 +169,8 @@ function getPointGen() {
 	if (player.de.unlocked) gain = gain.times(tmp.de.expansionEffect)
 	if (hasChallenge("hz", 12)) gain = gain.times(challengeEffect("hz", 12))
 	gain = gain.times(neutrinoEffect())
+	gain = gain.times(cosmicGift("energy"))
+	gain = gain.times(observatoryBonus())
 	if (hasMilestone("as", 2)) gain = gain.times(1.5)
 	// Pacing: stretches the whole act evenly so something new unlocks about once a minute
 	gain = gain.max(1).pow(ENERGY_PACING)
@@ -215,4 +224,11 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
+	try {
+		DISCOVERIES.forEach((d, n) => {
+			let id = String(11 + Math.floor(n / 4) * 10 + n % 4)
+			if (d.done() && !player.ob.achievements.includes(id)) player.ob.achievements.push(id)
+		})
+	} catch (e) {}
 }

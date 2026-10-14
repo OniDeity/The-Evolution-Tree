@@ -38,6 +38,17 @@ With perfect play the branches make each act roughly 10–20% faster for the bot
 | Quirks | Dark Energy (DE) | **Twist: Fate of the Universe.** Balance Expansion against Gravity to stay flat |
 | Hindrances | Cosmic Hazards (Hz) | **Twist: Combined Hazards.** Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay, plus Cosmic Winter and Doomsday |
 
+**Row 4 (v1.3, optional bonus content, unlocked by the Habitable Zone):** no row resets, so it can't undo the ending. Each layer also gives small gifts to the later acts.
+
+| Prestige Tree | Cosmos | Twist |
+|---|---|---|
+| Magic | Quantum Fluctuations (QF) | **Uncertainty:** spells are strong and brief or weak and long (energy, DNA or Biomass) |
+| Balance | Matter vs. Antimatter (MA) | **Baryon asymmetry:** a slider sets the mix; the meeting point makes Light, the surplus boosts DNA or Biomass |
+| Solarity | Stellar Winds (SW) | **Solar cycle:** furl your sails before flares at solar maximum |
+| Phantom Souls | Dark Matter Halos (DM) | **Invisible mass:** weigh halos in as few higher/lower guesses as you can; boosts Act 3 tiers |
+
+Side layers: **Observatory** (16 discoveries, +5% energy each) and **Star Log** (statistics).
+
 Endgame: **Habitable Zone** (survive every Cosmic Hazard, buy every Row 3 upgrade, and have 5 planets in the Habitable orbit). It unlocks Act 2.
 
 **Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 44 seconds on average and finishes in about 100 minutes, so a human should take roughly 2.5 hours.
@@ -86,7 +97,7 @@ A perfect bot takes about 90 minutes, with something new about every 34 seconds 
 
 ## Planned expansions (optional bonus content)
 1. ~~Act 3: Selection Pressures, Specimen Collection, Field Notes~~ ✅ v1.2
-2. Act 1: Row 4 (Quantum Fluctuations, Matter vs. Antimatter, Stellar Winds, Dark Matter Halos) plus an Observatory museum and stats
+2. ~~Act 1: Row 4 (Quantum Fluctuations, Matter vs. Antimatter, Stellar Winds, Dark Matter Halos) plus an Observatory museum and stats~~ ✅ v1.3
 3. Act 2: Row 5 on land (Hormones, Homeostasis, Territory, Seasons)
 
 ## Act 4: Extinction

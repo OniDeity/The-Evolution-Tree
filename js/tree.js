@@ -4,7 +4,7 @@ var layoutInfo = {
 	showTree: true,
 
     // Act 1's tree. Act 2 has its own tree, opened from the "Life" node.
-    treeLayout: [["p", "nu"], ["ps", "at", "gr"], ["st", "fu", "pl", "as"], ["ga", "de", "hz", "bh"]]
+    treeLayout: [["ob", "sl"], ["p", "nu"], ["ps", "at", "gr"], ["st", "fu", "pl", "as"], ["ga", "de", "hz", "bh"], ["qf", "ma", "sw", "dm"]]
 
     
 }

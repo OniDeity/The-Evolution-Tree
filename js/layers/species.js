@@ -56,6 +56,7 @@ function tierMult(t) {
     m = m.times(speciesAchievementBonus())
     m = m.times(evolutionBonus(t))
     m = m.times(coevolutionEffect())
+    m = m.times(cosmicGift("tiers"))
     return m
 }
 
@@ -102,6 +103,7 @@ function biomassGain() {
     if (hasUpgrade("ti", 43)) g = g.times(upgradeEffect("ti", 43))
     g = g.times(chitinEffect())
     g = g.times(specimenBonus())
+    g = g.times(cosmicGift("biomass"))
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)

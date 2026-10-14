@@ -14,6 +14,7 @@ function branchBonus(kind) {
     if (!player.ph) return b
     if (kind == "dna") {
         b = b.times(ironEffect())
+        b = b.times(cosmicGift("dna"))
         if (hasMilestone("oc", 1)) b = b.times(player.oc.drift.add(10).log10().sqrt())
     }
     if (kind == "capacity" && hasMilestone("ph", 0)) b = b.times(1.25)
