@@ -218,6 +218,12 @@ function giftBond(id) {
     return have.div(2).add(1).log10().sqrt().div(5).toNumber()
 }
 
+// Auto-gifting (partner milestone) only gives when a gift would raise the Bond by at least 10%,
+// so a strong Bond is tended every so often rather than constantly
+function autoGiftThreshold(id) {
+    return player.sy.bonds[id] * 0.1 + 0.05
+}
+
 function giveGift(id) {
     let s = SYMBIONTS[id]
     player.sy.bonds[id] += giftBond(id)
@@ -263,7 +269,7 @@ addLayer("sy", {
     automate() {
         // Milestone: partners are tended automatically whenever their Bond would grow by at least 10%
         if (!hasMilestone("sy", 3)) return
-        for (let id of SYMBIONT_IDS) if (symbiontUnlocked(id) && giftBond(id) > player.sy.bonds[id] * 0.1 + 0.05) giveGift(id)
+        for (let id of SYMBIONT_IDS) if (symbiontUnlocked(id) && giftBond(id) > autoGiftThreshold(id)) giveGift(id)
     },
     effectDescription() { return "who live alongside you" },
     tabFormat: [
@@ -285,11 +291,12 @@ addLayer("sy", {
             display() {
                 if (!symbiontUnlocked(id)) return "Get " + (n + 1) + " partners to meet them."
                 return "Wants: half your " + SYMBIONTS[id].wants + "<br>Bond: <b>" + format(player.sy.bonds[id]) + "</b> (+" + format(giftBond(id)) + " per gift)<br>" +
-                    SYMBIONTS[id].text + " x" + format(symbiontEffect(id)) + "<br><br>Click to give a gift"
+                    SYMBIONTS[id].text + " x" + format(symbiontEffect(id)) + "<br><br>" +
+                    (hasMilestone("sy", 3) ? "<i>Auto-gifts once a gift would add " + format(autoGiftThreshold(id)) + "</i><br>Click to give one now" : "Click to give a gift")
             },
             canClick() { return symbiontUnlocked(id) && SYMBIONTS[id].get().gt(1) },
             onClick() { giveGift(id) },
-            style() { return { width: "160px", height: "170px" } },
+            style() { return { width: "160px", height: "190px" } },
         },
     }))),
     milestones: lifeRow4Milestones("partners", {

@@ -22,7 +22,8 @@ let changelog = `<h1>Changelog:</h1><br>
 		- New branches on every tree: small helper layers with something to do while you wait out a wall. They never reset.<br>
 		- Act 1: Neutrinos (catch bursts), Pulsars (tap on the beat) and the Asteroid Belt (prospect for rich ore).<br>
 		- Act 2: Photosynthesis (vent Oxygen before it overflows), Gene Transfer (pick up traits you passed on), Eggs (clutch timing) and Ocean Currents (Drift makes colonists cheaper).<br>
-		- Act 3: Insects (harvest the swarm at its peak), Coal (bury Biomass before you reset) and Coevolution (keep the arms race balanced).<br><br>
+		- Act 3: Insects (harvest the swarm at its peak), Coal (bury Biomass before you reset) and Coevolution (keep the arms race balanced).<br>
+		- Symbiosis: each partner now shows when it will next be gifted automatically.<br><br>
 	<h3>v1.0.2</h3><br>
 		- Fixed offspring barely growing (or sitting at 0) once they live a long time.<br><br>
 	<h3>v1.0.1</h3><br>
