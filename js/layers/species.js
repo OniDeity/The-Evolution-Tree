@@ -52,11 +52,13 @@ function tierMult(t) {
     m = m.times(Decimal.pow(2, player.sn.points))
     m = m.times(Decimal.pow(2, player.sn.keystones[t] || 0))
     m = m.times(player.cu.mults[t])
+    if (player.cu.mults[t].gt(1)) m = m.times(landGift("competition"))
     if (tierStarving(t)) m = m.times(inPressure(22) ? 0 : hasUpgrade("ti", 14) ? 0.75 : 0.5)
     m = m.times(speciesAchievementBonus())
     m = m.times(evolutionBonus(t))
     m = m.times(coevolutionEffect())
     m = m.times(cosmicGift("tiers"))
+    m = m.times(landGift("tiers"))
     return m
 }
 
@@ -86,6 +88,7 @@ function foodDemandScale() {
     if (hasUpgrade("me", 13)) k /= 2
     if (hasUpgrade("ti", 32)) k *= 0.8
     k /= coalDemandDivider()
+    k /= homeostasisDemandDivider()
     if (inPressure(12)) k *= 4
     return k
 }
@@ -104,6 +107,7 @@ function biomassGain() {
     g = g.times(chitinEffect())
     g = g.times(specimenBonus())
     g = g.times(cosmicGift("biomass"))
+    g = g.times(landGift("biomass"))
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)

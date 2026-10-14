@@ -74,6 +74,15 @@ Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers us
 Side layers (never reset): **Fossil Record** (16 fossils found at milestones, +5% DNA each), **Biodiversity** (rewards variety across traits, habitats, climates, body plan, partners, behaviors and predators) and **Field Notes** (statistics).
 
 **Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
+**Row 5 (v1.4, optional bonus content, unlocked by the Tree of Life):** no resets; each layer sends a small gift to Act 3.
+
+| Prestige Tree | Life | Twist |
+|---|---|---|
+| Magic | Hormones (Ho) | **Fight or flight:** answer each situation with the right hormone; streaks pay more (Act 3 Biomass) |
+| Balance | Homeostasis (Hs) | **Plate-spinning:** keep three needs between 30 and 90 (lower Act 3 food demand) |
+| Subspace | Territory (Te) | **Border defense:** chase rivals off a 4x4 range; lost patches come back after a minute (stronger Competition) |
+| Solarity | Seasons (Yr) | **Storing for winter:** only food that lasts the winter becomes Fat (every Act 3 tier) |
+
 Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 80–90 minutes to reach land and about 70 more to finish (v1.0.2 fixed an offspring bug that had been slowing Rows 1–3), at roughly one unlock a minute for a human.
 
 ## Act 3: Species ✅ (v1.0)
@@ -98,7 +107,7 @@ A perfect bot takes about 90 minutes, with something new about every 34 seconds 
 ## Planned expansions (optional bonus content)
 1. ~~Act 3: Selection Pressures, Specimen Collection, Field Notes~~ ✅ v1.2
 2. ~~Act 1: Row 4 (Quantum Fluctuations, Matter vs. Antimatter, Stellar Winds, Dark Matter Halos) plus an Observatory museum and stats~~ ✅ v1.3
-3. Act 2: Row 5 on land (Hormones, Homeostasis, Territory, Seasons)
+3. ~~Act 2: Row 5 on land (Hormones, Homeostasis, Territory, Seasons)~~ ✅ v1.4
 
 ## Act 4: Extinction
 *Antimatter Dimensions' Infinity and Eternity, retold.*

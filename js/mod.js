@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3",
-	name: "The Wider Universe",
+	num: "1.4",
+	name: "Life on Land",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.4 - Life on Land</h3><br>
+		- Act 2 bonus content (optional): a new Row 5, unlocked by the Tree of Life. Each layer sends a small gift to Act 3.<br>
+		- Hormones: something happens, and you answer with the right hormone before the moment passes. Streaks pay more.<br>
+		- Homeostasis: keep Temperature, Water and Energy in the healthy band. Too much counts as out of balance too.<br>
+		- Territory: chase rivals off your range before they take a patch.<br>
+		- Seasons: forage all year (autumn's harvest pays 3x). Whatever food lasts the winter becomes permanent Fat.<br><br>
 	<h3>v1.3 - The Wider Universe</h3><br>
 		- Act 1 bonus content (optional): a new Row 4, unlocked by the Habitable Zone. It keeps the universe evolving alongside life, and sends small gifts to the later acts.<br>
 		- Quantum Fluctuations: cast spells for energy, DNA or Biomass. Uncertainty: they're either strong and brief or weak and long.<br>
