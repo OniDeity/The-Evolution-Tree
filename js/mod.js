@@ -13,11 +13,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.5",
-	name: "Second Nature",
+	num: "1.6",
+	name: "Balancing Act",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.6 - Balancing Act</h3><br>
+		- Act 1 rebalance: energy no longer runs away once Galaxies arrive. Galaxies now add to the Atom base instead of multiplying it, and Atoms, Inflation and Gravitational Force have stronger softcaps.<br>
+		- Row 3's last shared milestone (Stars and Planets reset nothing) needs a few more galaxies, black holes, dark energy or resilience.<br>
+		- Galaxies and Black Holes are a little cheaper. Cosmic Winter and Doomsday have higher goals.<br>
+		- Max All moved to the Q key (M is Mutations again), and it no longer buys a tier past the one below it. The tier Instincts work the same way.<br>
+		- Competition no longer makes your food demand spike.<br>
+		- Radiation founders are limited to the first 4 tiers, the only ones still around after radiating.<br>
+		- The Hunt → Rest combo did nothing; it's now Forage → Hunt.<br>
+		- Fixed offline time breaking Photosynthesis, Pulsars and Ocean Currents.<br>
+		- Fixed Habitats automation stalling when the Shoreline wasn't next to a colony.<br>
+		- A Supernova's neutrinos add to a burst that's already passing.<br>
+		- Gene Transfer milestones are in order. Act 3 autobuyers keep running after Sentience.<br><br>
 	<h3>v1.5 - Second Nature</h3><br>
 		- Everything you'd otherwise repeat forever can now be automated by a milestone:<br>
 		- Act 1: Galaxies and Black Holes form on their own; Asteroid prospecting, Quantum spells and Dark Matter weighing.<br>
