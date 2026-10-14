@@ -215,7 +215,32 @@ addLayer("a", {
         85: {
             name: "Cambrian Explosion",
             done() { return hasUpgrade("c", 34) },
-            tooltip: "Reach the end of the current content.",
+            tooltip: "Buy the Cambrian Explosion.",
+        },
+        91: {
+            name: "Ancestors",
+            done() { return player.ge.heritage.gt(0) },
+            tooltip: "Hand down your first Heritage.",
+        },
+        92: {
+            name: "Weathering the Storm",
+            done() { return [11, 12, 13, 14].every(id => getBuyableAmount("ad", id).gte(1)) },
+            tooltip: "Own an adaptation for every climate.",
+        },
+        93: {
+            name: "Black Smoker",
+            done() { return habitatCount("vent") > 0 },
+            tooltip: "Colonize a Hydrothermal Vent.",
+        },
+        94: {
+            name: "Great Barrier",
+            done() { return habitatCount("reef") >= 4 },
+            tooltip: "Colonize every Reef.",
+        },
+        95: {
+            name: "Land Ho!",
+            done() { return reachedLand() },
+            tooltip: "Crawl onto the Shoreline.",
         },
     },
 })

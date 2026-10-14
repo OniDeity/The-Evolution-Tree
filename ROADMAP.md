@@ -24,7 +24,7 @@ Endgame: **Habitable Zone** (survive every Cosmic Hazard, buy every Row 3 upgrad
 
 **Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 44 seconds on average and finishes in about 100 minutes, so a human should take roughly 2.5 hours.
 
-## Act 2: Life 🚧 (v0.6: Rows 1–2)
+## Act 2: Life 🚧 (v0.7: Rows 1–3)
 *The Prestige Tree again, at biological scale, with its own tree and its own resource (DNA).*
 Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers use rows 10+ and reset each other through `lifeReset()`, so Act 1 and Act 2 never reset each other.
 
@@ -34,13 +34,13 @@ Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers us
 | Prestige | Cells ✅ | **Carrying capacity.** Cells divide on their own and fill up to a capacity |
 | Boosters | Mutations ✅ | **Natural selection.** Each mutation offers a choice of two random traits |
 | Generators | Reproduction ✅ | **Life and death.** Offspring settle where births balance deaths; Fecundity vs. Longevity |
-| Time | Generations | |
-| Space | Habitats (Organs as buildings) | |
-| Enhance | Adaptation | |
+| Time | Generations ✅ | **Generation clock.** Each time it fills, Heritage is handed down based on cells and offspring at that moment |
+| Space | Habitats ✅ | **A map to explore.** Colonize a 5x5 sea outward from where life began; reach the Shoreline |
+| Enhance | Adaptation ✅ | **Changing climate.** Four climates cycle; each adaptation is strongest in its own |
 | Super-Boosters / Super-Gens | Multicellular / Symbiosis | |
 | Quirks / Hindrances | Instincts / Predators (Hunted, Famine, Parasites) | |
 
-Current end: **Cambrian Explosion** (needs 12 mutations and 12 broods). A perfect bot takes about 32 minutes from the start of Act 2, at one unlock every 45 seconds.
+**Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3. Current end: **Land Ho!**, colonizing a Shoreline (needs Lungs and 8 generations). A perfect bot takes about 105 minutes from the start of Act 2, at one unlock every 41 seconds.
 
 ## Act 3: Species
 *Antimatter Dimensions, retold.*

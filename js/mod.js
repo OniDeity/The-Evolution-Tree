@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.6",
-	name: "It's Alive",
+	num: "0.7",
+	name: "Out of the Water",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.7 - Out of the Water</h3><br>
+		- Act 2's second row: Generations, Adaptation and Habitats, unlocked by the Cambrian Explosion.<br>
+		- Generations: a generation clock hands down Heritage based on your cells and offspring when it fills.<br>
+		- Adaptation: the climate cycles, and each adaptation is strongest in its own climate.<br>
+		- Habitats: colonize a map of the sea, tile by tile, all the way to the Shoreline.<br>
+		- New ending: crawl onto land.<br>
+		- Added 5 achievements.<br><br>
 	<h3>v0.6 - It's Alive</h3><br>
 		- Act 2: Life has begun! Buy the Habitable Zone, then open the new Life node next to Achievements.<br>
 		- Added DNA and Cells: cells divide on their own up to a carrying capacity.<br>
@@ -66,8 +73,8 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added achievements.<br>
 		- Endgame: a habitable world.`
 
-let winText = `Single cells crowd the warm seas, swapping genes and copying themselves by the trillion.<br>
-	Then, in what is barely a blink in the long life of the Earth, they begin to stick together.<br><br>
+let winText = `A small, ugly fish heaves itself out of a tide pool, gulps the thin dry air, and does not die.<br>
+	For the first time in four billion years, something is alive on land.<br><br>
 	<b>Act 2: Life</b> continues soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -138,7 +145,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("c", 34)
+	return reachedLand()
 }
 
 

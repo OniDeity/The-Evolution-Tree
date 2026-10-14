@@ -11,7 +11,7 @@
 //  reset each other through lifeReset() instead of the usual row resets.
 // ============================================================
 
-const LIFE_LAYERS = ["c", "mu", "re"]
+const LIFE_LAYERS = ["c", "mu", "re", "ge", "ad", "hb"]
 
 function lifeUnlocked() {
     return hasUpgrade("pl", 23)
@@ -28,6 +28,7 @@ function dnaGain() {
     if (player.mu.unlocked) gain = gain.times(tmp.mu.effect)
     if (player.re.unlocked) gain = gain.times(tmp.re.offspringEffect)
     gain = gain.times(traitEffect("flagellum")).times(traitEffect("photo")).times(traitEffect("chemo"))
+    gain = gain.times(lifeBonus("dna"))
     return gain
 }
 
@@ -62,7 +63,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["c"], ["mu", "re"]]],
+        ["tree", [["c"], ["mu", "re"], ["ge", "ad", "hb"]]],
     ],
 })
 
@@ -90,6 +91,7 @@ addLayer("c", {
         let mult = new Decimal(1)
         if (hasUpgrade("c", 23)) mult = mult.times(upgradeEffect("c", 23))
         mult = mult.times(traitEffect("cilia"))
+        mult = mult.times(lifeBonus("cells"))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -100,8 +102,10 @@ addLayer("c", {
     layerShown() { return lifeUnlocked() },
     resetsNothing: true,
     onPrestige() { lifeReset(this.row) },
+    passiveGeneration() { return hasLifeRow3Milestone(1) ? 1 : 0 },
     lifeKeep(row) {
-        if (hasMilestone("mu", 0) || hasMilestone("re", 0)) return ["upgrades"]
+        if (hasLifeRow3Milestone(0)) return ["upgrades"]
+        if (row == 11 && (hasMilestone("mu", 0) || hasMilestone("re", 0))) return ["upgrades"]
         return []
     },
     capacity() {
@@ -111,6 +115,7 @@ addLayer("c", {
         if (hasUpgrade("c", 33)) k = k.times(10)
         k = k.times(traitEffect("membrane"))
         if (player.re.unlocked) k = k.times(buyableEffect("re", 12).capacity).times(player.re.points.add(1))
+        k = k.times(lifeBonus("capacity"))
         return k
     },
     divisionRate() {
@@ -118,6 +123,7 @@ addLayer("c", {
         if (hasUpgrade("c", 21)) r *= 2
         if (hasUpgrade("c", 31)) r *= 1.5
         r *= traitEffect("fission").toNumber()
+        r *= lifeBonus("division").toNumber()
         return r
     },
     // Logistic growth, solved exactly so it stays stable for any tick length:
@@ -229,7 +235,7 @@ addLayer("c", {
         },
         34: {
             title: "Cambrian Explosion",
-            description: "Life is ready to get complicated. <b>The end of the current content.</b><br>Requires 12 mutations and 12 broods.",
+            description: "Life is ready to get complicated. <b>Unlocks Generations, Adaptation and Habitats.</b><br>Requires 12 mutations and 12 broods.",
             cost: new Decimal(1e6),
             unlocked() { return hasUpgrade("c", 33) },
             canAfford() { return player.mu.points.gte(12) && player.re.points.gte(12) },
@@ -308,7 +314,13 @@ addLayer("mu", {
     ],
     layerShown() { return lifeUnlocked() && player.c.unlocked },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasMilestone("ge", 3) },
+    onPrestige() { if (!hasMilestone("ge", 3)) lifeReset(this.row) },
+    lifeKeep(row) {
+        let keep = []
+        if (hasLifeRow3Milestone(0)) keep.push("milestones", "traits")
+        return keep
+    },
     effect() { return Decimal.pow(1.3, player.mu.points) },
     effectDescription() { return "which multiply DNA gain by " + format(tmp.mu.effect) },
     tabFormat: [
@@ -395,18 +407,27 @@ addLayer("re", {
     ],
     layerShown() { return lifeUnlocked() && player.c.unlocked },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasMilestone("hb", 3) },
+    onPrestige() { if (!hasMilestone("hb", 3)) lifeReset(this.row) },
+    lifeKeep(row) {
+        let keep = []
+        if (hasLifeRow3Milestone(0)) keep.push("milestones", "buyables")
+        return keep
+    },
     births() {
-        return Decimal.pow(2, player.re.points).sub(1).times(buyableEffect("re", 11))
+        return Decimal.pow(2, player.re.points).sub(1).times(buyableEffect("re", 11)).times(lifeBonus("births"))
     },
     lifespan() {
-        return new Decimal(20).times(buyableEffect("re", 12).lifespan).times(traitEffect("toxin"))
+        return new Decimal(20).times(buyableEffect("re", 12).lifespan).times(traitEffect("toxin")).times(lifeBonus("lifespan"))
     },
     equilibrium() {
         return tmp.re.births.times(tmp.re.lifespan)
     },
     offspringEffect() {
         return player.re.offspring.add(1).pow(0.15)
+    },
+    automate() {
+        if (hasLifeRow3Milestone(2)) buyBuyable("re", getBuyableAmount("re", 11).lte(getBuyableAmount("re", 12)) ? 11 : 12)
     },
     // Births add offspring and deaths remove them: dO/dt = births - O / lifespan, solved exactly
     update(diff) {
