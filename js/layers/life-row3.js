@@ -35,6 +35,7 @@ function lifeRow3Milestones(resource, extra) {
 function lifeBonus(kind) {
     let b = new Decimal(1)
     if (player.mc) b = b.times(lifeRow4Bonus(kind)).times(predatorPenalty(kind))
+    if (player.bd) b = b.times(biodiversityBonus(kind))
     if (!player.ge || !lifeRow3Unlocked()) return b
     if (kind == "dna") {
         b = b.times(heritageEffect().dna)
@@ -127,6 +128,7 @@ addLayer("ge", {
             player.ge.progress -= passed * len
             player.ge.lastGift = tmp.ge.heritagePerGeneration
             player.ge.heritage = player.ge.heritage.add(tmp.ge.heritagePerGeneration.times(passed))
+            player.fn.generations += passed
         }
     },
     effectDescription() {

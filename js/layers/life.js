@@ -17,6 +17,8 @@ function lifeUnlocked() {
     return hasUpgrade("pl", 23)
 }
 
+const DNA_PACING = 0.93
+
 function dnaGain() {
     if (!lifeUnlocked() || !hasUpgrade("c", 11)) return new Decimal(0)
     let gain = new Decimal(1)
@@ -29,13 +31,15 @@ function dnaGain() {
     if (player.re.unlocked) gain = gain.times(tmp.re.offspringEffect)
     gain = gain.times(traitEffect("flagellum")).times(traitEffect("photo")).times(traitEffect("chemo"))
     gain = gain.times(lifeBonus("dna"))
-    return gain
+    // Pacing: stretches Act 2 evenly so something new unlocks about once a minute
+    return gain.max(1).pow(DNA_PACING)
 }
 
 // Prestiging in Act 2 resets DNA and every Act 2 layer in a lower row, keeping what that layer's milestones protect
 function lifeReset(row) {
     // Like energy in Act 1: a Cell reset empties your DNA, higher resets leave you 10 to start over with
     player.dna = new Decimal(row > 10 ? 10 : 0)
+    if (player.fn) player.fn.resets[row] = (player.fn.resets[row] || 0) + 1
     for (let l of LIFE_LAYERS) {
         if (layers[l].row >= row) continue
         let keep = layers[l].lifeKeep ? layers[l].lifeKeep(row) : []
@@ -79,7 +83,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["c"], ["mu", "re"], ["ge", "ad", "hb"], ["mc", "in", "pr", "sy"]]],
+        ["tree", [["fo", "bd", "fn"], ["c"], ["mu", "re"], ["ge", "ad", "hb"], ["mc", "in", "pr", "sy"]]],
     ],
 })
 

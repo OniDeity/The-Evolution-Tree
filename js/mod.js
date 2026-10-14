@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.8",
-	name: "The Tree of Life",
+	num: "0.9",
+	name: "Natural History",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.9 - Natural History</h3><br>
+		- Added three side layers to the Life tree. They never reset.<br>
+		- Fossil Record: a museum of 16 fossils found by reaching milestones, each with a little history. Every fossil boosts DNA.<br>
+		- Biodiversity: rewards variety, counting the different kinds of things you've collected.<br>
+		- Field Notes: statistics for Act 2.<br>
+		- Rebalanced Act 2 to about one new thing a minute: slower DNA overall, retuned predator goals.<br><br>
 	<h3>v0.8 - The Tree of Life</h3><br>
 		- Act 2 is complete! Its final row unlocks once you reach land.<br>
 		- Multicellular: build a body plan, one exclusive choice per tier.<br>

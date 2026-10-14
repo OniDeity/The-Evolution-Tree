@@ -42,8 +42,10 @@ Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers us
 | Quirks | Instincts ✅ | **Daily routine.** Behaviors in slots cycle; only the active one counts; Rest and combos boost the next |
 | Hindrances | Predators ✅ | **Arms race.** Hunted, Famine and Parasites, each winnable 3 times with rising goals and rewards |
 
+Side layers (never reset): **Fossil Record** (16 fossils found at milestones, +5% DNA each), **Biodiversity** (rewards variety across traits, habitats, climates, body plan, partners, behaviors and predators) and **Field Notes** (statistics).
+
 **Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
-Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 96 minutes to reach land and 83 more to finish, about 3 hours in all, so a human should take roughly 4–5 hours.
+Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 150 minutes to reach land and 70 more to finish, about 3.6 hours in all, at roughly one unlock a minute for a human (about 5–6 hours).
 
 ## Act 3: Species
 *Antimatter Dimensions, retold.*

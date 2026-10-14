@@ -222,6 +222,7 @@ function giveGift(id) {
     let s = SYMBIONTS[id]
     player.sy.bonds[id] += giftBond(id)
     s.set(s.get().div(2))
+    player.fn.gifts++
 }
 
 addLayer("sy", {
@@ -470,7 +471,7 @@ function predatorGoal(id) {
 }
 
 // log10 of the DNA goal for each win (first, second, third)
-const PREDATOR_GOALS = { 11: [68, 95, 115], 12: [78, 100, 118], 21: [105, 118, 128] }
+const PREDATOR_GOALS = { 11: [60, 85, 110], 12: [66, 95, 115], 21: [88, 112, 120] }
 
 addLayer("pr", {
     name: "predators",
