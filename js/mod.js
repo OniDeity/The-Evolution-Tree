@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0",
+	num: "1.0.1",
 	name: "Origin of Species",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.0.1</h3><br>
+		- Habitats: Abandon mode. Free up colonists from tiles you've settled and place them somewhere else.<br>
+		- Habitats now reminds you that the Shoreline needs 3 free colonists.<br><br>
 	<h3>v1.0 - Origin of Species</h3><br>
 		- Act 3: Species has begun! Finish the Tree of Life, then open the new Species node.<br>
 		- Species tiers: 8 tiers from Bacteria to Humans, each making the one below it. The food pyramid: a tier starves if the tier below it has fewer purchases.<br>

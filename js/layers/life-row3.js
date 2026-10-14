@@ -393,6 +393,24 @@ function canColonize(id) {
     return true
 }
 
+// Abandon mode: free a tile's colonists, as long as every other tile stays connected to the Birthplace
+function abandonBlocker(id) {
+    if (!player.hb.grid[id]) return "Not colonized"
+    let type = habitatType(id)
+    if (type == "start") return "Life began here"
+    if (type == "shore" && habitatCount("shore") <= 1) return "Your only foothold on land"
+    let seen = { 303: true }, queue = [303]
+    while (queue.length) {
+        let cur = queue.pop(), r = Math.floor(cur / 100), c = cur % 100
+        for (let [rr, cc] of [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]) {
+            let n = rr * 100 + cc
+            if (n != id && player.hb.grid[n] && !seen[n]) { seen[n] = true; queue.push(n) }
+        }
+    }
+    for (let other in player.hb.grid) if (player.hb.grid[other] && Number(other) != id && !seen[other]) return "Would cut off other tiles"
+    return ""
+}
+
 function reachedLand() {
     return habitatCount("shore") > 0
 }
@@ -406,6 +424,7 @@ addLayer("hb", {
         points: new Decimal(0),
         best: new Decimal(0),
         total: new Decimal(0),
+        abandon: false,
     }},
     color: "#3a7bd5",
     requires: new Decimal(1e13),
@@ -434,11 +453,15 @@ addLayer("hb", {
         cols: 5,
         getStartData(id) { return id == 303 },
         getUnlocked() { return true },
-        getCanClick(data, id) { return canColonize(id) },
-        onClick(data, id) { player.hb.grid[id] = true },
+        getCanClick(data, id) { return player.hb.abandon ? abandonBlocker(id) == "" : canColonize(id) },
+        onClick(data, id) { player.hb.grid[id] = !player.hb.abandon },
         getTitle(data, id) { return HABITAT_TYPES[habitatType(id)].name },
         getDisplay(data, id) {
             let t = HABITAT_TYPES[habitatType(id)]
+            if (data && player.hb.abandon) {
+                let why = abandonBlocker(id)
+                return why ? "<i>" + why + "</i>" : "<b>Tap to abandon</b><br>Frees " + habitatCost(id) + " colonist" + (habitatCost(id) > 1 ? "s" : "")
+            }
             if (data) return habitatType(id) == "start" ? t.text : "Colonized<br>" + t.text
             if (!nextToColony(id)) return "Too far away"
             return t.text + "<br>Cost: " + habitatCost(id) + " colonist" + (habitatCost(id) > 1 ? "s" : "")
@@ -449,7 +472,7 @@ addLayer("hb", {
                 width: "min(17vw, 92px)", height: "min(17vw, 92px)", "font-size": "9px", "border-radius": "8px", overflow: "hidden", padding: "2px",
                 "background-color": data ? t.color : (nextToColony(id) ? "#333" : "#1a1a1a"),
                 color: data && ["deep", "open"].includes(habitatType(id)) ? "white" : (data ? "black" : "#bbb"),
-                border: "2px solid " + t.color,
+                border: "2px solid " + (player.hb.abandon && data && abandonBlocker(id) == "" ? "#e74c3c" : t.color),
                 opacity: data || nextToColony(id) ? 1 : 0.5,
             }
         },
@@ -461,8 +484,11 @@ addLayer("hb", {
         "blank",
         ["display-text", function() {
             return "<h3>The Shallow Sea</h3><br>Spread outward from where life began. You can only colonize next to tiles you already hold.<br>" +
-                "Free colonists: <b>" + formatWhole(Math.max(0, freeColonists())) + "</b>"
+                "Free colonists: <b>" + formatWhole(Math.max(0, freeColonists())) + "</b>" +
+                (reachedLand() ? "" : "<br><i>The Shoreline needs 3 free colonists. If yours are all settled, abandon a few tiles to free them up.</i>")
         }],
+        "blank",
+        "clickables",
         "blank",
         "grid",
         "blank",
@@ -470,6 +496,15 @@ addLayer("hb", {
         "blank",
         "milestones",
     ],
+    clickables: {
+        11: {
+            title() { return "Abandon mode: " + (player.hb.abandon ? "ON" : "OFF") },
+            display() { return player.hb.abandon ? "Tap a colonized tile to free its colonists. Tap here when you're done." : "Turn on to move colonists. Abandoning is free." },
+            canClick() { return true },
+            onClick() { player.hb.abandon = !player.hb.abandon },
+            style() { return { width: "220px", "min-height": "70px", height: "70px", "background-color": player.hb.abandon ? "#e74c3c" : "#3a7bd5", color: "white" } },
+        },
+    },
     milestones: lifeRow3Milestones("colonists", {
         3: {
             requirementDescription: "5 colonists",
