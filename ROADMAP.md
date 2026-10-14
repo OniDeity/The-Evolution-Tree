@@ -47,12 +47,22 @@ Side layers (never reset): **Fossil Record** (16 fossils found at milestones, +5
 **Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
 Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 150 minutes to reach land and 70 more to finish, about 3.6 hours in all, at roughly one unlock a minute for a human (about 5–6 hours).
 
-## Act 3: Species
-*Antimatter Dimensions, retold.*
+## Act 3: Species ✅ (v1.0)
+*Antimatter Dimensions, retold, with its own tree and its own resource (Biomass).*
+Opened from the **Species** node once the Tree of Life is bought. Act 3 layers use rows 20+ and reset each other through `speciesReset()`.
 
-- 8 Dimensions → **8 Species tiers**: Bacteria → Fish → Amphibians → Reptiles → Birds → Mammals → Primates → Humans
-- Tickspeed → **Metabolism**
-- Dimension Boosts / Galaxies → **Speciation / Adaptive Radiation**
+| Antimatter Dimensions | Species | Twist |
+|---|---|---|
+| Antimatter | Biomass | |
+| 8 Dimensions | Species tiers (Ti): Bacteria → Fish → Amphibians → Reptiles → Birds → Mammals → Primates → Humans | **The food pyramid.** A tier starves (half strength) if the tier below has fewer purchases |
+| Tickspeed | Metabolism (Me) | **Food demand.** Each level eats a growing share of Biomass; more Bacteria move the sweet spot up |
+| Dimension Boosts | Speciation (Sn) | **Keystone species.** Each speciation doubles one chosen tier a second time |
+| Antimatter Galaxies | Adaptive Radiation (Ar) | **The founder effect.** One chosen tier keeps 10% of its population |
+| Dimensional Sacrifice | Competition (Cu) | **Choose the winner.** Any tier can out-compete everything below it |
+| Infinity | The Spark of Sentience (1.8e308 Biomass) | |
+
+Plus 16 **Evolutionary milestones** (permanent Biomass upgrades) and 10 achievements (+5% to every tier each).
+A perfect bot takes about 90 minutes, with something new about every 34 seconds (roughly 70 seconds for a human).
 
 ## Act 4: Extinction
 *Antimatter Dimensions' Infinity and Eternity, retold.*

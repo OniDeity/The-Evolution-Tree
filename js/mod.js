@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/species.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.9",
-	name: "Natural History",
+	num: "1.0",
+	name: "Origin of Species",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.0 - Origin of Species</h3><br>
+		- Act 3: Species has begun! Finish the Tree of Life, then open the new Species node.<br>
+		- Species tiers: 8 tiers from Bacteria to Humans, each making the one below it. The food pyramid: a tier starves if the tier below it has fewer purchases.<br>
+		- Metabolism: speeds up every tier, but eats a growing share of your Biomass.<br>
+		- Speciation: unlocks new tiers and doubles everything. Pick a keystone tier to double again.<br>
+		- Adaptive Radiation: a stronger, cheaper-to-feed Metabolism. Pick a founder tier that keeps 10% of its population.<br>
+		- Competition: pick a winner, and every tier below it is wiped out to boost it.<br>
+		- Evolutionary milestones: 16 permanent upgrades bought with Biomass.<br>
+		- New ending: the Spark of Sentience, at 1.8e308 Biomass.<br>
+		- Added 10 Act 3 achievements. Each makes every species tier 5% stronger.<br><br>
 	<h3>v0.9 - Natural History</h3><br>
 		- Added three side layers to the Life tree. They never reset.<br>
 		- Fossil Record: a museum of 16 fossils found by reaching milestones, each with a little history. Every fossil boosts DNA.<br>
@@ -92,9 +102,8 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added achievements.<br>
 		- Endgame: a habitable world.`
 
-let winText = `From one warm drop of chemistry to forests, reefs and things that walk, the Tree of Life has branched into every corner of the world.<br>
-	Somewhere among those branches, a few species are beginning to get clever.<br><br>
-	<b>Act 2: Life is complete.</b> Act 3: Species is coming soon...`
+let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid, until one strange ape looked up at the stars and wondered where it all came from.<br><br>
+	<b>Act 3: Species is complete.</b> Act 4: Extinction is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -143,12 +152,14 @@ function getPointGen() {
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 	dna: new Decimal(0),
+	biomass: new Decimal(0),
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
 	function() { return cosmicEra() },
 	function() { return lifeUnlocked() ? "<span style='color:#7ed957'>" + format(player.dna) + " DNA (+" + format(dnaGain()) + "/sec)</span>" : "" },
+	function() { return speciesUnlocked() ? "<span style='color:#e0c068'>" + format(player.biomass) + " Biomass (+" + format(biomassGain()) + "/sec)</span>" : "" },
 ]
 
 function cosmicEra() {
@@ -164,7 +175,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("mc", 11)
+	return player.ti.sentient
 }
 
 

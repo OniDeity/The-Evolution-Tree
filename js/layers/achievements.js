@@ -267,5 +267,55 @@ addLayer("a", {
             done() { return hasUpgrade("mc", 11) },
             tooltip: "Finish Act 2.",
         },
+        111: {
+            name: "Primordial Soup",
+            done() { return tierBought(1).gte(1) },
+            tooltip: "Buy your first Bacteria. Each Act 3 achievement makes every species tier 5% stronger.",
+        },
+        112: {
+            name: "Food Chain",
+            done() { return tierBought(4).gte(1) },
+            tooltip: "Buy a Reptile.",
+        },
+        113: {
+            name: "Origin of Species",
+            done() { return player.sn.points.gte(1) },
+            tooltip: "Speciate.",
+        },
+        114: {
+            name: "Fast Living",
+            done() { return metabolismLevel().gte(25) },
+            tooltip: "Reach Metabolism level 25.",
+        },
+        115: {
+            name: "Survival of the Fittest",
+            done() { return player.cu.mults.some(m => m && m.gte(2)) },
+            tooltip: "Get a Competition boost of x2 or more on one tier.",
+        },
+        121: {
+            name: "Hello, Humans",
+            done() { return tierBought(8).gte(1) },
+            tooltip: "Buy a Human.",
+        },
+        122: {
+            name: "Darwin's Finches",
+            done() { return player.ar.points.gte(1) },
+            tooltip: "Radiate.",
+        },
+        123: {
+            name: "No Vacancies",
+            done() { return [1, 2, 3, 4, 5, 6, 7, 8].every(t => tierBought(t).gte(100)) },
+            tooltip: "Have 100 of every tier bought at once.",
+        },
+        124: {
+            name: "Planet of the Apes",
+            done() { return player.biomass.gte("1e200") },
+            tooltip: "Reach 1e200 Biomass.",
+        },
+        125: {
+            name: "I Think, Therefore I Am",
+            done() { return player.ti.sentient },
+            tooltip: "Spark sentience and finish Act 3.",
+        },
     },
 })
