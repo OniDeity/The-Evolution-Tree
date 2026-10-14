@@ -3,6 +3,24 @@
 Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
 The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
 
+## Branches (v1.1)
+Every act's tree has small branch layers further out: modest helpers with a little minigame for when you hit a wall. They never reset and are not part of the retold game.
+
+| Act | Branch | Hangs off | Minigame | Helps |
+|---|---|---|---|---|
+| 1 | Neutrinos | Particles | Catch random bursts before they pass (Supernovae send big ones) | Energy |
+| 1 | Pulsars | Stars | Tap on the beat to build a streak | Starlight |
+| 1 | Asteroid Belt | Planets | Pick 3 of 9 asteroids, hoping for rich ore | Cheaper planets |
+| 2 | Photosynthesis | Cells | Vent Oxygen into Banded Iron before it overflows | DNA |
+| 2 | Gene Transfer | Mutations | Spend plasmids to pick up traits you passed on in the draft | Traits (a quarter copy each) |
+| 2 | Eggs | Reproduction | Clutch size vs incubation time | Births |
+| 2 | Ocean Currents | Habitats | The current turns every 30 s; steer it toward your tiles | Cheaper colonists |
+| 3 | Insects | Tiers | Harvest the boom-and-bust swarm near its peak | Biomass |
+| 3 | Coal | Metabolism | Bury Biomass right before a reset; dig it up as Coal | Lower food demand |
+| 3 | Coevolution | Speciation | Keep predators and prey in balance | Every tier |
+
+With perfect play the branches make each act roughly 10–20% faster for the bot.
+
 ## Act 1: The Cosmos ✅ (v0.5)
 *The Prestige Tree, retold from the Big Bang to the first habitable world.*
 
@@ -45,7 +63,7 @@ Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers us
 Side layers (never reset): **Fossil Record** (16 fossils found at milestones, +5% DNA each), **Biodiversity** (rewards variety across traits, habitats, climates, body plan, partners, behaviors and predators) and **Field Notes** (statistics).
 
 **Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
-Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 150 minutes to reach land and 70 more to finish, about 3.6 hours in all, at roughly one unlock a minute for a human (about 5–6 hours).
+Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 80–90 minutes to reach land and about 70 more to finish (v1.0.2 fixed an offspring bug that had been slowing Rows 1–3), at roughly one unlock a minute for a human.
 
 ## Act 3: Species ✅ (v1.0)
 *Antimatter Dimensions, retold, with its own tree and its own resource (Biomass).*

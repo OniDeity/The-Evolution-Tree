@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/species.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/species.js", "layers/species-branches.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0.2",
-	name: "Origin of Species",
+	num: "1.1",
+	name: "Branching Out",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.1 - Branching Out</h3><br>
+		- New branches on every tree: small helper layers with something to do while you wait out a wall. They never reset.<br>
+		- Act 1: Neutrinos (catch bursts), Pulsars (tap on the beat) and the Asteroid Belt (prospect for rich ore).<br>
+		- Act 2: Photosynthesis (vent Oxygen before it overflows), Gene Transfer (pick up traits you passed on), Eggs (clutch timing) and Ocean Currents (Drift makes colonists cheaper).<br>
+		- Act 3: Insects (harvest the swarm at its peak), Coal (bury Biomass before you reset) and Coevolution (keep the arms race balanced).<br><br>
 	<h3>v1.0.2</h3><br>
 		- Fixed offspring barely growing (or sitting at 0) once they live a long time.<br><br>
 	<h3>v1.0.1</h3><br>
@@ -148,6 +153,8 @@ function getPointGen() {
 	if (hasUpgrade("hz", 11)) gain = gain.times(upgradeEffect("hz", 11))
 	if (player.de.unlocked) gain = gain.times(tmp.de.expansionEffect)
 	if (hasChallenge("hz", 12)) gain = gain.times(challengeEffect("hz", 12))
+	gain = gain.times(neutrinoEffect())
+	if (hasMilestone("as", 2)) gain = gain.times(1.5)
 	// Pacing: stretches the whole act evenly so something new unlocks about once a minute
 	gain = gain.max(1).pow(ENERGY_PACING)
 	if (inChallenge("hz", 12)) gain = gain.max(1).pow(0.5)

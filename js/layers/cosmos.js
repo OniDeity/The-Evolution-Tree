@@ -103,6 +103,7 @@ addLayer("p", {
         if (player.fu.unlocked) mult = mult.times(buyableEffect("fu", 11).particles)
         if (hasUpgrade("pl", 22)) mult = mult.times(upgradeEffect("pl", 22))
         mult = mult.times(orbitEffect("outer"))
+        if (hasMilestone("nu", 0)) mult = mult.times(1.25)
         return mult
     },
     gainExp() {
@@ -723,6 +724,7 @@ addLayer("st", {
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade("ga", 23)) mult = mult.div(upgradeEffect("ga", 23))
+        if (hasMilestone("ps", 0)) mult = mult.div(1.5)
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -764,6 +766,9 @@ addLayer("st", {
             onClick() {
                 player.st.heavy = player.st.heavy.add(tmp.st.supernovaGain)
                 player.st.points = new Decimal(0)
+                // A supernova sends a big burst of neutrinos
+                if (tmp.nu.layerShown && !hasMilestone("nu", 2)) startBurst(10)
+                else if (tmp.nu.layerShown) player.nu.caught = player.nu.caught.add(10)
             },
             style() { return { width: "220px", height: "140px" } },
         },
@@ -785,6 +790,7 @@ addLayer("st", {
         if (hasUpgrade("de", 22)) gain = gain.times(upgradeEffect("de", 22))
         if (hasUpgrade("st", 24)) gain = gain.times(2)
         if (player.ga.unlocked) gain = gain.times(galaxyShapeEffect("spiral"))
+        gain = gain.times(pulsarEffect())
         return gain
     },
     starlightEffect() {
@@ -1150,6 +1156,7 @@ addLayer("pl", {
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade("bh", 22)) mult = mult.div(upgradeEffect("bh", 22))
+        mult = mult.div(asteroidEffect())
         return mult
     },
     gainExp() { return new Decimal(1) },

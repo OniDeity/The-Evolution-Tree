@@ -83,7 +83,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["fo", "bd", "fn"], ["c"], ["mu", "re"], ["ge", "ad", "hb"], ["mc", "in", "pr", "sy"]]],
+        ["tree", [["fo", "bd", "fn"], ["c", "ph"], ["gt", "mu", "re", "eg"], ["ge", "ad", "hb", "oc"], ["mc", "in", "pr", "sy"]]],
     ],
 })
 
@@ -286,7 +286,14 @@ function effectiveTraitLevel(n) {
 
 function traitEffect(id) {
     if (!player.mu || !player.mu.traits) return new Decimal(1)
-    return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0))
+    return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0) + borrowedLevel(id))
+}
+
+// Take one of the two traits on offer; the other drifts into the Gene Transfer pool
+function pickTrait(n) {
+    let offers = traitOffers()
+    player.mu.traits[offers[n]]++
+    passTrait(offers[1 - n])
 }
 
 function traitsPicked() {
@@ -330,7 +337,7 @@ addLayer("mu", {
     type: "static",
     base: 3,
     exponent: 1.2,
-    gainMult() { return new Decimal(1).div(traitEffect("repair")) },
+    gainMult() { return new Decimal(1).div(traitEffect("repair")).div(hasMilestone("gt", 0) ? 1.25 : 1) },
     gainExp() { return new Decimal(1) },
     canBuyMax() { return hasMilestone("mu", 1) },
     row: 11,
@@ -382,7 +389,7 @@ addLayer("mu", {
                 return TRAITS[id].text + "<br><br>You have: " + (player.mu.traits[id] || 0)
             },
             canClick() { return pendingTraits() > 0 },
-            onClick() { player.mu.traits[traitOffers()[n]]++ },
+            onClick() { pickTrait(n) },
             style() { return { width: "200px", height: "150px" } },
         },
     })), {
@@ -391,7 +398,7 @@ addLayer("mu", {
             display() { return "Take the first offer for all " + pendingTraits() + " traits you have waiting." },
             unlocked() { return pendingTraits() >= 5 },
             canClick() { return pendingTraits() > 0 },
-            onClick() { while (pendingTraits() > 0) player.mu.traits[traitOffers()[0]]++ },
+            onClick() { while (pendingTraits() > 0) pickTrait(0) },
             style() { return { width: "200px", height: "80px" } },
         },
     }),

@@ -55,6 +55,7 @@ function tierMult(t) {
     if (tierStarving(t)) m = m.times(hasUpgrade("ti", 14) ? 0.75 : 0.5)
     m = m.times(speciesAchievementBonus())
     m = m.times(evolutionBonus(t))
+    m = m.times(coevolutionEffect())
     return m
 }
 
@@ -82,6 +83,7 @@ function foodDemandScale() {
     if (hasUpgrade("me", 12)) k /= 2
     if (hasUpgrade("me", 13)) k /= 2
     if (hasUpgrade("ti", 32)) k *= 0.8
+    k /= coalDemandDivider()
     return k
 }
 
@@ -96,6 +98,7 @@ function biomassGain() {
     g = g.times(player.dna.add(1).log10().div(100).add(1))
     if (hasUpgrade("ti", 34)) g = g.times(upgradeEffect("ti", 34))
     if (hasUpgrade("ti", 43)) g = g.times(upgradeEffect("ti", 43))
+    g = g.times(chitinEffect())
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (player.ti.amounts[1].eq(0)) g = new Decimal(0)
@@ -122,7 +125,7 @@ addLayer("species", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#e0c068'>Act 3: Species</h2><br>You have <h2 style='color:#e0c068;text-shadow:0 0 10px #e0c068'>" + format(player.biomass) + "</h2> Biomass (+" + format(biomassGain()) + "/sec)" }],
         "blank",
-        ["tree", [["ti"], ["me", "sn"], ["cu", "ar"]]],
+        ["tree", [["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar"]]],
     ],
 })
 
@@ -258,6 +261,7 @@ function evoUpgrade(title, description, cost, effect) {
 function evolutionBonus(t) {
     let m = new Decimal(1)
     if (t == 1 && hasUpgrade("ti", 11)) m = m.times(3)
+    if (t == 1 && hasMilestone("ix", 0)) m = m.times(2)
     if ((t == 2 || t == 3) && hasUpgrade("ti", 12)) m = m.times(2)
     if (t == 4 && hasUpgrade("ti", 13)) m = m.times(upgradeEffect("ti", 13))
     if (t == 6 && hasUpgrade("ti", 21)) m = m.times(3)
