@@ -288,7 +288,7 @@ addLayer("a", {
             tooltip: "Reach Metabolism level 25.",
         },
         115: {
-            name: "Survival of the Fittest",
+            name: "Winner Takes All",
             done() { return player.cu.mults.some(m => m && m.gte(2)) },
             tooltip: "Get a Competition boost of x2 or more on one tier.",
         },

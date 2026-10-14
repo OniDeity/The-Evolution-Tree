@@ -52,11 +52,9 @@ function pressuresBeaten() {
 function runInstincts() {
     if (instinctOn("me")) for (let i = 0; i < 100 && metabolismWorthIt() && layers.me.buyables[11].canAfford(); i++) layers.me.buyables[11].buy()
     let tierKeys = { 1: "t12", 2: "t12", 3: "t34", 4: "t34", 5: "t56", 6: "t56", 7: "t78", 8: "t78" }
-    for (let t = tiersUnlocked(); t >= 1; t--) {
-        if (!instinctOn(tierKeys[t])) continue
-        for (let i = 0; i < 100 && player.biomass.gte(costUntil10(t)); i++) buyUntil10(t)
-        for (let i = 0; i < 10 && layers.ti.buyables[10 + t].canAfford(); i++) layers.ti.buyables[10 + t].buy()
-    }
+    let tiers = []
+    for (let t = tiersUnlocked(); t >= 1; t--) if (instinctOn(tierKeys[t])) tiers.push(t)
+    buyTiers(tiers)
     if (instinctOn("cu") && tmp.cu.layerShown && competitionGain(player.cu.winner).gte(2) && layers.cu.clickables[91].canClick()) layers.cu.clickables[91].onClick()
     if (instinctOn("ar") && layers.ar.clickables[91].canClick()) layers.ar.clickables[91].onClick()
     else if (instinctOn("sn") && layers.sn.clickables[91].canClick()) layers.sn.clickables[91].onClick()
@@ -82,7 +80,7 @@ addLayer("pz", {
     },
     automate() {
         if (!speciesUnlocked()) return
-        if (!player.ti.sentient) runInstincts()
+        runInstincts()
         if (hasMilestone("pz", 0)) for (let l of ["ti", "me"]) for (let id in layers[l].upgrades) if (!isNaN(id)) buyUpg(l, id)
     },
     milestones: {

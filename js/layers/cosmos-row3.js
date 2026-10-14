@@ -26,15 +26,19 @@ function requireOwned(layer, noun, upgrades) {
     return upgrades
 }
 
+const ROW3_REQS = { ga: [1, 2, 6], bh: [1, 2, 6], de: [1, 3, 30], hz: [1, 3, 20] }
+
 function row3UpgradesDone() {
     return ["ga", "bh", "de", "hz"].every(l => Object.keys(layers[l].upgrades).filter(id => !isNaN(id)).every(id => hasUpgrade(l, id)))
 }
 
-function row3Milestones(resource, extra) {
+// reqs: how many of this layer's resource each shared milestone needs. The last one (stars and planets
+// resetting nothing) is what lets energy take off, so it comes a little later.
+function row3Milestones(resource, reqs, extra) {
     let shared = [
-        [1, "Keep Row 2 milestones on all resets."],
-        [2, "Keep Row 2 upgrades on all resets."],
-        [3, "Automatically gain stars and planets, and they reset nothing. Stars go supernova on their own when that would at least double your Heavy Elements."],
+        [reqs[0], "Keep Row 2 milestones on all resets."],
+        [reqs[1], "Keep Row 2 upgrades on all resets."],
+        [reqs[2], "Automatically gain stars and planets, and they reset nothing. Stars go supernova on their own when that would at least double your Heavy Elements."],
     ]
     let m = {}
     shared.forEach(([req, text], id) => {
@@ -46,6 +50,9 @@ function row3Milestones(resource, extra) {
     })
     return Object.assign(m, extra)
 }
+
+// Galaxies add to the Atom base (multiplying it made energy run away)
+const GALAXY_ATOM_BASE = 0.25
 
 const GALAXY_SHAPES = {
     spiral: { name: "Spiral", look: "Bright arms full of young stars", text: "Multiply Starlight gain.", show: x => format(x) + "x" },
@@ -81,7 +88,7 @@ addLayer("ga", {
     baseResource: "atoms",
     baseAmount() { return player.at.points },
     type: "static",
-    base: 1.04,
+    base: 1.035,
     exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
@@ -94,10 +101,10 @@ addLayer("ga", {
     ],
     layerShown() { return player.st.unlocked },
     effect() {
-        return player.ga.points.times(hasUpgrade("ga", 22) ? 0.25 : 0.2).add(1)
+        return player.ga.points.times(hasUpgrade("ga", 22) ? GALAXY_ATOM_BASE * 1.5 : GALAXY_ATOM_BASE)
     },
     effectDescription() {
-        return "which multiply the Atom base by " + format(tmp.ga.effect)
+        return "which add " + format(tmp.ga.effect) + " to the Atom base"
     },
     // Each galaxy takes the shape you picked before it formed, and keeps it.
     onPrestige(gain) {
@@ -134,7 +141,7 @@ addLayer("ga", {
         "milestones",
         "upgrades",
     ],
-    milestones: row3Milestones("galaxies", {
+    milestones: row3Milestones("galaxies", ROW3_REQS.ga, {
         3: {
             requirementDescription: "5 galaxies",
             effectDescription: "You can buy max galaxies.",
@@ -231,7 +238,7 @@ addLayer("bh", {
     baseResource: "gravity wells",
     baseAmount() { return player.gr.points },
     type: "static",
-    base: 1.04,
+    base: 1.035,
     exponent: 1.2,
     gainMult() { return new Decimal(1) },
     gainExp() { return new Decimal(1) },
@@ -278,7 +285,7 @@ addLayer("bh", {
         "milestones",
         "upgrades",
     ],
-    milestones: row3Milestones("black holes", {
+    milestones: row3Milestones("black holes", ROW3_REQS.bh, {
         3: {
             requirementDescription: "5 black holes",
             effectDescription: "You can buy max black holes.",
@@ -429,7 +436,7 @@ addLayer("de", {
         "blank",
         "upgrades",
     ],
-    milestones: row3Milestones("dark energy", {
+    milestones: row3Milestones("dark energy", ROW3_REQS.de, {
         3: {
             requirementDescription: "25 dark energy",
             effectDescription: "Gain 10% of your Dark Energy gain every second.",
@@ -600,7 +607,7 @@ addLayer("hz", {
             unlocked() { return hasUpgrade("hz", 13) },
         },
     },
-    milestones: row3Milestones("resilience", {
+    milestones: row3Milestones("resilience", ROW3_REQS.hz, {
         3: {
             requirementDescription: "10 resilience",
             effectDescription: "Gain 10% of your Resilience gain every second.",
@@ -647,8 +654,8 @@ addLayer("hz", {
             name: "Cosmic Winter",
             challengeDescription: "<b>Combined hazard:</b> Big Crunch and Heat Death at the same time.",
             countsAs: [12, 21],
-            goalDescription: "1e26 energy",
-            canComplete() { return player.points.gte(1e26) },
+            goalDescription: "1e55 energy",
+            canComplete() { return player.points.gte(1e55) },
             rewardDescription: "Supernovas give 3x Heavy Elements.",
             unlocked() { return hasChallenge("hz", 22) },
         },
@@ -656,8 +663,8 @@ addLayer("hz", {
             name: "Doomsday",
             challengeDescription: "<b>Combined hazard:</b> Gamma-Ray Burst and Vacuum Decay at the same time.",
             countsAs: [11, 22],
-            goalDescription: "1e85 energy",
-            canComplete() { return player.points.gte(1e85) },
+            goalDescription: "1e110 energy",
+            canComplete() { return player.points.gte(1e110) },
             rewardDescription: "Black holes spin up 3x faster.",
             unlocked() { return hasChallenge("hz", 31) },
         },

@@ -60,7 +60,8 @@ addLayer("ph", {
     update(diff) {
         if (!tmp.ph.layerShown) return
         player.ph.oxygen += 100 * diff / oxygenFillTime()
-        if (hasMilestone("ph", 2) && player.ph.oxygen >= 75) ventOxygen()
+        // A long tick (like offline time) can overshoot, so never vent more than the meter holds
+        if (hasMilestone("ph", 2) && player.ph.oxygen >= 75) { player.ph.oxygen = 75; ventOxygen() }
         if (player.ph.oxygen >= 100) { player.ph.oxygen = 0; player.ph.lost++ }
     },
     bars: {
@@ -159,12 +160,12 @@ addLayer("gt", {
     tooltip() { return player.gt.plasmids + " plasmids" },
     update(diff) {
         if (!tmp.gt.layerShown) return
-        if (hasMilestone("gt", 3)) {
+        if (hasMilestone("gt", 2)) {
             let best = -1
             player.gt.pool.forEach((id, i) => { if (canAbsorb(i) && (best < 0 || (player.gt.genes[id] || 0) < (player.gt.genes[player.gt.pool[best]] || 0))) best = i })
             if (best >= 0) layers.gt.clickables[11 + best].onClick()
         }
-        let cap = hasMilestone("gt", 2) ? 5 : 3
+        let cap = hasMilestone("gt", 3) ? 5 : 3
         if (player.gt.plasmids >= cap) return
         player.gt.progress += diff / plasmidTime()
         if (player.gt.progress >= 1) { player.gt.progress = 0; player.gt.plasmids++ }
@@ -201,12 +202,12 @@ addLayer("gt", {
     milestones: {
         0: { requirementDescription: "Absorb 3 traits", effectDescription: "Mutations are 1.25x cheaper.", done() { return player.gt.absorbed >= 3 } },
         1: { requirementDescription: "Absorb 8 traits", effectDescription: "Plasmids form 1.5x faster.", done() { return player.gt.absorbed >= 8 } },
-        2: { requirementDescription: "Absorb 15 traits", effectDescription: "You can hold 5 plasmids instead of 3.", done() { return player.gt.absorbed >= 15 } },
-        3: { requirementDescription: "Absorb 12 traits", effectDescription: "Plasmids are spent on their own, on whichever pooled trait you've borrowed least.", done() { return player.gt.absorbed >= 12 } },
+        2: { requirementDescription: "Absorb 12 traits", effectDescription: "Plasmids are spent on their own, on whichever pooled trait you've borrowed least.", done() { return player.gt.absorbed >= 12 } },
+        3: { requirementDescription: "Absorb 15 traits", effectDescription: "You can hold 5 plasmids instead of 3.", done() { return player.gt.absorbed >= 15 } },
     },
     tabFormat: [
         ["display-text", function() {
-            return "<h2 style='color:#c38df2'>Gene Transfer</h2><br>You have <h2 style='color:#c38df2'>" + player.gt.plasmids + "</h2> plasmids (holds " + (hasMilestone("gt", 2) ? 5 : 3) + ")."
+            return "<h2 style='color:#c38df2'>Gene Transfer</h2><br>You have <h2 style='color:#c38df2'>" + player.gt.plasmids + "</h2> plasmids (holds " + (hasMilestone("gt", 3) ? 5 : 3) + ")."
         }],
         "blank",
         lore("Bacteria don't only inherit genes. They pass them around, swapping little loops of DNA called plasmids with total strangers."),
@@ -376,7 +377,7 @@ addLayer("oc", {
         if (hasMilestone("oc", 4) && layers.oc.clickables[11].canClick() && driftGain().gte(Object.values(player.hb.grid).filter(x => x).length * 0.25 / 2 * (hasMilestone("oc", 2) ? 2 : 1))) layers.oc.clickables[11].onClick()
         if (player.oc.held > 0) { player.oc.held = Math.max(0, player.oc.held - diff); return }
         player.oc.timer += diff
-        if (player.oc.timer >= 30) { player.oc.timer = 0; player.oc.dir = (player.oc.dir + 1) % 4 }
+        while (player.oc.timer >= 30) { player.oc.timer -= 30; player.oc.dir = (player.oc.dir + 1) % 4 }
     },
     clickables: {
         11: {

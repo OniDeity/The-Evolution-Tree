@@ -15,6 +15,12 @@ function addSpin(amount) {
     else player.p.bosons = player.p.bosons.add(amount)
 }
 
+// Atoms, Inflation and Gravitational Force all feed back into energy, which buys more of them.
+// These softcaps keep that loop from running away once Row 3 stops Stars and Planets resetting.
+const ATOM_SOFTCAP = 0.35
+const INFLATION_SOFTCAP = 0.2
+const FORCE_SOFTCAP = 0.5
+
 function inflationSoftcap() {
     return new Decimal(hasUpgrade("de", 11) ? 1e30 : 1e15)
 }
@@ -230,7 +236,7 @@ addLayer("p", {
             unlocked() { return hasUpgrade("p", 11) },
             effect() {
                 let exp = hasUpgrade("p", 32) ? 0.6 : 0.5
-                return softcap(player.p.points.add(2).pow(exp), inflationSoftcap(), 0.3)
+                return softcap(player.p.points.add(2).pow(exp), inflationSoftcap(), INFLATION_SOFTCAP)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + (upgradeEffect(this.layer, this.id).gte(inflationSoftcap()) ? " (softcapped)" : "") },
         },
@@ -349,12 +355,12 @@ addLayer("at", {
         if (player.st.unlocked) base = base.add(tmp.st.starlightAtomBase)
         if (hasChallenge("hz", 11)) base = base.add(challengeEffect("hz", 11))
         if (player.ga.unlocked) base = base.add(galaxyShapeEffect("elliptical"))
-        if (player.ga.unlocked) base = base.times(tmp.ga.effect)
+        if (player.ga.unlocked) base = base.add(tmp.ga.effect)
         return base
     },
     effect() {
         if (inChallenge("hz", 11)) return new Decimal(1)
-        return softcap(Decimal.pow(tmp.at.effectBase, player.at.points), new Decimal(1e25), 0.5)
+        return softcap(Decimal.pow(tmp.at.effectBase, player.at.points), new Decimal(1e25), ATOM_SOFTCAP)
     },
     effectDescription() {
         return "which multiply energy gain by " + format(tmp.at.effect) + (tmp.at.effect.gte(1e25) ? " (softcapped)" : "") + " (" + format(tmp.at.effectBase) + "x each)"
@@ -563,7 +569,7 @@ addLayer("gr", {
     },
     forceEffect() {
         if (inChallenge("hz", 21)) return new Decimal(1)
-        return player.gr.force.add(1).pow(tmp.gr.forceExp)
+        return softcap(player.gr.force.add(1).pow(tmp.gr.forceExp), new Decimal(1e20), FORCE_SOFTCAP)
     },
     // Merging: three ordinary wells collapse into one Massive Well, which pulls like four.
     // It costs Gravitational Force, so you trade some energy now for faster Force later.
@@ -767,7 +773,7 @@ addLayer("st", {
                 player.st.heavy = player.st.heavy.add(tmp.st.supernovaGain)
                 player.st.points = new Decimal(0)
                 // A supernova sends a big burst of neutrinos
-                if (tmp.nu.layerShown && !hasMilestone("nu", 2)) startBurst(10)
+                if (tmp.nu.layerShown && !hasMilestone("nu", 2)) startBurst(player.nu.burst + 10)
                 else if (tmp.nu.layerShown) player.nu.caught = player.nu.caught.add(10)
             },
             style() { return { width: "220px", height: "140px" } },

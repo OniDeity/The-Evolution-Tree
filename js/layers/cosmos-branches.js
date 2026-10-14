@@ -124,12 +124,14 @@ addLayer("ps", {
     update(diff) {
         if (!tmp.ps.layerShown) return
         player.ps.phase += diff
-        if (player.ps.phase >= PULSE_PERIOD) {
-            player.ps.phase -= PULSE_PERIOD
-            player.ps.beats++
+        // A long tick (like offline time) can pass several beats at once
+        let passed = Math.floor(player.ps.phase / PULSE_PERIOD)
+        if (passed > 0) {
+            player.ps.phase -= passed * PULSE_PERIOD
+            player.ps.beats += passed
             // Missing two beats in a row breaks the streak
             if (player.ps.beats - player.ps.lastHit > 2) player.ps.streak = 0
-            if (hasMilestone("ps", 2)) player.ps.radio = player.ps.radio.add(5)
+            if (hasMilestone("ps", 2)) player.ps.radio = player.ps.radio.add(5 * passed)
         }
     },
     bars: {

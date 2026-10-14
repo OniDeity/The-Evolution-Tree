@@ -334,8 +334,8 @@ const BEHAVIORS = {
 }
 const BEHAVIOR_IDS = Object.keys(BEHAVIORS)
 const BEHAVIOR_TIME = 10
-// Behaviors that work well one after the other
-const COMBOS = [["hunt", "rest"], ["hide", "forage"], ["court", "migrate"]]
+// Behaviors that work well one after the other (the second one gets the boost)
+const COMBOS = [["forage", "hunt"], ["hide", "forage"], ["court", "migrate"]]
 
 function behaviorUnlocked(id) {
     return id == "forage" || hasUpgrade("in", 11 + BEHAVIOR_IDS.indexOf(id) - 1)
@@ -359,7 +359,7 @@ function instinctStrength() {
     return player.in.points.add(1).log10().add(1)
 }
 
-// The active behavior's bonus. After Rest, it's cubed; after its combo partner, it's squared.
+// The active behavior's bonus. After Rest, it's ^2; after its combo partner, it's ^1.5.
 function instinctBonus(kind) {
     let steps = routineSteps(), i = activeBehaviorIndex()
     if (i < 0) return new Decimal(1)
@@ -414,7 +414,7 @@ addLayer("in", {
             let steps = routineSteps(), i = activeBehaviorIndex()
             let line = steps.map((id, n) => n == i ? "<b style='color:#f2c94c'>[" + BEHAVIORS[id].name + "]</b>" : BEHAVIORS[id].name).join(" → ")
             return "<h3>Daily Routine</h3><br>Your routine repeats, " + BEHAVIOR_TIME + " seconds per behavior. Only the active behavior's bonus counts.<br>" +
-                "After <b>Rest</b>, a behavior is boosted ^2. Combos are boosted ^1.5: <b>Hunt → Rest</b>, <b>Hide → Forage</b>, <b>Court → Migrate</b>.<br><br>" +
+                "After <b>Rest</b>, a behavior is boosted ^2. Combos are boosted ^1.5: <b>Forage → Hunt</b>, <b>Hide → Forage</b>, <b>Court → Migrate</b>.<br><br>" +
                 (steps.length ? line : "Your routine is empty. Click a slot to fill it.")
         }],
         "blank",

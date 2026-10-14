@@ -83,7 +83,9 @@ function metabolismSpeed() {
 // Share of Biomass eaten by your metabolism. It grows with the square of the level.
 // The bigger the base of the food pyramid (Bacteria), the faster a metabolism it can feed
 function foodDemandScale() {
-    let k = 0.01 / player.ti.amounts[1].add(10).log10().toNumber() / (1 + player.ar.points.toNumber())
+    // Uses the most Bacteria you've had this run, so wiping them out with Competition doesn't starve you
+    let bacteria = player.ti.amounts[1].max(player.ti.peakBacteria || 0)
+    let k = 0.01 / bacteria.add(10).log10().toNumber() / (1 + player.ar.points.toNumber())
     if (hasUpgrade("me", 12)) k /= 2
     if (hasUpgrade("me", 13)) k /= 2
     if (hasUpgrade("ti", 32)) k *= 0.8
@@ -152,6 +154,7 @@ addLayer("ti", {
         unlocked: true,
         points: new Decimal(0),
         amounts: [null, ...Array(8).fill(0).map(() => new Decimal(0))],
+        peakBacteria: new Decimal(0),
         sentient: false,
     }},
     type: "none",
@@ -166,6 +169,7 @@ addLayer("ti", {
             player.ti.amounts[t - 1] = player.ti.amounts[t - 1].add(player.ti.amounts[t].times(tierMult(t)).times(speed).times(diff))
         }
         player.biomass = player.biomass.add(biomassGain().times(diff))
+        player.ti.peakBacteria = player.ti.amounts[1].max(player.ti.peakBacteria || 0)
     },
     tabFormat: [
         ["display-text", function() {
@@ -232,7 +236,7 @@ addLayer("ti", {
     })), {
         91: {
             title: "Max All",
-            display() { return "Buy Metabolism while it helps, then as many of every tier as you can, top tier first. (Hotkey: M)" },
+            display() { return "Buy Metabolism while it helps, then as many of every tier as you can without starving any of them. (Hotkey: Q)" },
             canClick() { return true },
             onClick() { maxAllSpecies() },
             style() { return { width: "240px", "min-height": "60px", height: "60px" } },
@@ -247,7 +251,7 @@ addLayer("ti", {
         },
     }),
     hotkeys: [
-        {key: "m", description: "M: Max all species tiers and Metabolism", onPress() { if (speciesUnlocked()) maxAllSpecies() }},
+        {key: "q", description: "Q: Max all species tiers and Metabolism", onPress() { if (speciesUnlocked()) maxAllSpecies() }, unlocked() { return speciesUnlocked() }},
     ],
 })
 
@@ -314,13 +318,30 @@ function metabolismWorthIt() {
     return metabolismBase() * (1 - foodDemandAt(l.add(1))) > 1 - foodDemandAt(l)
 }
 
-// Spend everything: Metabolism first (while it's worth it), then tiers from the top down, in sets of 10, then singles
+// How many of tier t you can own without it starving: no more than the tier below it
+function tierRoom(t) {
+    return t == 1 ? Infinity : tierBought(t - 1).sub(tierBought(t)).toNumber()
+}
+
+// Buy the given tiers from the top down, in sets of 10, then singles, never starving a tier.
+// Buying a lower tier makes room above it, so keep going until nothing more can be bought.
+function buyTiers(tiers) {
+    for (let pass = 0; pass < 20; pass++) {
+        let bought = false
+        for (let t of tiers) {
+            for (let i = 0; i < 100 && player.biomass.gte(costUntil10(t)) && tierRoom(t) >= 10 - tierBought(t).toNumber() % 10; i++) { buyUntil10(t); bought = true }
+            for (let i = 0; i < 10 && tierRoom(t) >= 1 && layers.ti.buyables[10 + t].canAfford(); i++) { layers.ti.buyables[10 + t].buy(); bought = true }
+        }
+        if (!bought) return
+    }
+}
+
+// Spend everything: Metabolism first (while it's worth it), then the tiers
 function maxAllSpecies() {
     for (let i = 0; i < 100 && metabolismWorthIt() && layers.me.buyables[11].canAfford(); i++) layers.me.buyables[11].buy()
-    for (let t = tiersUnlocked(); t >= 1; t--) {
-        for (let i = 0; i < 100 && player.biomass.gte(costUntil10(t)); i++) buyUntil10(t)
-        for (let i = 0; i < 10 && layers.ti.buyables[10 + t].canAfford(); i++) layers.ti.buyables[10 + t].buy()
-    }
+    let tiers = []
+    for (let t = tiersUnlocked(); t >= 1; t--) tiers.push(t)
+    buyTiers(tiers)
 }
 
 // Every Act 3 reset goes through here. Speciation resets the tiers and Metabolism;
@@ -329,6 +350,7 @@ function speciesReset(depth) {
     // Coal milestone: Biomass that's about to be lost goes into any free seams first
     if (player.cf && hasMilestone("cf", 3)) while (layers.cf.clickables[11].canClick()) layers.cf.clickables[11].onClick()
     player.biomass = new Decimal(10)
+    player.ti.peakBacteria = new Decimal(0)
     for (let t = 1; t <= 8; t++) {
         player.ti.amounts[t] = new Decimal(0)
         setBuyableAmount("ti", 10 + t, new Decimal(0))
@@ -524,7 +546,7 @@ addLayer("ar", {
         "blank",
         lore("When a new door opens, life pours through it. One kind of creature becomes dozens, each one trying something different."),
         "blank",
-        ["display-text", function() { return "<h3>The founder effect</h3><br>Choose a founder tier. It keeps 10% of its population through the reset, and your next run starts from there.<br>Founder now: <b>" + TIERS[player.ar.founder].name + "</b>" }],
+        ["display-text", function() { return "<h3>The founder effect</h3><br>Choose a founder tier (one of the first 4, the only ones left after a radiation). It keeps 10% of its population through the reset, and your next run starts from there.<br>Founder now: <b>" + TIERS[Math.min(4, player.ar.founder)].name + "</b>" }],
         "blank",
         ["clickables", [1, 2]],
         "blank",
@@ -533,8 +555,9 @@ addLayer("ar", {
     clickables: Object.assign({}, ...[1, 2, 3, 4, 5, 6, 7, 8].map(t => ({
         [10 * (t <= 4 ? 1 : 2) + ((t - 1) % 4) + 1]: {
             title() { return TIERS[t].name },
-            display() { return format(player.ti.amounts[t].div(10)) + " would survive" },
-            canClick() { return true },
+            // Radiating resets your speciations, so only the first 4 tiers are around afterwards
+            display() { return t > 4 ? "Can't found a run: locked until 4 speciations" : format(player.ti.amounts[t].div(10)) + " would survive" },
+            canClick() { return t <= 4 },
             onClick() { player.ar.founder = t },
             style() { return { width: "110px", height: "70px", "min-height": "70px", "background-color": player.ar.founder == t ? "#b38cff" : "#4e3d73" } },
         },
@@ -544,7 +567,7 @@ addLayer("ar", {
             display() { return "Needs " + radiationReq() + " Humans bought" },
             canClick() { return tierBought(8).gte(radiationReq()) },
             onClick() {
-                let f = player.ar.founder, survivors = player.ti.amounts[f].div(10)
+                let f = Math.min(4, player.ar.founder), survivors = player.ti.amounts[f].div(10)
                 player.ar.points = player.ar.points.add(1)
                 player.sf.radiations++
                 speciesReset(2)
