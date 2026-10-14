@@ -24,7 +24,7 @@ Endgame: **Habitable Zone** (survive every Cosmic Hazard, buy every Row 3 upgrad
 
 **Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 44 seconds on average and finishes in about 100 minutes, so a human should take roughly 2.5 hours.
 
-## Act 2: Life 🚧 (v0.7: Rows 1–3)
+## Act 2: Life ✅ (v0.8)
 *The Prestige Tree again, at biological scale, with its own tree and its own resource (DNA).*
 Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers use rows 10+ and reset each other through `lifeReset()`, so Act 1 and Act 2 never reset each other.
 
@@ -37,10 +37,13 @@ Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers us
 | Time | Generations ✅ | **Generation clock.** Each time it fills, Heritage is handed down based on cells and offspring at that moment |
 | Space | Habitats ✅ | **A map to explore.** Colonize a 5x5 sea outward from where life began; reach the Shoreline |
 | Enhance | Adaptation ✅ | **Changing climate.** Four climates cycle; each adaptation is strongest in its own |
-| Super-Boosters / Super-Gens | Multicellular / Symbiosis | |
-| Quirks / Hindrances | Instincts / Predators (Hunted, Famine, Parasites) | |
+| Super-Boosters | Multicellular ✅ | **Body plan.** Six tiers, each an exclusive choice (Radial or Bilateral, Exo- or Endoskeleton…) |
+| Super-Generators | Symbiosis ✅ | **Partnerships.** Four partners each want a different gift; their Bond fades unless tended |
+| Quirks | Instincts ✅ | **Daily routine.** Behaviors in slots cycle; only the active one counts; Rest and combos boost the next |
+| Hindrances | Predators ✅ | **Arms race.** Hunted, Famine and Parasites, each winnable 3 times with rising goals and rewards |
 
-**Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3. Current end: **Land Ho!**, colonizing a Shoreline (needs Lungs and 8 generations). A perfect bot takes about 105 minutes from the start of Act 2, at one unlock every 41 seconds.
+**Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
+Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 96 minutes to reach land and 83 more to finish, about 3 hours in all, so a human should take roughly 4–5 hours.
 
 ## Act 3: Species
 *Antimatter Dimensions, retold.*

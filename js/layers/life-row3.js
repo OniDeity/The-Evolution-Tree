@@ -34,6 +34,7 @@ function lifeRow3Milestones(resource, extra) {
 // All of Row 3's bonuses to the rest of Act 2, by what they boost
 function lifeBonus(kind) {
     let b = new Decimal(1)
+    if (player.mc) b = b.times(lifeRow4Bonus(kind)).times(predatorPenalty(kind))
     if (!player.ge || !lifeRow3Unlocked()) return b
     if (kind == "dna") {
         b = b.times(heritageEffect().dna)
@@ -101,7 +102,9 @@ addLayer("ge", {
     ],
     layerShown() { return lifeUnlocked() && lifeRow3Unlocked() },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasLifeRow4Milestone(1) },
+    onPrestige() { if (!hasLifeRow4Milestone(1)) lifeReset(this.row) },
+    lifeKeep(row) { return ["milestones", "upgrades", "heritage", "progress", "lastGift"] },
     generationLength() {
         let len = 90 * Math.pow(0.85, player.ge.points.toNumber())
         if (hasUpgrade("ge", 13)) len *= 0.75
@@ -112,6 +115,7 @@ addLayer("ge", {
         let gift = player.c.points.add(1).log10().add(player.re.offspring.add(1).log10()).times(player.ge.points)
         if (hasUpgrade("ge", 11)) gift = gift.times(2)
         gift = gift.times(Decimal.pow(2, habitatCount("vent")))
+        gift = gift.times(lifeBonus("heritage"))
         return gift
     },
     update(diff) {
@@ -208,7 +212,7 @@ function currentClimate() {
 
 // How strongly an adaptation works: fully in its own climate, partly in the others
 function adaptationStrength(id) {
-    if (CLIMATES[currentClimate()].adaptation == id) return 1
+    if (CLIMATES[currentClimate()].adaptation == id || bodyPart("warm")) return 1
     return hasUpgrade("ad", 11) ? 0.5 : 0.25
 }
 
@@ -242,9 +246,10 @@ addLayer("ad", {
     baseAmount() { return player.c.points },
     type: "normal",
     exponent: 0.25,
-    gainMult() { return new Decimal(1) },
+    gainMult() { return lifeBonus("fitness") },
     gainExp() { return new Decimal(1) },
-    passiveGeneration() { return hasMilestone("ad", 3) ? 0.1 : 0 },
+    passiveGeneration() { return hasLifeRow4Milestone(2) ? 1 : hasMilestone("ad", 3) ? 0.1 : 0 },
+    lifeKeep(row) { return ["milestones", "upgrades", "buyables", "climateTime"] },
     row: 12,
     branches: ["mu", "re"],
     hotkeys: [
@@ -288,6 +293,7 @@ addLayer("ad", {
             },
             canAfford() { return player.ad.points.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.ad.points = player.ad.points.sub(this.cost())
                 setBuyableAmount("ad", id, getBuyableAmount("ad", id).add(1))
             },
@@ -417,7 +423,10 @@ addLayer("hb", {
     ],
     layerShown() { return lifeUnlocked() && lifeRow3Unlocked() },
     resetsNothing: true,
-    onPrestige() { lifeReset(this.row) },
+    autoPrestige() { return hasLifeRow4Milestone(1) },
+    onPrestige() { if (!hasLifeRow4Milestone(1)) lifeReset(this.row) },
+    // Colonists stay with the tiles they settled
+    lifeKeep(row) { return ["milestones", "grid", "points", "best", "total"] },
     grid: {
         rows: 5,
         cols: 5,

@@ -242,5 +242,30 @@ addLayer("a", {
             done() { return reachedLand() },
             tooltip: "Crawl onto the Shoreline.",
         },
+        101: {
+            name: "Strength in Numbers",
+            done() { return player.mc.unlocked },
+            tooltip: "Become multicellular.",
+        },
+        102: {
+            name: "Mutualism",
+            done() { return SYMBIONT_IDS.every(id => player.sy.bonds[id] >= 1) },
+            tooltip: "Have a Bond of at least 1 with all four partners.",
+        },
+        103: {
+            name: "Creature of Habit",
+            done() { return routineSteps().length >= 3 },
+            tooltip: "Fill 3 slots of your routine.",
+        },
+        104: {
+            name: "Red in Tooth and Claw",
+            done() { return predatorWins() >= 1 },
+            tooltip: "Beat a predator.",
+        },
+        105: {
+            name: "The Tree of Life",
+            done() { return hasUpgrade("mc", 11) },
+            tooltip: "Finish Act 2.",
+        },
     },
 })

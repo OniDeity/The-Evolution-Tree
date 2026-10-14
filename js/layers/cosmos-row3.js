@@ -444,6 +444,7 @@ addLayer("de", {
             },
             canAfford() { return player.de.points.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.de.points = player.de.points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },

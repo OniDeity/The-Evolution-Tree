@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,24 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.7",
-	name: "Out of the Water",
+	num: "0.8",
+	name: "The Tree of Life",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.8 - The Tree of Life</h3><br>
+		- Act 2 is complete! Its final row unlocks once you reach land.<br>
+		- Multicellular: build a body plan, one exclusive choice per tier.<br>
+		- Symbiosis: partners each want a different gift, and their Bond fades unless you keep giving.<br>
+		- Instincts: arrange behaviors into a daily routine that cycles, with combos.<br>
+		- Predators: an arms race of 3 challenges, each winnable 3 times.<br>
+		- New ending: the Tree of Life.<br>
+		- Fixed traits being wiped by Generations, Adaptation and Habitats resets.<br>
+		- Fixed your first reset in a new row not getting the protection its milestone promises.<br>
+		- Fixed buying an upgrade several times in one tick overspending.<br>
+		- After 5 copies of the same trait, extra copies count for less.<br>
+		- Added "Let nature decide" to pick many waiting traits at once.<br>
+		- Added 5 achievements.<br><br>
 	<h3>v0.7 - Out of the Water</h3><br>
 		- Act 2's second row: Generations, Adaptation and Habitats, unlocked by the Cambrian Explosion.<br>
 		- Generations: a generation clock hands down Heritage based on your cells and offspring when it fills.<br>
@@ -73,9 +86,9 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added achievements.<br>
 		- Endgame: a habitable world.`
 
-let winText = `A small, ugly fish heaves itself out of a tide pool, gulps the thin dry air, and does not die.<br>
-	For the first time in four billion years, something is alive on land.<br><br>
-	<b>Act 2: Life</b> continues soon...`
+let winText = `From one warm drop of chemistry to forests, reefs and things that walk, the Tree of Life has branched into every corner of the world.<br>
+	Somewhere among those branches, a few species are beginning to get clever.<br><br>
+	<b>Act 2: Life is complete.</b> Act 3: Species is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -145,7 +158,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return reachedLand()
+	return hasUpgrade("mc", 11)
 }
 
 

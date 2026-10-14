@@ -11,7 +11,7 @@
 //  reset each other through lifeReset() instead of the usual row resets.
 // ============================================================
 
-const LIFE_LAYERS = ["c", "mu", "re", "ge", "ad", "hb"]
+const LIFE_LAYERS = ["c", "mu", "re", "ge", "ad", "hb", "mc", "sy", "in", "pr"]
 
 function lifeUnlocked() {
     return hasUpgrade("pl", 23)
@@ -39,8 +39,24 @@ function lifeReset(row) {
     for (let l of LIFE_LAYERS) {
         if (layers[l].row >= row) continue
         let keep = layers[l].lifeKeep ? layers[l].lifeKeep(row) : []
-        layerDataReset(l, keep)
+        // Copy what's kept first: layerDataReset resets nested objects (like traits) in place,
+        // so keeping them by reference would silently wipe them
+        let saved = {}
+        for (let k of keep) if (player[l][k] !== undefined) saved[k] = deepCopy(player[l][k])
+        layerDataReset(l, [])
+        for (let k in saved) player[l][k] = saved[k]
     }
+}
+
+function deepCopy(value) {
+    if (value instanceof Decimal) return new Decimal(value)
+    if (Array.isArray(value)) return value.map(deepCopy)
+    if (value && typeof value == "object") {
+        let copy = {}
+        for (let k in value) copy[k] = deepCopy(value[k])
+        return copy
+    }
+    return value
 }
 
 // ------------------------------------------------------------
@@ -63,7 +79,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["c"], ["mu", "re"], ["ge", "ad", "hb"]]],
+        ["tree", [["c"], ["mu", "re"], ["ge", "ad", "hb"], ["mc", "in", "pr", "sy"]]],
     ],
 })
 
@@ -104,7 +120,7 @@ addLayer("c", {
     onPrestige() { lifeReset(this.row) },
     passiveGeneration() { return hasLifeRow3Milestone(1) ? 1 : 0 },
     lifeKeep(row) {
-        if (hasLifeRow3Milestone(0)) return ["upgrades"]
+        if (row >= 12 || hasLifeRow3Milestone(0)) return ["upgrades"]
         if (row == 11 && (hasMilestone("mu", 0) || hasMilestone("re", 0))) return ["upgrades"]
         return []
     },
@@ -138,6 +154,8 @@ addLayer("c", {
         let k = tmp.c.capacity
         let decay = Math.exp(-tmp.c.divisionRate * diff)
         player.c.points = k.div(k.div(n).sub(1).times(decay).add(1))
+        // Hunted: predators eat a share of your cells every second
+        if (player.pr && inChallenge("pr", 11)) player.c.points = player.c.points.times(Math.pow(1 - 0.05 * predatorLevel(11), diff))
         player.c.best = player.c.best.max(player.c.points)
     },
     tabFormat: [
@@ -257,9 +275,14 @@ const TRAITS = {
     repair: { name: "DNA Repair", text: "Mutations are 2x cheaper.", per: lvl => Decimal.pow(2, lvl) },
 }
 
+// After 5 copies of the same trait, extra copies count for less (as a square root)
+function effectiveTraitLevel(n) {
+    return n <= 5 ? n : 5 + Math.sqrt(n - 5)
+}
+
 function traitEffect(id) {
     if (!player.mu || !player.mu.traits) return new Decimal(1)
-    return TRAITS[id].per(player.mu.traits[id] || 0)
+    return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0))
 }
 
 function traitsPicked() {
@@ -318,10 +341,10 @@ addLayer("mu", {
     onPrestige() { if (!hasMilestone("ge", 3)) lifeReset(this.row) },
     lifeKeep(row) {
         let keep = []
-        if (hasLifeRow3Milestone(0)) keep.push("milestones", "traits")
+        if (row >= 12 || hasLifeRow3Milestone(0)) keep.push("milestones", "traits")
         return keep
     },
-    effect() { return Decimal.pow(1.3, player.mu.points) },
+    effect() { return Decimal.pow(new Decimal(1.3).add(player.mc && player.mc.unlocked ? tmp.mc.effect : 0), player.mu.points) },
     effectDescription() { return "which multiply DNA gain by " + format(tmp.mu.effect) },
     tabFormat: [
         "main-display",
@@ -336,12 +359,12 @@ addLayer("mu", {
                 (pending > 0 ? "<br><b>You have " + pending + " trait" + (pending > 1 ? "s" : "") + " to pick.</b>" : "<br>Get another mutation to pick a new trait.")
         }],
         "blank",
-        ["clickables", [1]],
+        ["clickables", [1, 2]],
         "blank",
         ["display-text", function() {
             let owned = Object.keys(TRAITS).filter(id => player.mu.traits[id] > 0)
             if (!owned.length) return ""
-            return "<b>Your traits:</b><br>" + owned.map(id => TRAITS[id].name + " x" + player.mu.traits[id]).join(", ")
+            return "<b>Your traits:</b><br>" + owned.map(id => TRAITS[id].name + " x" + player.mu.traits[id]).join(", ") + "<br><i>After 5 copies of a trait, extra copies count for less.</i>"
         }],
         "blank",
         "milestones",
@@ -358,7 +381,16 @@ addLayer("mu", {
             onClick() { player.mu.traits[traitOffers()[n]]++ },
             style() { return { width: "200px", height: "150px" } },
         },
-    }))),
+    })), {
+        21: {
+            title: "Let nature decide",
+            display() { return "Take the first offer for all " + pendingTraits() + " traits you have waiting." },
+            unlocked() { return pendingTraits() >= 5 },
+            canClick() { return pendingTraits() > 0 },
+            onClick() { while (pendingTraits() > 0) player.mu.traits[traitOffers()[0]]++ },
+            style() { return { width: "200px", height: "80px" } },
+        },
+    }),
     milestones: {
         0: {
             requirementDescription: "3 mutations",
@@ -411,7 +443,7 @@ addLayer("re", {
     onPrestige() { if (!hasMilestone("hb", 3)) lifeReset(this.row) },
     lifeKeep(row) {
         let keep = []
-        if (hasLifeRow3Milestone(0)) keep.push("milestones", "buyables")
+        if (row >= 12 || hasLifeRow3Milestone(0)) keep.push("milestones", "buyables")
         return keep
     },
     births() {
@@ -465,6 +497,7 @@ addLayer("re", {
             },
             canAfford() { return player.re.offspring.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.re.offspring = player.re.offspring.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
@@ -480,6 +513,7 @@ addLayer("re", {
             },
             canAfford() { return player.re.offspring.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.re.offspring = player.re.offspring.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },

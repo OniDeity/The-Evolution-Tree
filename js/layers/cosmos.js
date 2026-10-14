@@ -164,6 +164,7 @@ addLayer("p", {
             },
             canAfford() { return player.p.points.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.p.points = player.p.points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
@@ -1063,6 +1064,7 @@ addLayer("fu", {
             },
             canAfford() { return player.fu.points.gte(this.cost()) },
             buy() {
+                if (!this.canAfford()) return
                 player.fu.points = player.fu.points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
