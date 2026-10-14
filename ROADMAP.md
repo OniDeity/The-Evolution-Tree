@@ -63,5 +63,12 @@ Current end: **Cambrian Explosion** (needs 12 mutations and 12 broods). A perfec
 ## Act 6: Civilization
 *Synergism-style: Tools → Agriculture → Industry → Information → Space.*
 
+**Payoff for the trait draft: Genetic Engineering.** Once the species is sentient, it takes control of its own evolution, building on the Act 2 trait draft:
+- Reroll an offer, at a cost.
+- Lock a trait so it keeps appearing.
+- Add a third choice to each draft.
+- Eventually, design traits directly.
+
+
 ## Act 7: Genesis (the loop)
 The civilization builds a universe of its own. That resets everything into **Universe 2**, with new physical constants (for example double gravity, no light, or faster time), and the whole tree is played again with meta-upgrades from the **Multiverse** layer.
