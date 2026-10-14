@@ -1268,9 +1268,9 @@ addLayer("pl", {
             effect() { return player.pl.points.add(1).pow(2) },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
         }),
-        23: planetUpgrade("Habitable Zone", "A world where life might begin. <b>Finish Act 1.</b><br>Also requires 3 planets in the Habitable orbit, surviving every Cosmic Hazard, and every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.", 10, {
+        23: planetUpgrade("Habitable Zone", "A world where life might begin. <b>Finish Act 1 and unlock Act 2: Life.</b><br>Also requires 5 planets in the Habitable orbit, surviving every Cosmic Hazard, and every Galaxy, Black Hole, Dark Energy and Cosmic Hazard upgrade.", 10, {
             unlocked() { return hasUpgrade("pl", 22) },
-            extraReq() { return player.pl.orbits.hab >= 3 && ["11", "12", "21", "22", "31", "32"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
+            extraReq() { return player.pl.orbits.hab >= 5 && ["11", "12", "21", "22", "31", "32"].every(id => hasChallenge("hz", id)) && row3UpgradesDone() },
         }),
         24: planetUpgrade("Ice Giants", "Worlds in the Outer orbit are stronger.", 8, {
             unlocked() { return hasUpgrade("pl", 14) },

@@ -145,7 +145,7 @@ addLayer("ga", {
             title: "Andromeda",
             description: "Our nearest neighbor, on a collision course. Galaxies boost particle gain.",
             cost: new Decimal(0),
-            needs: 7,
+            needs: 8,
             unlocked() { return hasUpgrade("ga", 13) },
             effect() {
                 return Decimal.pow(2, player.ga.points)
@@ -156,14 +156,14 @@ addLayer("ga", {
             title: "Dwarf Galaxies",
             description: "Galaxies are more effective.",
             cost: new Decimal(0),
-            needs: 8,
+            needs: 10,
             unlocked() { return hasUpgrade("ga", 21) },
         },
         23: {
             title: "Galaxy Cluster",
             description: "Galaxies make stars cheaper.",
             cost: new Decimal(0),
-            needs: 9,
+            needs: 12,
             unlocked() { return hasUpgrade("ga", 22) },
             effect() {
                 return Decimal.pow(10, player.ga.points)
@@ -283,14 +283,14 @@ addLayer("bh", {
             title: "Accretion Disk",
             description: "Hawking Radiation's effect is stronger.",
             cost: new Decimal(0),
-            needs: 7,
+            needs: 8,
             unlocked() { return hasUpgrade("bh", 13) },
         },
         22: {
             title: "Kugelblitz",
             description: "A black hole made of pure light. Black holes make planets cheaper.",
             cost: new Decimal(0),
-            needs: 8,
+            needs: 10,
             unlocked() { return hasUpgrade("bh", 21) },
             effect() {
                 return Decimal.pow(10, player.bh.points)
@@ -301,7 +301,7 @@ addLayer("bh", {
             title: "Supermassive",
             description: "Hawking Radiation boosts Starlight gain.",
             cost: new Decimal(0),
-            needs: 9,
+            needs: 12,
             unlocked() { return hasUpgrade("bh", 22) },
             effect() {
                 return player.bh.radiation.add(1).pow(0.2)
@@ -598,8 +598,8 @@ addLayer("hz", {
         11: {
             name: "Gamma-Ray Burst",
             challengeDescription: "Atoms do nothing.",
-            goalDescription: "1e78 energy",
-            canComplete() { return player.points.gte(1e78) },
+            goalDescription: "1e82 energy",
+            canComplete() { return player.points.gte(1e82) },
             rewardDescription: "Add 1 to the Atom base.",
             rewardEffect() { return new Decimal(1) },
             unlocked() { return player.hz.unlocked },
@@ -607,8 +607,8 @@ addLayer("hz", {
         12: {
             name: "Big Crunch",
             challengeDescription: "Energy gain is square-rooted.",
-            goalDescription: "1e47 energy",
-            canComplete() { return player.points.gte(1e47) },
+            goalDescription: "1e50 energy",
+            canComplete() { return player.points.gte(1e50) },
             rewardDescription: "Stars boost energy gain.",
             rewardEffect() { return player.st.points.add(1).pow(5) },
             rewardDisplay() { return format(challengeEffect(this.layer, this.id)) + "x" },
@@ -617,16 +617,16 @@ addLayer("hz", {
         21: {
             name: "Heat Death",
             challengeDescription: "Starlight and Gravitational Force do nothing.",
-            goalDescription: "1e92 energy",
-            canComplete() { return player.points.gte(1e92) },
+            goalDescription: "1e96 energy",
+            canComplete() { return player.points.gte(1e96) },
             rewardDescription: "Starlight's energy effect is stronger.",
             unlocked() { return hasChallenge("hz", 12) },
         },
         22: {
             name: "Vacuum Decay",
             challengeDescription: "Particle gain is square-rooted.",
-            goalDescription: "1e160 energy",
-            canComplete() { return player.points.gte(1e160) },
+            goalDescription: "1e165 energy",
+            canComplete() { return player.points.gte(1e165) },
             rewardDescription: "Every orbit counts one extra planet.",
             unlocked() { return hasChallenge("hz", 21) },
         },
@@ -634,8 +634,8 @@ addLayer("hz", {
             name: "Cosmic Winter",
             challengeDescription: "<b>Combined hazard:</b> Big Crunch and Heat Death at the same time.",
             countsAs: [12, 21],
-            goalDescription: "1e24 energy",
-            canComplete() { return player.points.gte(1e24) },
+            goalDescription: "1e26 energy",
+            canComplete() { return player.points.gte(1e26) },
             rewardDescription: "Supernovas give 3x Heavy Elements.",
             unlocked() { return hasChallenge("hz", 22) },
         },
@@ -643,8 +643,8 @@ addLayer("hz", {
             name: "Doomsday",
             challengeDescription: "<b>Combined hazard:</b> Gamma-Ray Burst and Vacuum Decay at the same time.",
             countsAs: [11, 22],
-            goalDescription: "1e81 energy",
-            canComplete() { return player.points.gte(1e81) },
+            goalDescription: "1e85 energy",
+            canComplete() { return player.points.gte(1e85) },
             rewardDescription: "Black holes spin up 3x faster.",
             unlocked() { return hasChallenge("hz", 31) },
         },

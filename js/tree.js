@@ -3,7 +3,8 @@ var layoutInfo = {
     startNavTab: "tree-tab",
 	showTree: true,
 
-    treeLayout: ""
+    // Act 1's tree. Act 2 has its own tree, opened from the "Life" node.
+    treeLayout: [["p"], ["at", "gr"], ["st", "fu", "pl"], ["ga", "de", "hz", "bh"]]
 
     
 }

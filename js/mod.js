@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/life.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5.1",
-	name: "Every Layer Its Own",
+	num: "0.6",
+	name: "It's Alive",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.6 - It's Alive</h3><br>
+		- Act 2: Life has begun! Buy the Habitable Zone, then open the new Life node next to Achievements.<br>
+		- Added DNA and Cells: cells divide on their own up to a carrying capacity.<br>
+		- Added Mutations: every mutation offers a choice of two random traits.<br>
+		- Added Reproduction: offspring are born and die, settling where births balance deaths.<br>
+		- Added 10 Act 2 achievements.<br>
+		- The end of Act 1 is harder: tougher Cosmic Hazards, 5 Habitable planets, pricier Row 3 upgrades.<br>
+		- The tree fits on phone screens.<br><br>
 	<h3>v0.5.1</h3><br>
 		- Game files now always refresh after an update, so old cached files can't mix with new ones.<br><br>
 	<h3>v0.5 - Every Layer Its Own</h3><br>
@@ -58,9 +66,9 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added achievements.<br>
 		- Endgame: a habitable world.`
 
-let winText = `A small, wet, rocky world settles into orbit around a quiet star.<br>
-	Somewhere in its oceans, a molecule copies itself for the very first time.<br><br>
-	<b>Act 2: Life</b> is coming soon...`
+let winText = `Single cells crowd the warm seas, swapping genes and copying themselves by the trillion.<br>
+	Then, in what is barely a blink in the long life of the Earth, they begin to stick together.<br><br>
+	<b>Act 2: Life</b> continues soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -108,11 +116,13 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	dna: new Decimal(0),
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
 	function() { return cosmicEra() },
+	function() { return lifeUnlocked() ? "<span style='color:#7ed957'>" + format(player.dna) + " DNA (+" + format(dnaGain()) + "/sec)</span>" : "" },
 ]
 
 function cosmicEra() {
@@ -128,7 +138,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("pl", 23)
+	return hasUpgrade("c", 34)
 }
 
 

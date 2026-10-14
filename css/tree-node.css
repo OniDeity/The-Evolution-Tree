@@ -106,3 +106,12 @@
 .star:after {
 	transform: rotate(35deg);
 }
+/* Phones: smaller nodes so a 4-layer row still fits on one line */
+@media (max-width: 520px) {
+	.treeNode {
+		height: 72px;
+		width: 72px;
+		font-size: 28px;
+		margin: 0 5px 0 5px;
+	}
+}

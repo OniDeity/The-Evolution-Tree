@@ -167,5 +167,55 @@ addLayer("a", {
             done() { return hasUpgrade("pl", 23) },
             tooltip: "Find the Habitable Zone.",
         },
+        71: {
+            name: "It's Alive!",
+            done() { return player.c.unlocked },
+            tooltip: "Make your first cell.",
+        },
+        72: {
+            name: "Full House",
+            done() { return player.c.points.gte(tmp.c.capacity.times(0.99)) && player.c.points.gte(100) },
+            tooltip: "Fill your carrying capacity.",
+        },
+        73: {
+            name: "Survival of the Fittest",
+            done() { return traitsPicked() >= 1 },
+            tooltip: "Pick your first trait.",
+        },
+        74: {
+            name: "Family Tree",
+            done() { return player.re.unlocked },
+            tooltip: "Raise your first brood.",
+        },
+        75: {
+            name: "Green Fingers",
+            done() { return hasUpgrade("c", 32) },
+            tooltip: "Buy Chloroplasts.",
+        },
+        81: {
+            name: "Specialist",
+            done() { return Object.values(player.mu.traits).some(n => n >= 3) },
+            tooltip: "Have 3 of the same trait.",
+        },
+        82: {
+            name: "Baby Boom",
+            done() { return player.re.offspring.gte(1e6) },
+            tooltip: "Have 1,000,000 offspring.",
+        },
+        83: {
+            name: "A Billion Cells",
+            done() { return player.c.points.gte(1e9) },
+            tooltip: "Have 1e9 cells.",
+        },
+        84: {
+            name: "Methuselah",
+            done() { return getBuyableAmount("re", 12).gte(5) },
+            tooltip: "Buy 5 Longevity.",
+        },
+        85: {
+            name: "Cambrian Explosion",
+            done() { return hasUpgrade("c", 34) },
+            tooltip: "Reach the end of the current content.",
+        },
     },
 })

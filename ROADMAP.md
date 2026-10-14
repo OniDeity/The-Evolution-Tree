@@ -20,24 +20,27 @@ The overall arc is a loop: the universe forms, life evolves, and a civilization 
 | Quirks | Dark Energy (DE) | **Twist: Fate of the Universe.** Balance Expansion against Gravity to stay flat |
 | Hindrances | Cosmic Hazards (Hz) | **Twist: Combined Hazards.** Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay, plus Cosmic Winter and Doomsday |
 
-Endgame: **Habitable Zone** (survive every Cosmic Hazard and buy every Row 3 upgrade).
+Endgame: **Habitable Zone** (survive every Cosmic Hazard, buy every Row 3 upgrade, and have 5 planets in the Habitable orbit). It unlocks Act 2.
 
-**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 32 seconds on average and finishes in about 72 minutes; with all the choices involved, a human should take roughly 2 hours.
+**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 44 seconds on average and finishes in about 100 minutes, so a human should take roughly 2.5 hours.
 
-## Act 2: Life
-*The Prestige Tree again, this time at biological scale, boosted by the Cosmos.*
+## Act 2: Life 🚧 (v0.6: Rows 1–2)
+*The Prestige Tree again, at biological scale, with its own tree and its own resource (DNA).*
+Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers use rows 10+ and reset each other through `lifeReset()`, so Act 1 and Act 2 never reset each other.
 
-| Prestige Tree | Life |
-|---|---|
-| Points | DNA |
-| Prestige | Cells |
-| Boosters | Mutations |
-| Generators | Reproduction |
-| Time | Generations |
-| Space | Habitats (Organs as buildings) |
-| Enhance | Adaptation |
-| Super-Boosters / Super-Gens | Multicellular / Symbiosis |
-| Quirks / Hindrances | Instincts / Predators (Hunted, Famine, Parasites) |
+| Prestige Tree | Life | Twist |
+|---|---|---|
+| Points | DNA | |
+| Prestige | Cells ✅ | **Carrying capacity.** Cells divide on their own and fill up to a capacity |
+| Boosters | Mutations ✅ | **Natural selection.** Each mutation offers a choice of two random traits |
+| Generators | Reproduction ✅ | **Life and death.** Offspring settle where births balance deaths; Fecundity vs. Longevity |
+| Time | Generations | |
+| Space | Habitats (Organs as buildings) | |
+| Enhance | Adaptation | |
+| Super-Boosters / Super-Gens | Multicellular / Symbiosis | |
+| Quirks / Hindrances | Instincts / Predators (Hunted, Famine, Parasites) | |
+
+Current end: **Cambrian Explosion** (needs 12 mutations and 12 broods). A perfect bot takes about 32 minutes from the start of Act 2, at one unlock every 45 seconds.
 
 ## Act 3: Species
 *Antimatter Dimensions, retold.*
