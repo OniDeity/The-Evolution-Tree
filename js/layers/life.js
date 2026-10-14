@@ -466,11 +466,21 @@ addLayer("re", {
         if (hasLifeRow3Milestone(2)) buyBuyable("re", getBuyableAmount("re", 11).lte(getBuyableAmount("re", 12)) ? 11 : 12)
     },
     // Births add offspring and deaths remove them: dO/dt = births - O / lifespan, solved exactly
+    // When offspring live a long time, a tick only changes the population by a sliver, and the exact
+    // formula loses that sliver to rounding. So for short ticks, step it directly instead.
     update(diff) {
         if (!player.re.unlocked) return
-        let eq = tmp.re.equilibrium
-        let fade = Math.exp(-diff / tmp.re.lifespan.toNumber())
-        player.re.offspring = eq.add(player.re.offspring.sub(eq).times(fade)).max(0)
+        let eq = tmp.re.equilibrium, o = player.re.offspring
+        let x = new Decimal(diff).div(tmp.re.lifespan)
+        let next
+        if (x.lt(1e-4)) {
+            next = o.add(tmp.re.births.times(diff)).sub(o.times(x))
+            if (o.lte(eq)) next = next.min(eq)
+        } else {
+            let fade = Math.exp(-x.toNumber())
+            next = o.times(fade).add(eq.times(1 - fade))
+        }
+        player.re.offspring = next.max(0)
     },
     tabFormat: [
         "main-display",

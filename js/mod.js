@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0.1",
+	num: "1.0.2",
 	name: "Origin of Species",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.0.2</h3><br>
+		- Fixed offspring barely growing (or sitting at 0) once they live a long time.<br><br>
 	<h3>v1.0.1</h3><br>
 		- Habitats: Abandon mode. Free up colonists from tiles you've settled and place them somewhere else.<br>
 		- Habitats now reminds you that the Shoreline needs 3 free colonists.<br><br>
