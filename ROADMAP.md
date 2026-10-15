@@ -3,6 +3,7 @@
 Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
 
 **Scale goal:** grow the whole game to The Plague Tree's size and scale in content, playtime and numbers (it has about 1,100 upgrades, 320 buyables, 245 milestones, 42 challenges and 169 achievements, numbers far past e1e10, and weeks of play). v2.0 had 180 upgrades, 46 buyables, 159 milestones, 21 challenges and 126 achievements. Act 5 is built deep to close that gap, and Act 6 (the first New Game+) deepens every earlier act.
+
 The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
 
 ## Automation (v1.5)
