@@ -32,7 +32,7 @@ const CONSTANT_EFFECTS = {
 const RARITIES = [[2.2, "Legendary", "#ffb347"], [1.9, "Epic", "#c48bff"], [1.6, "Rare", "#7fb2ff"], [1.3, "Uncommon", "#9be27a"], [0, "Common", "#cccccc"]]
 
 // Measurements come every CONSTANT_TUNE.every orders of magnitude of energy in a Loop; level is digits / levelPer
-var CONSTANT_TUNE = { every: 10, levelPer: 10, inventory: 12 }
+var CONSTANT_TUNE = { every: 20, levelPer: 10, inventory: 12 }
 
 function constantsUnlocked() {
     return !!(player.lt && player.lt.genesis > 0)
