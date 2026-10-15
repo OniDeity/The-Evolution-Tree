@@ -667,6 +667,17 @@ addLayer("a", {
             done() { return spaceUnlocked() && player.mv.heatDeath },
             tooltip: "Reach the Heat Death and finish Act 5.",
         },
+        // Act 6: each one makes Light 5% brighter
+        271: { name: "Again", done() { return player.lt.genesis >= 1 }, tooltip: "Say \"Let there be light\" and start a new Loop." },
+        272: { name: "A Familiar Sky", done() { return player.lt.best.hz !== undefined && player.lt.best.hz <= 1800 }, tooltip: "Reach the Habitable Zone within 30 minutes of a Genesis." },
+        273: { name: "Measured", done() { return player.cn.total >= 10 }, tooltip: "Measure 10 constants." },
+        274: { name: "Legendary", done() { return player.cn.list.some(k => k.rarity >= 2.2) }, tooltip: "Measure a Legendary constant." },
+        275: { name: "Event Horizon", done() { return [11, 12, 13].reduce((a, id) => a + getBuyableAmount("si", id).toNumber(), 0) >= 10 }, tooltip: "Buy 10 levels of the Singularity." },
+        281: { name: "Remembrance", done() { return player.mm.upgrades.length >= 8 }, tooltip: "Have 8 Memories." },
+        282: { name: "Faster Than Light", done() { return actSpeedCache.some(s => s >= 10) }, tooltip: "Make any act run 10 times as fast." },
+        283: { name: "Echo Chamber", done() { return Object.values(player.cn.echoes).reduce((a, x) => a + x, 0) >= 100 }, tooltip: "Gather 100 Echoes in all." },
+        284: { name: "Second Light", done() { return player.lt.genesis >= 1 && player.mv.heatDeath }, tooltip: "Reach the Heat Death again, in a Loop." },
+        285: { name: "Radiant", done() { return player.lt.total.gte(500) }, tooltip: "Earn 500 Light in all." },
     },
 })
 
@@ -677,5 +688,10 @@ function civAchievementBonus() {
 
 // Act 5 achievements each make everything in Harvest 10% stronger
 function spaceAchievementBonus() {
-    return new Decimal(1 + 0.1 * player.a.achievements.filter(id => Number(id) >= 151).length)
+    return new Decimal(1 + 0.1 * player.a.achievements.filter(id => Number(id) >= 151 && Number(id) < 271).length)
+}
+
+// Act 6 achievements each make Light 5% brighter
+function genesisAchievementBonus() {
+    return 1 + 0.05 * player.a.achievements.filter(id => Number(id) >= 271).length
 }

@@ -112,6 +112,7 @@ function biomassGain() {
     g = g.times(specimenBonus())
     g = g.times(cosmicGift("biomass"))
     g = g.times(landGift("biomass"))
+    if (hasUpgrade("lt", 15)) g = g.times(1e20)
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)
@@ -579,7 +580,7 @@ addLayer("ar", {
         [10 * (t <= 4 ? 1 : 2) + ((t - 1) % 4) + 1]: {
             title() { return TIERS[t].name },
             // Radiating resets your speciations, so only the first 4 tiers are around afterwards
-            display() { return t > 4 ? "Can't found a run: locked until 4 speciations" : format(player.ti.amounts[t].div(10)) + " would survive" },
+            display() { return t > 4 ? "Can't found a run: radiating locks this tier again until 4 speciations" : format(player.ti.amounts[t].div(10)) + " would survive" },
             canClick() { return t <= 4 },
             onClick() { player.ar.founder = t },
             style() { return { width: "110px", height: "70px", "min-height": "70px", "background-color": player.ar.founder == t ? "#b38cff" : "#4e3d73" } },

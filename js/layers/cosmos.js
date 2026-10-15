@@ -110,6 +110,7 @@ addLayer("p", {
         if (hasUpgrade("pl", 22)) mult = mult.times(upgradeEffect("pl", 22))
         mult = mult.times(orbitEffect("outer"))
         if (hasMilestone("nu", 0)) mult = mult.times(1.25)
+        mult = mult.times(constantEffect("particles"))
         return mult
     },
     gainExp() {
@@ -331,6 +332,7 @@ addLayer("at", {
         let mult = new Decimal(1)
         if (hasUpgrade("at", 13)) mult = mult.div(upgradeEffect("at", 13))
         if (hasUpgrade("st", 13)) mult = mult.div(upgradeEffect("st", 13))
+        mult = mult.div(constantEffect("atoms"))
         if (hasUpgrade("p", 44)) mult = mult.div(5)
         return mult
     },
@@ -528,6 +530,7 @@ addLayer("gr", {
         if (hasUpgrade("pl", 13)) mult = mult.div(upgradeEffect("pl", 13))
         if (hasUpgrade("p", 44)) mult = mult.div(5)
         if (hasUpgrade("gr", 24)) mult = mult.div(upgradeEffect("gr", 24))
+        mult = mult.div(constantEffect("wells"))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -731,6 +734,7 @@ addLayer("st", {
         let mult = new Decimal(1)
         if (hasUpgrade("ga", 23)) mult = mult.div(upgradeEffect("ga", 23))
         if (hasMilestone("ps", 0)) mult = mult.div(1.5)
+        mult = mult.div(constantEffect("stars"))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -1000,6 +1004,7 @@ addLayer("fu", {
         if (player.st.heavy.gt(0)) mult = mult.times(tmp.st.heavyFusionEffect)
         if (hasUpgrade("bh", 12)) mult = mult.times(upgradeEffect("bh", 12))
         mult = mult.times(plasmaFuelFactor())
+        mult = mult.times(constantEffect("fusion"))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -1163,6 +1168,7 @@ addLayer("pl", {
         let mult = new Decimal(1)
         if (hasUpgrade("bh", 22)) mult = mult.div(upgradeEffect("bh", 22))
         mult = mult.div(asteroidEffect())
+        mult = mult.div(constantEffect("planets"))
         return mult
     },
     gainExp() { return new Decimal(1) },

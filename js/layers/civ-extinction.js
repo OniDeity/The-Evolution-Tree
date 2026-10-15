@@ -36,6 +36,7 @@ function strataGain() {
     if (hasUpgrade("dt", 42)) g *= 2
     if (hasMilestone("ex", 4)) g *= 1.5
     g *= lostSpeciesBonus().strata
+    if (hasUpgrade("lt", 21)) g *= 2
     return new Decimal(Math.floor(g))
 }
 

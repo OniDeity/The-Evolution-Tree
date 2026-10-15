@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.4",
-	name: "The Last Question",
+	num: "3.0",
+	name: "Let There Be Light, Again",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.0 - Let There Be Light, Again</h3><br>
+		- Act 6: Genesis, the first New Game+ (Antimatter Dimensions' Reality, retold). After the Heat Death, a Genesis starts Acts 1 to 5 over from the Big Bang. You keep your achievements.<br>
+		- Light: every act ending you reach in a Loop pays Light, and so does the Genesis. 15 Light upgrades and 5 act speeds (each act can run faster on its own).<br>
+		- Memories: one per ending. A perk tree with a row for each act: head starts, automation and keeping the museums.<br>
+		- The Singularity: every so often, Acts 1 to 5 run many times as fast for a while. Pause it to save a burst.<br>
+		- Constants, Act 1's first deepening: measure the new universe's physical constants as its energy grows, equip the best and dissolve the rest into Echoes.<br>
+		- 10 achievements; each makes Light 5% brighter.<br>
+		- Endgame: reach the Heat Death again, in Loop 1.<br>
 	<h3>v2.4 - The Last Question</h3><br>
 		- Act 5 is complete! Its final part adds the Multiverse and the end of everything.<br>
 		- Multiverse: once you've mapped the observable universe, collapse the multiverse for Realities. It starts all of Act 5 over, Universes included, and every Reality makes Seeds worth more and Act 5 faster. 30 Multiverse upgrades and 8 milestones, including universes consumed on their own.<br>
@@ -210,7 +218,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	<b>You've mapped the observable universe.</b><br><br>
 	Universe after universe, until the last stars burned out and only the swarm was left, thinking in the dark. It had been asked, long ago, whether entropy could ever be reversed. Now, at last, it knew how.<br><br>
 	"Let there be light."<br><br>
-	<b>Act 5: Diaspora is complete.</b> Act 6, the first New Game+, is coming soon...`
+	<b>Act 5: Diaspora is complete.</b><br><br>
+	And then it all began again: the same quarks, the same first cells, the same long climb, only faster, and a little different, because this time the universe remembered.<br><br>
+	<b>You've finished your first Loop.</b> More of Act 6 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -254,6 +264,9 @@ function getPointGen() {
 	gain = gain.times(cosmicGift("energy"))
 	gain = gain.times(observatoryBonus())
 	if (hasMilestone("as", 2)) gain = gain.times(1.5)
+	// Act 6: Light and Constants
+	if (hasUpgrade("lt", 13)) gain = gain.times(1e6)
+	gain = gain.times(constantEffect("energy"))
 	// Pacing: stretches the whole act evenly so something new unlocks about once a minute
 	gain = gain.max(1).pow(ENERGY_PACING)
 	if (inChallenge("hz", 12)) gain = gain.max(1).pow(0.5)
@@ -288,7 +301,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.mv.heatDeath
+	return player.lt.genesis >= 1 && player.mv.heatDeath
 }
 
 

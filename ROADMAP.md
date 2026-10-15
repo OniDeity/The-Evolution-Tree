@@ -184,8 +184,31 @@ Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 cha
 
 **Design rule learned in v2.2:** a currency that buys its own multipliers (Yomi) is stable only if each upgrade's cost step outgrows the multiplier it adds; give the cost curve some curvature (`n²` term). Also avoid loops through other systems: Navigation needs Swarm upgrades, so Compute takes only the log of probes, or Yomi, probes and Navigation feed each other and run away.
 
-## Act 6: the first New Game+
-The heat death of the last universe, and "Let there be light" again. A bigger reset that wipes everything before it (Acts 1–5) and starts expanding them: each loop makes every earlier act deeper, until the whole game reaches Plague Tree scale.
+## Act 6: Genesis, the first New Game+ (in progress)
+*Antimatter Dimensions' Reality, retold.* After the Heat Death, say "Let there be light" again: **Genesis** wipes Acts 1–5 and starts a new **Loop** from the Big Bang. Each Loop is faster than the last, and each one opens new content inside the earlier acts.
+
+**Scale:** Acts 1–5 take a bot about 25 hours, so Act 6 should take about 50 (roughly 7 Loops). By its end, Acts 1–5 are fully automated, one-time choices and challenges included, all earned through Loops.
+
+**What a Genesis keeps:** achievements, always. Everything else resets at first, the museums (Observatory, Fossil Record, Specimens, Lost Species, Hall of Probes) included. Memories gradually keep more, until by the end a Loop keeps everything.
+
+| AD Reality | Genesis | Twist |
+|---|---|---|
+| Reality Machines | **Light** | Earned during a Loop: every act ending you reach pays Light (8 endings per Loop), and so does the Genesis itself |
+| Perks | **Memories** | One Memory per ending. A perk tree with one column per act: head starts, keeps and automation for that act |
+| Reality upgrades | **Light upgrades** | Act speeds (rebuyable) and one-off boosts |
+| Black Hole | **Singularity** | Every so often, Acts 1–5 run many times as fast for a while |
+| Glyphs | **Constants** (Act 1) | Measure physical constants as energy grows; equip a few, dissolve the rest for permanent echoes |
+| Celestials | One deepening per act | See the versions below |
+| Automator | **Autopilot** | Plays a whole Loop by itself |
+
+| Version | Content |
+|---|---|
+| v3.0 | **Genesis**, Light, Memories, the Singularity, and **Constants** (Act 1's deepening) |
+| v3.1 | Act 2: **Genetic Engineering** (reroll, lock, then design traits) and **Devolution** (a mirror tree from Humans back to one cell) |
+| v3.2 | Act 3: **Mass Extinctions** (Infinity Challenges), **Viruses** (Replicanti) and **Geological Eras** (Eternity), past 1.8e308 |
+| v3.3 | Act 4: **Eras**, Synergism-style (Tools → Agriculture → Industry → Information → Space) |
+| v3.4 | Act 5: **Reversal**, entropy run backwards across universes |
+| v3.5 | **Autopilot**, full automation of Acts 1–5, and the Act 6 ending |
 
 ## Earlier ideas (not scheduled)
 These were planned before v2.0 and may still be useful when Act 6 deepens the earlier acts:

@@ -52,6 +52,8 @@ function pressuresBeaten() {
 
 // Instincts run every tick: tiers from the top down, then the rest
 function runInstincts() {
+    // Hold off while the Spark of Sentience is ready, so instincts can't spend or reset it away
+    if (!player.ti.sentient && player.biomass.gte(SENTIENCE)) return
     if (instinctOn("me")) for (let i = 0; i < 100 && metabolismWorthIt() && layers.me.buyables[11].canAfford(); i++) layers.me.buyables[11].buy()
     let tierKeys = { 1: "t12", 2: "t12", 3: "t34", 4: "t34", 5: "t56", 6: "t56", 7: "t78", 8: "t78" }
     let tiers = []

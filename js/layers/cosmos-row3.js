@@ -90,7 +90,7 @@ addLayer("ga", {
     type: "static",
     base: 1.035,
     exponent: 1.2,
-    gainMult() { return new Decimal(1) },
+    gainMult() { return new Decimal(1).div(constantEffect("galaxies")) },
     gainExp() { return new Decimal(1) },
     autoPrestige() { return hasMilestone("ga", 4) && !player.hz.activeChallenge },
     canBuyMax() { return hasMilestone("ga", 3) },
@@ -240,7 +240,7 @@ addLayer("bh", {
     type: "static",
     base: 1.035,
     exponent: 1.2,
-    gainMult() { return new Decimal(1) },
+    gainMult() { return new Decimal(1).div(constantEffect("galaxies")) },
     gainExp() { return new Decimal(1) },
     autoPrestige() { return hasMilestone("bh", 4) && tmp.bh.spin > 0.7 && !player.hz.activeChallenge },
     canBuyMax() { return hasMilestone("bh", 3) },
@@ -388,6 +388,7 @@ addLayer("de", {
         if (hasUpgrade("ga", 13)) mult = mult.times(upgradeEffect("ga", 13))
         if (hasUpgrade("bh", 13)) mult = mult.times(upgradeEffect("bh", 13))
         if (hasUpgrade("de", 21)) mult = mult.times(upgradeEffect("de", 21))
+        mult = mult.times(constantEffect("dark"))
         return mult
     },
     gainExp() { return new Decimal(1) },
@@ -552,7 +553,7 @@ addLayer("hz", {
     baseAmount() { return player.st.starlight },
     type: "normal",
     exponent: 0.2,
-    gainMult() { return new Decimal(1) },
+    gainMult() { return new Decimal(constantEffect("resilience")) },
     gainExp() { return new Decimal(1) },
     passiveGeneration() { return hasMilestone("hz", 3) ? 0.1 : 0 },
     row: 3,

@@ -337,23 +337,27 @@ function gameLoop(diff) {
 			diff = limit
 	}
 	addTime(diff)
-	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
+	// Act 6 makes each act run at its own speed
+	if (typeof updateActSpeeds == "function") updateActSpeeds()
+	player.points = player.points.add(tmp.pointGen.times(diff * (typeof layerSpeed == "function" ? layerSpeed("p") : 1))).max(0)
 
 	for (let x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item]
-			player[layer].resetTime += diff
-			if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
-			if (layers[layer].update) layers[layer].update(diff);
+			let d = diff * (typeof layerSpeed == "function" ? layerSpeed(layer) : 1)
+			player[layer].resetTime += d
+			if (tmp[layer].passiveGeneration) generatePoints(layer, d*tmp[layer].passiveGeneration);
+			if (layers[layer].update) layers[layer].update(d);
 		}
 	}
 
 	for (row in OTHER_LAYERS){
 		for (item in OTHER_LAYERS[row]) {
 			let layer = OTHER_LAYERS[row][item]
-			player[layer].resetTime += diff
-			if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
-			if (layers[layer].update) layers[layer].update(diff);
+			let d = diff * (typeof layerSpeed == "function" ? layerSpeed(layer) : 1)
+			player[layer].resetTime += d
+			if (tmp[layer].passiveGeneration) generatePoints(layer, d*tmp[layer].passiveGeneration);
+			if (layers[layer].update) layers[layer].update(d);
 		}
 	}	
 
