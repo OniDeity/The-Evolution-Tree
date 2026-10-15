@@ -189,6 +189,8 @@ Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 cha
 
 **Scale:** Acts 1–5 take a bot about 25 hours, so Act 6 should take about 50 (roughly 7 Loops). By its end, Acts 1–5 are fully automated, one-time choices and challenges included, all earned through Loops.
 
+**Testing:** `botlib/act1.js` to `act5.js` play each act like an attentive human (Act 1 ~110 min, Act 2 ~93, Act 3 ~99 with every Selection Pressure, Act 4 ~5.7 h, Act 5 ~13 h), and `act6.js` plays whole Loops with all five at once, spending Light and Memories. Act speeds multiply each layer's time step in the game loop; branches you play against the clock keep their own pace.
+
 **What a Genesis keeps:** achievements, always. Everything else resets at first, the museums (Observatory, Fossil Record, Specimens, Lost Species, Hall of Probes) included. Memories gradually keep more, until by the end a Loop keeps everything.
 
 | AD Reality | Genesis | Twist |
@@ -203,7 +205,7 @@ Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 cha
 
 | Version | Content |
 |---|---|
-| v3.0 | **Genesis**, Light, Memories, the Singularity, and **Constants** (Act 1's deepening) |
+| v3.0 ✅ | **Genesis**, Light (15 upgrades, 5 act speeds), Memories (16 perks), the Singularity (3 buyables), **Constants** (Act 1's deepening: 4 kinds, 12 effects, Echoes) and 10 achievements. Loop 1 takes the bot about 6.9 hours (Habitable Zone 24m, Tree of Life +56m, Sentience +19m, Eternity +185m, Heat Death +130m) |
 | v3.1 | Act 2: **Genetic Engineering** (reroll, lock, then design traits) and **Devolution** (a mirror tree from Humans back to one cell). Also fix what the v3.0 bot found: a 40-minute wall between reaching land and the first multicellular form (40 mutations), Predators that never push back (DNA leaps past every goal once the body plan cascades), and Instincts that arrive too late to matter |
 | v3.2 | Act 3: **Mass Extinctions** (Infinity Challenges), **Viruses** (Replicanti) and **Geological Eras** (Eternity), past 1.8e308 |
 | v3.3 | Act 4: **Eras**, Synergism-style (Tools → Agriculture → Industry → Information → Space) |
