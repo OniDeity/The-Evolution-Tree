@@ -204,7 +204,7 @@ Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 cha
 | Version | Content |
 |---|---|
 | v3.0 | **Genesis**, Light, Memories, the Singularity, and **Constants** (Act 1's deepening) |
-| v3.1 | Act 2: **Genetic Engineering** (reroll, lock, then design traits) and **Devolution** (a mirror tree from Humans back to one cell) |
+| v3.1 | Act 2: **Genetic Engineering** (reroll, lock, then design traits) and **Devolution** (a mirror tree from Humans back to one cell). Also fix what the v3.0 bot found: a 40-minute wall between reaching land and the first multicellular form (40 mutations), Predators that never push back (DNA leaps past every goal once the body plan cascades), and Instincts that arrive too late to matter |
 | v3.2 | Act 3: **Mass Extinctions** (Infinity Challenges), **Viruses** (Replicanti) and **Geological Eras** (Eternity), past 1.8e308 |
 | v3.3 | Act 4: **Eras**, Synergism-style (Tools → Agriculture → Industry → Information → Space) |
 | v3.4 | Act 5: **Reversal**, entropy run backwards across universes |
