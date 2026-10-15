@@ -121,6 +121,17 @@ function biomassGain() {
     return g
 }
 
+// How far Biomass has come toward Sentience, measured by its number of digits
+function sentienceProgress() {
+    return format(Decimal.min(100, player.biomass.max(1).log10().div(SENTIENCE.log10()).times(100)), 1)
+}
+
+function sentienceGoalText() {
+    if (player.ti.sentient) return "<span style='color:#8fce00'>Sentience sparked: Act 4 (Extinction) is open on the main tree.</span>"
+    return "<b>Goal:</b> reach " + format(SENTIENCE) + " Biomass, then spark <b>Sentience</b> (the button at the bottom of the Species Tiers tab) to finish Act 3 and open Act 4. " +
+        "You're " + sentienceProgress() + "% of the way there."
+}
+
 // ------------------------------------------------------------
 //  THE SPECIES TREE (opened from the "Species" node)
 // ------------------------------------------------------------
@@ -140,6 +151,8 @@ addLayer("species", {
     tabFormat: [
         "blank",
         ["display-text", function() { return "<h2 style='color:#e0c068'>Act 3: Species</h2><br>You have <h2 style='color:#e0c068;text-shadow:0 0 10px #e0c068'>" + format(player.biomass) + "</h2> Biomass (+" + format(biomassGain()) + "/sec)" }],
+        "blank",
+        ["display-text", function() { return sentienceGoalText() }],
         "blank",
         ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"]]],
     ],
@@ -180,6 +193,8 @@ addLayer("ti", {
             return "You have <h2 style='color:#e0c068'>" + format(player.biomass) + "</h2> Biomass (+" + format(biomassGain()) + "/sec)<br>" +
                 "Metabolism speeds everything up x" + format(metabolismSpeed()) + ", and eats " + format(foodDemand() * 100) + "% of your Biomass."
         }],
+        "blank",
+        ["display-text", function() { return sentienceGoalText() }],
         "blank",
         lore("Life has filled every corner of the world. Now it stacks up: small things feed bigger things, which feed bigger things still, all the way up to a strange, curious ape."),
         "blank",
@@ -247,8 +262,12 @@ addLayer("ti", {
         },
         101: {
             title: "The Spark of Sentience",
-            display() { return "A mind that knows it exists. <b>Finish Act 3.</b><br>Requires " + format(SENTIENCE) + " Biomass." },
-            unlocked() { return player.biomass.gte(SENTIENCE) || player.ti.sentient },
+            display() {
+                if (player.ti.sentient) return "A mind that knows it exists. <b>Act 3 is complete.</b>"
+                return "A mind that knows it exists. <b>Finish Act 3</b> and open Act 4.<br>Requires " + format(SENTIENCE) + " Biomass (" + sentienceProgress() + "% of the way)."
+            },
+            // Always shown, so you know what Act 3 is working toward
+            unlocked() { return true },
             canClick() { return player.biomass.gte(SENTIENCE) && !player.ti.sentient },
             onClick() { player.ti.sentient = true },
             style() { return { width: "260px", height: "130px" } },

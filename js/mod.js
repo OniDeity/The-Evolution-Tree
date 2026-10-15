@@ -25,6 +25,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- 120 more upgrades, 6 buyables, 24 milestones (including 4 new Probe milestones) and 15 achievements.<br>
 		- Act 5 now shows a Getting Started checklist, and Self-Replication can never drop below 1 trust, so the swarm can't stall.<br>
 		- The Speciation Instinct now spreads keystones across your tiers instead of stacking them on one.<br>
+		- Act 3 now always shows its goal: how close you are to 1.8e308 Biomass, and the Spark of Sentience button that opens Act 4.<br>
 		- New ending (for now): explore every system in the Virgo Supercluster.<br><br>
 	<h3>v2.1 - Diaspora</h3><br>
 		- Act 5: Diaspora has begun! Reach Eternity, then open the new Diaspora node. It retells Universal Paperclips' journey into space, and it's being built in four parts. This is the first: the Milky Way.<br>
