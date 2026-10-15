@@ -294,6 +294,11 @@ addLayer("lt", {
     nodeStyle: { color: "#3a3220" },
     update(diff) {
         if (!genesisUnlocked()) return
+        // Head starts can make a layer passive before its first reset; it still counts as found
+        if (player.lt.genesis > 0) for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) {
+            let d = player[l]
+            if (d && !d.unlocked && d.points instanceof Decimal && d.points.gt(0) && layers[l].type != "none") d.unlocked = true
+        }
         let before = player.lt.points
         checkEndings()
         player.lt.loopLight = player.lt.loopLight.add(player.lt.points.sub(before).max(0))
