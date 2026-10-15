@@ -517,6 +517,81 @@ addLayer("a", {
             done() { return spaceUnlocked() && player.pb.explored.gte(VIRGO_SYSTEMS) },
             tooltip: "Explore every system in the Virgo Supercluster.",
         },
+        211: {
+            name: "Big Plans",
+            done() { return spaceUnlocked() && projectsDone() >= 1 },
+            tooltip: "Finish a Project.",
+        },
+        212: {
+            name: "Megaprojects",
+            done() { return spaceUnlocked() && projectsDone() >= 25 },
+            tooltip: "Finish 25 Projects.",
+        },
+        213: {
+            name: "Beyond Virgo",
+            done() { return spaceUnlocked() && player.pb.explored.gte(1e16) },
+            tooltip: "Explore 1e16 systems.",
+        },
+        214: {
+            name: "Seeds of Tomorrow",
+            done() { return spaceUnlocked() && player.un.count >= 1 },
+            tooltip: "Consume a universe.",
+        },
+        215: {
+            name: "Different Physics",
+            done() { return spaceUnlocked() && player.un.physics != 'standard' },
+            tooltip: "Live in a universe with different physics.",
+        },
+        221: {
+            name: "Collector of Constants",
+            done() { return spaceUnlocked() && physicsCollected() >= 4 },
+            tooltip: "Consume 4 different kinds of universe.",
+        },
+        222: {
+            name: "Peace in Our Time",
+            done() { return spaceUnlocked() && !!player.un.collected.quiet },
+            tooltip: "Consume a Quiet universe.",
+        },
+        223: {
+            name: "Seed Bank",
+            done() { return spaceUnlocked() && player.un.seeds.gte(100) },
+            tooltip: "Have 100 Seeds at once.",
+        },
+        224: {
+            name: "Halfway to Everywhere",
+            done() { return spaceUnlocked() && player.pb.explored.gte(1e19) },
+            tooltip: "Explore 1e19 systems.",
+        },
+        225: {
+            name: "Master Builder",
+            done() { return spaceUnlocked() && projectsDone() >= 75 },
+            tooltip: "Finish 75 Projects.",
+        },
+        231: {
+            name: "Many Worlds",
+            done() { return spaceUnlocked() && player.un.count >= 10 },
+            tooltip: "Consume 10 universes.",
+        },
+        232: {
+            name: "All the Constants",
+            done() { return spaceUnlocked() && physicsCollected() >= 8 },
+            tooltip: "Consume every kind of universe.",
+        },
+        233: {
+            name: "A Thousand Seeds",
+            done() { return spaceUnlocked() && player.un.totalSeeds.gte(1000) },
+            tooltip: "Plant 1,000 Seeds in all.",
+        },
+        234: {
+            name: "Every Last Project",
+            done() { return spaceUnlocked() && projectsDone() >= 150 },
+            tooltip: "Finish all 150 Projects.",
+        },
+        235: {
+            name: "The Observable Universe",
+            done() { return spaceUnlocked() && player.pb.explored.gte(UNIVERSE_SYSTEMS) },
+            tooltip: "Explore every system in the observable universe.",
+        },
     },
 })
 

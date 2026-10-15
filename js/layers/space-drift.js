@@ -29,20 +29,27 @@ function driftStarted() {
     return !!(player.dr && (player.dr.started || player.pb.explored.gte(GALAXY_SYSTEMS)))
 }
 
+// Probes only drift after many generations of copying: past the Milky Way, in every universe
+function driftActive() {
+    return driftStarted() && player.pb.explored.gte(GALAXY_SYSTEMS)
+}
+
 function explorationCap() {
+    if (beyondVirgo()) return UNIVERSE_SYSTEMS
     return driftStarted() ? VIRGO_SYSTEMS : GALAXY_SYSTEMS
 }
 
 // Boosts to Act 5 targets from Drift and Swarm upgrades
 function extraMult(target) {
     if (!player.dr) return new Decimal(1)
-    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target))
+    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target)).times(spaceMult("pj", PJ_UPGRADES, target)).times(spaceMult("un", UN_UPGRADES, target))
 }
 
 // Crossing the dark between galaxies takes thought: beyond the Milky Way, exploring grows with every Swarm upgrade you buy
 function navigation() {
-    if (!driftStarted()) return 1
-    return Math.min(1, SPACE_TUNE.navBase * Math.pow(1 + player.sq.upgrades.length, SPACE_TUNE.navExp))
+    // Inside a galaxy there's no void to cross
+    if (!driftStarted() || player.pb.explored.lt(GALAXY_SYSTEMS)) return 1
+    return Math.min(1, SPACE_TUNE.navBase * Math.pow(1 + player.sq.upgrades.length, SPACE_TUNE.navExp) * extraMult("nav").toNumber() * physics("nav"))
 }
 
 function driftSwarmTrust() {
@@ -113,7 +120,7 @@ function loyaltyPower() {
 }
 
 function driftRate() {
-    return new Decimal(SPACE_TUNE.drift).times(distance() / 12).div(loyaltyPower().log10().add(1))
+    return new Decimal(SPACE_TUNE.drift).times(distance() / 12).times(physics("drift")).div(loyaltyPower().log10().add(1))
 }
 
 function drifterCopyRate() {
@@ -142,7 +149,7 @@ function attackRate() {
 }
 
 function honorMult() {
-    return extraMult("honor").times(hasMilestone("dr", 6) ? 3 : 1)
+    return extraMult("honor").times(hasMilestone("dr", 6) ? 3 : 1).times(physics("honor"))
 }
 
 function salvageMult() {
@@ -152,14 +159,15 @@ function salvageMult() {
 function driftTick(dt) {
     let p = player.pb.probes, d = player.dr.drifters
     // Some probes drift away and join the Drifters
-    let drifted = Decimal.min(p.times(driftRate()).times(dt), p.times(0.5))
+    // The Drifters can never take your last probe
+    let drifted = Decimal.min(p.times(driftRate()).times(dt), p.times(0.5), p.sub(1).max(0))
     // Drifters copy themselves, and your probes destroy them
     let w = combatRate(), r = drifterCopyRate()
     let after = d.times(Decimal.exp(r.sub(w).times(dt)))
     let destroyed = d.times(Decimal.min(1, w.times(dt)))
     after = after.add(drifted).max(0)
     // ...and they destroy your probes
-    let lost = Decimal.min(p.times(attackRate()).times(dt), p.times(0.5))
+    let lost = Decimal.min(p.times(attackRate()).times(dt), p.times(0.5), p.sub(drifted).sub(1).max(0))
     player.pb.probes = p.sub(drifted).sub(lost).max(0)
     player.dr.drifters = after
     player.dr.destroyed = player.dr.destroyed.add(destroyed)
@@ -178,6 +186,7 @@ function driftTick(dt) {
 
 function driftHint() {
     if (!driftStarted()) return ""
+    if (!driftActive()) return "<span style='color:#8fce00'>No probes are drifting yet: in every universe, drift begins once your probes pass the Milky Way (" + format(GALAXY_SYSTEMS) + " systems).</span>"
     let w = combatRate(), r = drifterCopyRate()
     if (w.gt(r)) return "<span style='color:#8fce00'>Combat (" + format(w.times(100), 3) + "%/sec) outpaces the Drifters' copying (" + format(r.times(100), 3) + "%/sec): they're held back.</span>"
     return "<span style='color:#e06666'>The Drifters copy themselves (" + format(r.times(100), 3) + "%/sec) faster than you destroy them (" + format(w.times(100), 3) + "%/sec). " +
@@ -307,7 +316,7 @@ function memoryCap() {
 
 function computeRate() {
     // The swarm thinks better the bigger it is, but only by the log, so Compute can't run away with the probes
-    return new Decimal(100).times(Math.pow(1 + player.pb.probes.add(1).log10().toNumber(), 2)).times(thinkShare()).times(processorMult()).times(extraMult("compute")).times(hasMilestone("sq", 8) ? 10 : 1)
+    return new Decimal(100).times(Math.pow(1 + player.pb.probes.add(1).log10().toNumber(), 2)).times(thinkShare()).times(physics("compute")).times(processorMult()).times(extraMult("compute")).times(hasMilestone("sq", 8) ? 10 : 1)
 }
 
 function tournamentCost() {
@@ -351,7 +360,7 @@ function playTournament(m) {
 }
 
 function yomiMult() {
-    return extraMult("yomi").times(hasMilestone("sq", 7) ? 3 : 1)
+    return extraMult("yomi").times(hasMilestone("sq", 7) ? 3 : 1).times(physics("yomi"))
 }
 
 function runTournament(strategy) {

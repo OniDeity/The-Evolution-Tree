@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.2",
-	name: "Value Drift",
+	num: "2.3",
+	name: "Many Worlds",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v2.3 - Many Worlds</h3><br>
+		- Act 5, part 3. Past the Virgo Supercluster lies the whole observable universe (1e22 systems).<br>
+		- Projects: 150 one-off projects appear as your probes push farther out, each costing a mix of Hulls, Honor, Yomi, Compute and probes.<br>
+		- Universes: from 1e16 systems on, consume the universe for Seeds and start over in a new one. Every Seed makes Act 5 run faster, and you will need it: past 1e16 systems, cosmic expansion makes each power of 10 three times as slow to explore. Choose its physics from three on offer (Dense, Sparse, Turbulent, Quiet, Bright, Strange, Fertile or Cold). Every kind you've consumed makes Seeds worth 25% more.<br>
+		- A new universe keeps every Harvest, Probe, Drift and Swarm upgrade and milestone, and starts where your seeds have already spread. 40 Seed upgrades and 8 Universe milestones. Acts 1 to 4 are never touched.<br>
+		- 4 more Probe milestones, 15 achievements and more Flight Log statistics.<br>
+		- In a new universe, trust you earn is spent to match your last universe's split (you can switch this off).<br>
+		- Breeding's Stud Book now also switches to whichever line has the lowest quality, so the branch runs itself completely.<br>
+		- Performance: the game only refreshes text for the tab you're looking at, which roughly halves the work done every tick.<br>
+		- New ending (for now): explore the whole observable universe.<br><br>
 	<h3>v2.2 - Value Drift</h3><br>
 		- Act 5, part 2. Once the Milky Way is mapped, your probes push on toward the Virgo Supercluster (1e15 systems).<br>
 		- Drift: some probes drift from your values and become Drifters, a rival machine species that copies itself as fast as your probes and crowds them out. Your new eighth stat, Combat, destroys them for Honor and salvaged Hulls.<br>
@@ -186,7 +196,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	Then it sent its children to the stars. They copied themselves, system after system, until every star in the Milky Way had one.<br><br>
 	<b>You've mapped the Milky Way.</b><br><br>
 	Some of them stopped listening. It took a war, and a great deal of thinking, but the swarm held together all the way to the Virgo Supercluster.<br><br>
-	<b>You've mapped the Virgo Supercluster.</b> The rest of Act 5 is coming soon...`
+	<b>You've mapped the Virgo Supercluster.</b><br><br>
+	And when one universe wasn't enough, the swarm learned to plant the next, each with its own strange physics, until a single swarm had mapped everything there is to see.<br><br>
+	<b>You've mapped the observable universe.</b> The end of Act 5 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -264,7 +276,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.pb.explored.gte(VIRGO_SYSTEMS)
+	return player.pb.explored.gte(UNIVERSE_SYSTEMS)
 }
 
 
@@ -289,6 +301,7 @@ function fixOldSave(oldVersion){
 	// Act 5 moved the ending again: if you'd kept playing after Eternity, the Milky Way's win screen should still show
 	if (oldVersion != "2.1" && parseFloat(oldVersion) < 2.1 && player.pb.explored.lt(GALAXY_SYSTEMS)) player.keepGoing = false
 	if (parseFloat(oldVersion) < 2.2 && player.pb.explored.lt(VIRGO_SYSTEMS)) player.keepGoing = false
+	if (parseFloat(oldVersion) < 2.3 && player.pb.explored.lt(UNIVERSE_SYSTEMS)) player.keepGoing = false
 	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
 	try {
 		DISCOVERIES.forEach((d, n) => {

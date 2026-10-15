@@ -96,7 +96,9 @@ function updateTemp() {
 	if (tmp === undefined)
 		setupTemp()
 
-	updateTempData(layers, tmp, funcs)
+	// Display-only text (descriptions, styles and so on) is only refreshed for the tab you're looking at.
+	// With hundreds of upgrades, rebuilding every layer's text every tick was most of the game's CPU time.
+	for (let layer in funcs) updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
 
 	for (layer in layers){
 		tmp[layer].resetGain = getResetGain(layer)
@@ -121,14 +123,18 @@ function updateTemp() {
 	}
 }
 
-function updateTempData(layerData, tmpData, funcsData, useThis) {
-	for (item in funcsData){
+const DISPLAY_ONLY = new Set(["fullDisplay", "description", "display", "title", "effectDisplay", "requirementDescription", "effectDescription",
+	"challengeDescription", "goalDescription", "rewardDescription", "style", "textStyle", "fillStyle", "baseStyle", "borderStyle"])
+
+function updateTempData(layerData, tmpData, funcsData, useThis, skipDisplay) {
+	for (let item in funcsData){
+		if (skipDisplay && DISPLAY_ONLY.has(item)) continue
 		if (Array.isArray(layerData[item])) {
 			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
-				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
+				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis, skipDisplay)
 		}
 		else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)){
-			updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
+			updateTempData(layerData[item], tmpData[item], funcsData[item], useThis, skipDisplay)
 		}
 		else if (isFunction(layerData[item]) && !isFunction(tmpData[item])){
 			let value

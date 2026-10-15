@@ -37,6 +37,13 @@ addLayer("fl", {
                 ["Tournaments run (won)", formatWhole(player.sq.tournaments) + " (" + formatWhole(player.sq.wins) + ")"],
                 ["Yomi earned", format(player.sq.totalYomi)],
                 ["Drift and Swarm upgrades", player.dr.upgrades.length + " / 60, " + player.sq.upgrades.length + " / 60"],
+                ["Projects finished", projectsDone() + " / " + PROJECTS.length],
+                ["Universes consumed", formatWhole(player.un.count)],
+                ["This universe's physics", PHYSICS[player.un.physics].name],
+                ["Kinds of universe consumed", physicsCollected() + " / " + PHYSICS_KEYS.length],
+                ["Seeds planted", formatWhole(player.un.totalSeeds)],
+                ["This universe has lasted", formatTime(player.un.runTime)],
+                ["Most systems explored in one universe", format(player.un.bestExplored)],
             ]
             return "<h2 style='color:#9fb4c7'>Flight Log</h2><br><br><table style='margin:auto;text-align:left;border-spacing:12px 4px'>" +
                 rows.map(r => "<tr><td>" + r[0] + "</td><td><b>" + r[1] + "</b></td></tr>").join("") + "</table>"

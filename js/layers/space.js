@@ -139,7 +139,7 @@ function upgradeText(u) {
     let what = {
         harvest: "Harvesters", wire: "Wire Drones", factory: "Factories", power: "Solar Farms", all: "Harvesters, Wire Drones and Factories",
         matter: "Matter in every system", probeDrone: "Probe crews", explore: "Exploring", replicate: "Probes copy themselves",
-        calib: "Calibration", trust: "Trust", combat: "Combat", compute: "Compute", memory: "Memory", yomi: "Yomi gain", honor: "Honor gain",
+        calib: "Calibration", trust: "Trust", seeds: "Seed gain", nav: "Navigation", combat: "Combat", compute: "Compute", memory: "Memory", yomi: "Yomi gain", honor: "Honor gain",
     }[u.target]
     if (u.target == "loyalty") return "Loyalty x" + format(u.value) + ": fewer probes drift."
     if (u.target == "armor") return "Armor x" + format(u.value) + ": Drifters destroy fewer probes."
@@ -217,7 +217,7 @@ function hvBuy(id, n) {
 
 function powerSupply() {
     // Home sends a little power out to the first drones, so you can never be stuck without any
-    return new Decimal(10 + hvBuilt(14) * 10).times(spaceMult("hv", HV_UPGRADES, "power"))
+    return new Decimal(10 + hvBuilt(14) * 10).times(spaceMult("hv", HV_UPGRADES, "power")).times(physics("power"))
 }
 
 function powerDemand() {
@@ -232,7 +232,7 @@ function powerRatio() {
 }
 
 function matterPerSystem() {
-    return new Decimal(1e4).times(spaceMult("hv", HV_UPGRADES, "matter")).times(hasMilestone("hv", 10) ? 10 : 1)
+    return new Decimal(1e4).times(spaceMult("hv", HV_UPGRADES, "matter")).times(extraMult("matter")).times(hasMilestone("hv", 10) ? 10 : 1).times(physics("matter"))
 }
 
 // Matter in explored systems that nobody has gathered yet
@@ -430,7 +430,9 @@ const STAT_KEYS = Object.keys(PROBE_STATS)
 
 function probeTrust() {
     let t = 3 + Math.floor(player.pb.explored.add(1).log10().toNumber() * SPACE_TUNE.trustPerDecade)
-    t += spaceAdd("pb", PB_UPGRADES, "trust") + spaceAdd("dr", DR_UPGRADES, "trust") + spaceAdd("sq", SQ_UPGRADES, "trust") + driftSwarmTrust()
+    t += spaceAdd("pb", PB_UPGRADES, "trust") + spaceAdd("dr", DR_UPGRADES, "trust") + spaceAdd("sq", SQ_UPGRADES, "trust") + spaceAdd("pj", PJ_UPGRADES, "trust") + spaceAdd("un", UN_UPGRADES, "trust") + driftSwarmTrust()
+    if (hasMilestone("pb", 15)) t += 3
+    if (hasMilestone("un", 5)) t += 5
     if (hasMilestone("pb", 0)) t += 1
     if (hasMilestone("pb", 3)) t += 2
     if (hasMilestone("pb", 6)) t += 3
@@ -475,13 +477,13 @@ function replicationPower() {
 
 function replicationRate() {
     // Square root of the log: early boosts matter, and the late game doesn't run away
-    return replicationPower().add(1).log10().sqrt().times(SPACE_TUNE.rep)
+    return replicationPower().add(1).log10().sqrt().times(SPACE_TUNE.rep).times(physics("rep"))
 }
 
 function hazardRate() {
     // The farther out the probes go, the more dangerous it gets
-    let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(extraMult("hazard")).times(hasMilestone("pb", 5) ? 2 : 1).times(hasMilestone("pb", 13) ? 2 : 1)
-    return new Decimal(SPACE_TUNE.haz).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
+    let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(extraMult("hazard")).times(hasMilestone("pb", 5) ? 2 : 1).times(hasMilestone("pb", 13) ? 2 : 1).times(hasMilestone("pb", 16) ? 2 : 1)
+    return new Decimal(SPACE_TUNE.haz).times(physics("hazard")).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
 }
 
 // A galaxy can only hold so many probes for every system you've explored
@@ -495,8 +497,8 @@ function distance() {
 }
 
 function exploreRate() {
-    let power = statPower("explore").add(1).times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "explore")).times(extraMult("explore")).times(hasMilestone("pb", 7) ? 3 : 1).times(hasMilestone("pb", 11) ? 2 : 1)
-    return player.pb.probes.times(SPACE_TUNE.explore).div(Math.pow(distance(), SPACE_TUNE.exploreDist)).times(power.log10().add(1)).times(navigation())
+    let power = statPower("explore").add(1).times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "explore")).times(extraMult("explore")).times(hasMilestone("pb", 7) ? 3 : 1).times(hasMilestone("pb", 11) ? 2 : 1).times(hasMilestone("pb", 17) ? 3 : 1)
+    return player.pb.probes.times(SPACE_TUNE.explore).div(Math.pow(distance(), SPACE_TUNE.exploreDist)).times(power.log10().add(1)).times(navigation()).times(physics("explore")).times(cosmicExpansion())
 }
 
 function launchCost() {
@@ -533,7 +535,8 @@ function probeTick(dt) {
 function spaceTick(dt) {
     SPACE_MEMO = {}
     probeTick(dt)
-    if (driftStarted()) { player.dr.started = true; driftTick(dt); swarmTick(dt) }
+    // Drift starts again in every universe once the probes pass the Milky Way; the Swarm keeps thinking throughout
+    if (driftStarted()) { player.dr.started = true; if (driftActive()) driftTick(dt); swarmTick(dt) }
     harvestTick(dt)
     player.fl.time += dt
 }
@@ -561,6 +564,7 @@ addLayer("pb", {
     update(diff) {
         if (!spaceUnlocked()) return
         keepReplicating()
+        diff *= spaceSpeed()
         // Long ticks (offline time) run in steps of at most 10 seconds
         let steps = Math.min(400, Math.max(1, Math.ceil(diff / 10)))
         for (let i = 0; i < steps; i++) spaceTick(diff / steps)
@@ -669,7 +673,11 @@ addLayer("pb", {
         11: { requirementDescription: "1e12 systems explored", effectDescription: "The Local Group: exploring x2.", done() { return player.pb.explored.gte(1e12) } },
         12: { requirementDescription: "1e13 systems explored", effectDescription: "+2 trust.", done() { return player.pb.explored.gte(1e13) } },
         13: { requirementDescription: "1e14 systems explored", effectDescription: "Hazards destroy half as many probes (again).", done() { return player.pb.explored.gte(1e14) } },
-        14: { requirementDescription: "1e15 systems explored", effectDescription: "The whole Virgo Supercluster is mapped.", done() { return player.pb.explored.gte(VIRGO_SYSTEMS) } },
+        14: { requirementDescription: "1e15 systems explored", effectDescription: "The whole Virgo Supercluster is mapped. Beyond it: the observable universe, Projects, and the chance to consume a universe.", done() { return player.pb.explored.gte(VIRGO_SYSTEMS) } },
+        15: { requirementDescription: "1e17 systems explored", effectDescription: "+3 trust.", done() { return player.pb.explored.gte(1e17) } },
+        16: { requirementDescription: "1e19 systems explored", effectDescription: "Hazards destroy half as many probes (a third time).", done() { return player.pb.explored.gte(1e19) } },
+        17: { requirementDescription: "1e21 systems explored", effectDescription: "Exploring x3.", done() { return player.pb.explored.gte(1e21) } },
+        18: { requirementDescription: "1e22 systems explored", effectDescription: "The whole observable universe is mapped.", done() { return player.pb.explored.gte(UNIVERSE_SYSTEMS) } },
     },
 })
 
@@ -688,6 +696,7 @@ function statUnlocked(k) {
 
 // Older saves (and anyone who took it all out) get 1 trust back in Self-Replication, taken from the biggest other stat if needed
 function keepReplicating() {
+    fitTrust()
     if (trustIn("replicate") >= 1) return
     if (trustUsed() >= probeTrust()) {
         let biggest = STAT_KEYS.filter(k => k != "replicate").reduce((a, k) => trustIn(k) > trustIn(a) ? k : a, "speed")
@@ -698,13 +707,39 @@ function keepReplicating() {
 
 // Where the probes are headed in this part of Act 5
 function targetName() {
+    if (beyondVirgo()) return "the observable universe"
     return driftStarted() ? "the Virgo Supercluster" : "the Milky Way"
+}
+
+// Never spend more trust than you have (a new universe starts with less), and, if you've asked,
+// spend new trust to match the split you used in your last universe
+function fitTrust() {
+    let plan = player.un && player.un.followPlan !== false && player.un.plan
+    // Over budget with a saved split: rebuild the allocation from the split
+    if (plan && trustUsed() > probeTrust()) {
+        for (let k of STAT_KEYS) player.pb.trust[k] = 0
+        player.pb.trust.replicate = 1
+    }
+    while (trustUsed() > probeTrust()) {
+        let biggest = STAT_KEYS.reduce((a, k) => (k != "replicate" || trustIn(k) > 1) && trustIn(k) > trustIn(a) ? k : a, STAT_KEYS.find(k => k != "replicate"))
+        if (trustIn(biggest) <= (biggest == "replicate" ? 1 : 0)) break
+        player.pb.trust[biggest]--
+    }
+    if (!plan) return
+    let planTotal = STAT_KEYS.reduce((a, k) => a + (plan[k] || 0), 0)
+    if (planTotal <= 0) return
+    for (let i = 0; i < 50 && trustUsed() < probeTrust(); i++) {
+        let used = trustUsed() + 1
+        let k = STAT_KEYS.filter(k => statUnlocked(k)).reduce((a, k) => ((plan[k] || 0) / planTotal - trustIn(k) / used) > ((plan[a] || 0) / planTotal - trustIn(a) / used) ? k : a, "replicate")
+        player.pb.trust[k] = trustIn(k) + 1
+    }
 }
 
 function regionName() {
     if (player.pb.explored.lt(GALAXY_SYSTEMS)) return "the Milky Way"
     if (player.pb.explored.lt(1e12)) return "the Local Group"
-    return "the Virgo Supercluster"
+    if (player.pb.explored.lt(VIRGO_SYSTEMS)) return "the Virgo Supercluster"
+    return "intergalactic space"
 }
 
 // A short checklist for the start of Act 5. It disappears once every step is done.
@@ -751,6 +786,6 @@ addLayer("ds", {
         "blank",
         ["display-text", function() { return gettingStarted() }],
         "blank",
-        ["tree", [["fl"], ["pb", "dr"], ["hv", "sq"]]],
+        ["tree", [["fl"], ["pb", "dr"], ["hv", "sq"], ["pj", "un"]]],
     ],
 })

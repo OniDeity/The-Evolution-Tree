@@ -145,6 +145,12 @@ function newLitter() {
     player.br.timer = litterTime()
 }
 
+// Stud book: work on whichever line is furthest behind
+function studBookLine() {
+    let open = LINE_KEYS.filter(k => LINES[k].unlock())
+    if (open.length) player.br.line = open.reduce((a, k) => player.br.lines[k] < player.br.lines[a] ? k : a, open[0])
+}
+
 function keepYoung(n) {
     let v = player.br.litter[n]
     if (v === undefined) return
@@ -170,6 +176,7 @@ addLayer("br", {
         if (player.br.timer <= 0) {
             // An unclaimed litter goes to the best of it when Stud Book is reached, otherwise it's gone
             if (player.br.litter.length && hasMilestone("br", 2)) keepYoung(player.br.litter.indexOf(Math.max(...player.br.litter)))
+            if (hasMilestone("br", 2)) studBookLine()
             newLitter()
         }
         if (hasMilestone("br", 2) && player.br.litter.length) {
@@ -202,7 +209,7 @@ addLayer("br", {
     milestones: {
         0: { requirementDescription: "Total quality 20", effectDescription: "A litter every 12 seconds instead of 20.", done() { return breedingTotal() >= 20 } },
         1: { requirementDescription: "Total quality 60", effectDescription: "Litters have 4 young instead of 3.", done() { return breedingTotal() >= 60 } },
-        2: { requirementDescription: "Total quality 150", effectDescription: "Stud book: the best of each litter is kept on its own, if it beats its parent.", done() { return breedingTotal() >= 150 } },
+        2: { requirementDescription: "Total quality 150", effectDescription: "Stud book: the best of each litter is kept on its own, if it beats its parent, and each new litter comes from whichever line has the lowest quality.", done() { return breedingTotal() >= 150 } },
     },
     tabFormat: [
         ["display-text", function() {

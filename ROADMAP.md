@@ -169,12 +169,16 @@ Opened from the **Diaspora** node after Eternity. Rows 39–41. It never resets 
 |---|---|
 | v2.1 ✅ | **Probes** (trust across seven stats, calibration, replication, hazards that grow with distance, exploration) and **Harvest** (drones, wire, factories, solar power). 120 upgrades, 23 milestones, 15 achievements, Flight Log. Ends when the Milky Way (1e11 systems) is mapped: about 3.6 hours for the bot |
 | v2.2 ✅ | **Drift** (Drifters copy themselves 1.2x as fast as your probes and crowd their room; an 8th stat, Combat, destroys them for Honor and salvage) and **Swarm** (a work-or-think slider makes Compute for game-theory tournaments that pay Yomi; Swarm upgrades unlock **Navigation** across the void between galaxies). 120 upgrades, 6 buyables, 24 milestones, 15 achievements. Ends at the Virgo Supercluster (1e15 systems): about 2.4 hours for the bot |
-| v2.3 | **Projects** (150+ one-off projects) and **Universes** (first Act 5 reset: consume a universe, start a new one with different physics) |
+| v2.3 ✅ | **Projects** (150 one-off projects in 15 series, unlocked from 1e15 to 1e22 systems, each costing a mix of currencies) and **Universes** (first Act 5 reset from 1e16 systems: Seeds double per power of 10; **cosmic expansion** makes each power of 10 past 1e16 three times as slow; Seeds make Act 5 run faster; a new universe keeps all upgrades and starts at half your best digits; a choice of 8 physics; 40 Seed upgrades; 8 milestones). Ends at the observable universe (1e22 systems): about 4 hours and 10 universes for the bot |
 | v2.4 | **Multiverse** (second Act 5 reset), the **Heat Death** ending, Trials, branches, a museum of famous probes and ships, more achievements |
 
 Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 challenges and 60 achievements, 15–25 hours.
 
 **Design rule learned in v2.1:** never multiply a growth *rate* directly. Act 5's rates take the logarithm of their boosts (replication takes the square root of the log), or self-replication runs away.
+
+**Design rule learned in v2.3:** with log-based rates, multipliers can't carry a prestige layer. Reward a reset with *time* instead (a speed multiplier on the whole act) plus a head start, and put a real wall in front of the goal (cosmic expansion) so resetting beats pushing on. Make reward per reset grow slower than the time each further step costs, or players never have a reason to reset.
+
+**Testing:** `bot5.js`-style simulations should tick only the act being tested (its layers' update, automate and milestones) in 5-second steps, refreshing temp data every 15 seconds. That runs 10 simulated hours in about 4 minutes.
 
 **Design rule learned in v2.2:** a currency that buys its own multipliers (Yomi) is stable only if each upgrade's cost step outgrows the multiplier it adds; give the cost curve some curvature (`n²` term). Also avoid loops through other systems: Navigation needs Swarm upgrades, so Compute takes only the log of probes, or Yomi, probes and Navigation feed each other and run away.
 
