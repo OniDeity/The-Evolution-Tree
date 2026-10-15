@@ -265,7 +265,7 @@ function getPointGen() {
 	gain = gain.times(observatoryBonus())
 	if (hasMilestone("as", 2)) gain = gain.times(1.5)
 	// Act 6: Light and Constants
-	if (hasUpgrade("lt", 13)) gain = gain.times(1e6)
+	if (hasUpgrade("lt", 13)) gain = gain.times(1000)
 	gain = gain.times(constantEffect("energy"))
 	// Pacing: stretches the whole act evenly so something new unlocks about once a minute
 	gain = gain.max(1).pow(ENERGY_PACING)

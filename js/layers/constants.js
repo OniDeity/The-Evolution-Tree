@@ -71,7 +71,7 @@ function constantEffect(key) {
 }
 
 function measureEvery() {
-    return CONSTANT_TUNE.every / (hasMilestone("lt", 0) ? 2 : 1)
+    return CONSTANT_TUNE.every
 }
 
 function nextMeasurement() {
@@ -103,9 +103,13 @@ function measureConstant() {
 function dissolveConstant(id) {
     let k = player.cn.list.find(x => x.id == id)
     if (!k) return
-    player.cn.echoes[k.type] = (player.cn.echoes[k.type] || 0) + k.level * k.rarity
+    player.cn.echoes[k.type] = (player.cn.echoes[k.type] || 0) + echoValue(k)
     player.cn.list = player.cn.list.filter(x => x.id != id)
     player.cn.equipped = player.cn.equipped.filter(x => x != id)
+}
+
+function echoValue(k) {
+    return k.level * k.rarity * (hasMilestone("lt", 0) ? 2 : 1)
 }
 
 function toggleEquip(id) {
@@ -221,7 +225,7 @@ addLayer("cn", {
         },
         12: {
             title: "Dissolve",
-            display() { let k = selectedConstant(); return k ? "+" + format(k.level * k.rarity, 1) + " " + CONSTANT_TYPES[k.type].symbol + " Echo" : "Select a constant first." },
+            display() { let k = selectedConstant(); return k ? "+" + format(echoValue(k), 1) + " " + CONSTANT_TYPES[k.type].symbol + " Echo" : "Select a constant first." },
             canClick() { return !!selectedConstant() },
             onClick() { dissolveConstant(player.cn.selected); player.cn.selected = null },
             style() { return { width: "140px", "min-height": "60px", height: "60px" } },

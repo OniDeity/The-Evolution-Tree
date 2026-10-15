@@ -31,7 +31,7 @@ function dnaGain() {
     if (player.re.unlocked) gain = gain.times(tmp.re.offspringEffect)
     gain = gain.times(traitEffect("flagellum")).times(traitEffect("photo")).times(traitEffect("chemo"))
     gain = gain.times(lifeBonus("dna"))
-    if (hasUpgrade("lt", 14)) gain = gain.times(1000)
+    if (hasUpgrade("lt", 14)) gain = gain.times(10)
     // Pacing: stretches Act 2 evenly so something new unlocks about once a minute
     return gain.max(1).pow(DNA_PACING)
 }

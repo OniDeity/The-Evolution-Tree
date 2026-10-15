@@ -374,9 +374,9 @@ addLayer("lt", {
     upgrades: {
         11: lightUpgrade("Event Horizon", "Unlock the <b>Singularity</b>: every so often, Acts 1 to 5 run many times as fast for a while.", 5),
         12: lightUpgrade("Afterglow", "Light x1.5.", 10),
-        13: lightUpgrade("Primordial Fire", "Act 1: energy x1e6.", 3),
-        14: lightUpgrade("Ancient DNA", "Act 2: DNA x1,000.", 6),
-        15: lightUpgrade("Living Fossils", "Act 3: Biomass x1e20.", 10),
+        13: lightUpgrade("Primordial Fire", "Act 1: energy x1,000.", 3),
+        14: lightUpgrade("Ancient DNA", "Act 2: DNA x10.", 6),
+        15: lightUpgrade("Living Fossils", "Act 3: Biomass x100,000.", 10),
         21: lightUpgrade("Oral Tradition", "Act 4: Strata x2.", 15, { unlocked() { return player.lt.genesis > 0 } }),
         22: lightUpgrade("Old Signals", "Act 5: Seeds x2 and Realities x1.5.", 20, { unlocked() { return player.lt.genesis > 0 } }),
         23: lightUpgrade("Bright Constants", "Constants are 25% stronger.", 15, { unlocked() { return player.lt.genesis > 0 } }),
@@ -389,7 +389,7 @@ addLayer("lt", {
         35: lightUpgrade("Clockwork Universe", "Acts 1 to 5 run 1.5x as fast.", 80, { unlocked() { return player.lt.genesis > 0 } }),
     },
     milestones: {
-        0: { requirementDescription: "1 Genesis", effectDescription: "Constants are measured twice as often.", done() { return player.lt.genesis >= 1 } },
+        0: { requirementDescription: "1 Genesis", effectDescription: "Dissolving a constant leaves twice the Echo.", done() { return player.lt.genesis >= 1 } },
         1: { requirementDescription: "Reach the Tree of Life within 2 hours of a Genesis", effectDescription: "Act 2 runs 1.25x as fast.", done() { return player.lt.genesis > 0 && player.lt.best.tol !== undefined && player.lt.best.tol <= 7200 } },
         2: { requirementDescription: "Reach Eternity within 6 hours of a Genesis", effectDescription: "+1 Memory for each ending.", done() { return player.lt.genesis > 0 && player.lt.best.eternity !== undefined && player.lt.best.eternity <= 21600 } },
     },

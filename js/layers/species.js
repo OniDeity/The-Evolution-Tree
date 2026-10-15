@@ -112,7 +112,7 @@ function biomassGain() {
     g = g.times(specimenBonus())
     g = g.times(cosmicGift("biomass"))
     g = g.times(landGift("biomass"))
-    if (hasUpgrade("lt", 15)) g = g.times(1e20)
+    if (hasUpgrade("lt", 15)) g = g.times(1e5)
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)
