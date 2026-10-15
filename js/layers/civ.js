@@ -449,6 +449,10 @@ function civTick(dt) {
     let eng = jobCount("engineer")
     if (eng > 0) {
         let key = player.vg.engineerCraft
+        if (hasUpgrade("wk", 53)) {
+            let open = CRAFTED_RES.filter(k => RECIPES[k].unlock() && craftable(k) > 0)
+            if (open.length) key = open.reduce((a, k) => civRes(k) < civRes(a) ? k : a, open[0])
+        }
         if (RECIPES[key] && RECIPES[key].unlock()) {
             player.vg.engineerProgress += eng * 0.02 * dt * (1 + 0.08 * bld("powerplant") * r.fuelEff)
             let n = Math.floor(player.vg.engineerProgress)
@@ -690,7 +694,7 @@ addLayer("vg", {
         "blank",
         ...[0, 1, 2, 3, 4, 5].map(n => ["row", [["display-text", function() { return jobRowText(n) }], ["clickable", 11 + n], ["clickable", 21 + n], ["clickable", 31 + n]]]),
         "blank",
-        ["display-text", function() { return hasTech("industrialization") ? "<b>Engineers</b> are crafting: " + CIV_RES[player.vg.engineerCraft].name : "" }],
+        ["display-text", function() { return !hasTech("industrialization") ? "" : hasUpgrade("wk", 53) ? "<b>Engineers</b> craft whichever material you have least of (Production Planning)." : "<b>Engineers</b> are crafting: " + CIV_RES[player.vg.engineerCraft].name }],
         ["clickables", [5]],
     ],
     clickables: Object.assign({}, ...JOBS.map((j, n) => ({
@@ -787,6 +791,7 @@ const WORKSHOP = {
     44: { title: "Mechanized Farming", text: "Fields make 100% more.", cost: { plates: 800, fuel: 150 }, unlock: "chemistry" },
     51: { title: "Computers", text: "Knowledge x1.5, Knowledge storage x1.5.", cost: { plates: 1500, books: 300 }, unlock: "electronics" },
     52: { title: "Scrubbers", text: "Footprint x0.85.", cost: { plates: 2000, slabs: 1000 }, unlock: "ecology" },
+    53: { title: "Production Planning", text: "Engineers always craft whichever material you have least of, so they cover all four.", cost: { plates: 500, books: 150 }, unlock: "electricity" },
 }
 
 addLayer("wk", {

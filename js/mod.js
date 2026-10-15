@@ -21,6 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v2.4 - The Last Question</h3><br>
 		- Act 5 is complete! Its final part adds the Multiverse and the end of everything.<br>
 		- Multiverse: once you've mapped the observable universe, collapse the multiverse for Realities. It starts all of Act 5 over, Universes included, and every Reality makes Seeds worth more and Act 5 faster. 30 Multiverse upgrades and 8 milestones, including universes consumed on their own.<br>
+		- Act 4: new Workshop improvement, Production Planning. Engineers craft whichever material you have least of.<br>
 		- New ending: the Heat Death. Buy the last Multiverse upgrade, Let There Be Light.<br>
 		- Trials: 8 universes with harder rules (Lone Probe, Hostile Universe, Silent Swarm, Heavy Universe, Starless, No Templates, Fog and Entropy). Reach 1e18 systems for a permanent reward.<br>
 		- Three branches: Signals (tune in before the transmission fades), Wormholes (pick one of three and see where it leads) and Terraforming (find a world's ideal climate from hot-and-cold feedback). Each fully automates itself late on.<br>
