@@ -1,158 +1,31 @@
-# The Evolution Tree: Roadmap
+# Roadmap
 
-Each act takes a well-known incremental game and retells it with new themes, the way The Plague Tree does.
-The overall arc is a loop: the universe forms, life evolves, and a civilization eventually builds a universe of its own. Then everything starts again, one level up.
+Goal: grow The Evolution Tree to the size and scale of The Plague Tree (about 1,100 upgrades,
+300+ buyables, 240+ milestones, 40+ challenges, 170 achievements, numbers far past e1e10,
+and weeks of play).
 
-## Automation (v1.5)
-**Rule:** anything you'd otherwise repeat forever gets an automation milestone. It arrives late enough that you've done it by hand for a while, and early enough that it never becomes a chore. One-time choices (body plan, trait draft before the milestone, galaxy shape, keystone, founder, sliders) and challenges (Cosmic Hazards, Predators, Selection Pressures) stay in your hands. Every future act follows the same rule.
+## Done
 
-| Act | Layer | Repeated action | Automated by |
-|---|---|---|---|
-| 1 | Particles | Gaining particles, buying upgrades | Row 2 milestones |
-| 1 | Atoms, Gravity, Stars, Planets | Resets, merges, supernovae, orbits | Row 2 and Row 3 milestones |
-| 1 | Fusion, Dark Energy, Hazards | Reactors, Expansion, Hazard points | Their own milestones |
-| 1 | Galaxies, Black Holes | Forming them | 10 galaxies / 10 black holes (paused during Hazards) |
-| 1 | Neutrinos, Pulsars, Asteroid Belt | Catching, syncing, prospecting | 150 neutrinos, 2,000 Radio Waves, 600 ore |
-| 1 | Quantum Fluctuations, Stellar Winds, Dark Matter | Casting, sails and flares, weighing | 200 casts; 1e6 Wind and 25 sails; 50 halos |
-| 2 | Cells, Mutations, Reproduction | Gaining them, Fecundity and Longevity | Row 3 milestones, Generations and Habitats milestones |
-| 2 | Mutations | The trait draft | 40 mutations (picks the trait you have fewer of) |
-| 2 | Generations, Habitats | Gaining them | Row 4 milestone |
-| 2 | Adaptation | Fitness, adaptations | 25 fitness (passive), 1e6 fitness (adaptations) |
-| 2 | Habitats | Settling colonists | 10 colonists |
-| 2 | Multicellular, Symbiosis | Gaining them, gifts | 6 forms; 3 partners (gifts), 7 partners |
-| 2 | Instincts | Gaining instincts | 50 instincts (passive) |
-| 2 | Photosynthesis, Gene Transfer, Eggs, Ocean Currents | Venting, absorbing, clutches, steering | 40 Iron, 12 absorbed, 600 hatchlings, 50,000 Drift |
-| 2 | Hormones, Homeostasis, Territory, Seasons | Answering, needs, rivals, foraging | 150 right answers, 5,000 Stability, 100 rivals, 1,000 Fat |
-| 3 | Tiers, Metabolism, Speciation, Competition, Radiation | Everything | Instincts from Selection Pressures |
-| 3 | Evolutionary milestones, Metabolism upgrades | Buying them | Beat 4 Selection Pressures |
-| 3 | Insects, Coal, Coevolution | Harvesting, burying and digging, balancing | 800 Chitin; 500 and 10,000 Coal; 10,000 Fitness |
+- Act 1: The Cosmos (The Prestige Tree)
+- Act 2: Life (The Prestige Tree, at biological scale)
+- Act 3: Species (Antimatter Dimensions, up to Infinity)
+- Act 4: Extinction (Kittens Game and Evolve)
 
-## Branches (v1.1)
-Every act's tree has small branch layers further out: modest helpers with a little minigame for when you hit a wall. They never reset and are not part of the retold game.
+## Act 5: Diaspora (Universal Paperclips' space stage, built deep like The Plague Tree)
 
-| Act | Branch | Hangs off | Minigame | Helps |
-|---|---|---|---|---|
-| 1 | Neutrinos | Particles | Catch random bursts before they pass (Supernovae send big ones) | Energy |
-| 1 | Pulsars | Stars | Tap on the beat to build a streak | Starlight |
-| 1 | Asteroid Belt | Planets | Pick 3 of 9 asteroids, hoping for rich ore | Cheaper planets |
-| 2 | Photosynthesis | Cells | Vent Oxygen into Banded Iron before it overflows | DNA |
-| 2 | Gene Transfer | Mutations | Spend plasmids to pick up traits you passed on in the draft | Traits (a quarter copy each) |
-| 2 | Eggs | Reproduction | Clutch size vs incubation time | Births |
-| 2 | Ocean Currents | Habitats | The current turns every 30 s; steer it toward your tiles | Cheaper colonists |
-| 3 | Insects | Tiers | Harvest the boom-and-bust swarm near its peak | Biomass |
-| 3 | Coal | Metabolism | Bury Biomass right before a reset; dig it up as Coal | Lower food demand |
-| 3 | Coevolution | Speciation | Keep predators and prey in balance | Every tier |
+Unlocked by Act 4's Eternity. It does **not** reset Act 4. It ships in four versions:
 
-With perfect play the branches make each act roughly 10–20% faster for the bot.
+| Version | Content |
+|---|---|
+| v2.1 | Probes (probe trust, calibration, replication, hazards, exploration) and Harvest (drones, wire, factories, solar power) |
+| v2.2 | Drift (Drifters, a rival machine species; combat and Honor) and Swarm (computing, Strategic Modeling tournaments) |
+| v2.3 | Projects (150+ one-off projects) and Universes (first Act 5 reset: consume a universe, start a new one with different physics) |
+| v2.4 | Multiverse (second Act 5 reset), the Heat Death ending, Trials, branches, a museum of famous probes and ships, stats, achievements |
 
-## Act 1: The Cosmos ✅ (v0.5)
-*The Prestige Tree, retold from the Big Bang to the first habitable world.*
+Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 challenges, 60 achievements, 15-25 hours.
 
-| Prestige Tree | Cosmos | Notes |
-|---|---|---|
-| Points | Energy | |
-| Prestige | Particles (P) | **Twist: Fermions vs. Bosons.** Choose which kind of particle to make |
-| Boosters | Atoms (At) | **Twist: Periodic Table.** Elements are fused from elements you own |
-| Generators | Gravity (G) | **Twist: Merging.** Spend Force to merge 3 wells into a Massive Well |
-| Time | Stars (St) | **Twist: Supernova.** Trade all stars for permanent Heavy Elements |
-| Enhance | Fusion (F) | **Twist: Plasma Temperature.** Slider trades reactor strength for fuel |
-| Space | Planets (Pl) | **Twist: Orbits.** Place each planet in Inner, Habitable, Frost Line or Outer orbit |
-| Super-Boosters | Galaxies (Ga) | **Twist: Galaxy Shapes.** Spiral, Elliptical or Irregular, chosen before each galaxy forms |
-| Super-Generators | Black Holes (BH) | **Twist: Spin.** Black holes spin up the longer you leave them alone |
-| Quirks | Dark Energy (DE) | **Twist: Fate of the Universe.** Balance Expansion against Gravity to stay flat |
-| Hindrances | Cosmic Hazards (Hz) | **Twist: Combined Hazards.** Gamma-Ray Burst, Big Crunch, Heat Death, Vacuum Decay, plus Cosmic Winter and Doomsday |
+## Act 6: the first New Game+
 
-**Row 4 (v1.3, optional bonus content, unlocked by the Habitable Zone):** no row resets, so it can't undo the ending. Each layer also gives small gifts to the later acts.
-
-| Prestige Tree | Cosmos | Twist |
-|---|---|---|
-| Magic | Quantum Fluctuations (QF) | **Uncertainty:** spells are strong and brief or weak and long (energy, DNA or Biomass) |
-| Balance | Matter vs. Antimatter (MA) | **Baryon asymmetry:** a slider sets the mix; the meeting point makes Light, the surplus boosts DNA or Biomass |
-| Solarity | Stellar Winds (SW) | **Solar cycle:** furl your sails before flares at solar maximum |
-| Phantom Souls | Dark Matter Halos (DM) | **Invisible mass:** weigh halos in as few higher/lower guesses as you can; boosts Act 3 tiers |
-
-Side layers: **Observatory** (16 discoveries, +5% energy each) and **Star Log** (statistics).
-
-Endgame: **Habitable Zone** (survive every Cosmic Hazard, buy every Row 3 upgrade, and have 5 planets in the Habitable orbit). It unlocks Act 2.
-
-**Pacing target:** something new to unlock every 60–90 seconds of human play. Act 1 has 136 unlocks. A perfect bot gets one every 44 seconds on average and finishes in about 100 minutes, so a human should take roughly 2.5 hours.
-
-## Act 2: Life ✅ (v0.8)
-*The Prestige Tree again, at biological scale, with its own tree and its own resource (DNA).*
-Opened from the **Life** node once the Habitable Zone is bought. Act 2 layers use rows 10+ and reset each other through `lifeReset()`, so Act 1 and Act 2 never reset each other.
-
-| Prestige Tree | Life | Twist |
-|---|---|---|
-| Points | DNA | |
-| Prestige | Cells ✅ | **Carrying capacity.** Cells divide on their own and fill up to a capacity |
-| Boosters | Mutations ✅ | **Natural selection.** Each mutation offers a choice of two random traits |
-| Generators | Reproduction ✅ | **Life and death.** Offspring settle where births balance deaths; Fecundity vs. Longevity |
-| Time | Generations ✅ | **Generation clock.** Each time it fills, Heritage is handed down based on cells and offspring at that moment |
-| Space | Habitats ✅ | **A map to explore.** Colonize a 5x5 sea outward from where life began; reach the Shoreline |
-| Enhance | Adaptation ✅ | **Changing climate.** Four climates cycle; each adaptation is strongest in its own |
-| Super-Boosters | Multicellular ✅ | **Body plan.** Six tiers, each an exclusive choice (Radial or Bilateral, Exo- or Endoskeleton…) |
-| Super-Generators | Symbiosis ✅ | **Partnerships.** Four partners each want a different gift; their Bond fades unless tended |
-| Quirks | Instincts ✅ | **Daily routine.** Behaviors in slots cycle; only the active one counts; Rest and combos boost the next |
-| Hindrances | Predators ✅ | **Arms race.** Hunted, Famine and Parasites, each winnable 3 times with rising goals and rewards |
-
-Side layers (never reset): **Fossil Record** (16 fossils found at milestones, +5% DNA each), **Biodiversity** (rewards variety across traits, habitats, climates, body plan, partners, behaviors and predators) and **Field Notes** (statistics).
-
-**Cambrian Explosion** (12 mutations and 12 broods) unlocks Row 3; reaching land unlocks Row 4.
-**Row 5 (v1.4, optional bonus content, unlocked by the Tree of Life):** no resets; each layer sends a small gift to Act 3.
-
-| Prestige Tree | Life | Twist |
-|---|---|---|
-| Magic | Hormones (Ho) | **Fight or flight:** answer each situation with the right hormone; streaks pay more (Act 3 Biomass) |
-| Balance | Homeostasis (Hs) | **Plate-spinning:** keep three needs between 30 and 90 (lower Act 3 food demand) |
-| Subspace | Territory (Te) | **Border defense:** chase rivals off a 4x4 range; lost patches come back after a minute (stronger Competition) |
-| Solarity | Seasons (Yr) | **Storing for winter:** only food that lasts the winter becomes Fat (every Act 3 tier) |
-
-Endgame: **The Tree of Life** (a complete body plan and all 9 predator wins). A perfect bot takes about 80–90 minutes to reach land and about 70 more to finish (v1.0.2 fixed an offspring bug that had been slowing Rows 1–3), at roughly one unlock a minute for a human.
-
-## Act 3: Species ✅ (v1.0)
-*Antimatter Dimensions, retold, with its own tree and its own resource (Biomass).*
-Opened from the **Species** node once the Tree of Life is bought. Act 3 layers use rows 20+ and reset each other through `speciesReset()`.
-
-| Antimatter Dimensions | Species | Twist |
-|---|---|---|
-| Antimatter | Biomass | |
-| 8 Dimensions | Species tiers (Ti): Bacteria → Fish → Amphibians → Reptiles → Birds → Mammals → Primates → Humans | **The food pyramid.** A tier starves (half strength) if the tier below has fewer purchases |
-| Tickspeed | Metabolism (Me) | **Food demand.** Each level eats a growing share of Biomass; more Bacteria move the sweet spot up |
-| Dimension Boosts | Speciation (Sn) | **Keystone species.** Each speciation doubles one chosen tier a second time |
-| Antimatter Galaxies | Adaptive Radiation (Ar) | **The founder effect.** One chosen tier keeps 10% of its population |
-| Dimensional Sacrifice | Competition (Cu) | **Choose the winner.** Any tier can out-compete everything below it |
-| Infinity | The Spark of Sentience (1.8e308 Biomass) | |
-
-Plus 16 **Evolutionary milestones** (permanent Biomass upgrades) and 10 achievements (+5% to every tier each).
-A perfect bot takes about 90 minutes, with something new about every 34 seconds (roughly 70 seconds for a human).
-
-**Bonus content (v1.2, optional):** after the first radiation, **Selection Pressures** retell AD's challenges: Island, Drought, Ice Age, Crowded Niche, Fragmented Range, Famine, Invasive Species and Bottleneck. **Twist:** each one teaches an **Instinct** (an autobuyer you can toggle), so automation is earned rather than given. Side layers: **Specimen Collection** (12 creatures, +5% Biomass each) and **Field Notes**.
-
-## Planned expansions (optional bonus content)
-1. ~~Act 3: Selection Pressures, Specimen Collection, Field Notes~~ ✅ v1.2
-2. ~~Act 1: Row 4 (Quantum Fluctuations, Matter vs. Antimatter, Stellar Winds, Dark Matter Halos) plus an Observatory museum and stats~~ ✅ v1.3
-3. ~~Act 2: Row 5 on land (Hormones, Homeostasis, Territory, Seasons)~~ ✅ v1.4
-
-## Act 4: Extinction
-*Antimatter Dimensions' Infinity and Eternity, retold.*
-
-- Infinity (1.8e308) → **Extinction Event**
-- Infinity Challenges → **Mass Extinctions**: Ice Age, Meteor, Great Dying, Snowball Earth
-- Replicanti → **Viruses** (a nod to The Plague Tree)
-- Eternity → **Geological Eras**
-
-## Act 5: Devolution
-*A mirror of the whole Life tree, run in reverse, from Humans back down to a single cell (like The Plague Tree's "Unvaxxed" layers).*
-
-## Act 6: Civilization
-*Synergism-style: Tools → Agriculture → Industry → Information → Space.*
-
-**Payoff for the trait draft: Genetic Engineering.** Once the species is sentient, it takes control of its own evolution, building on the Act 2 trait draft:
-- Reroll an offer, at a cost.
-- Lock a trait so it keeps appearing.
-- Add a third choice to each draft.
-- Eventually, design traits directly.
-
-
-## Act 7: Genesis (the loop)
-The civilization builds a universe of its own. That resets everything into **Universe 2**, with new physical constants (for example double gravity, no light, or faster time), and the whole tree is played again with meta-upgrades from the **Multiverse** layer.
+The heat death of the last universe, and "Let there be light" again. Act 6 is a bigger reset that wipes
+everything before it (Acts 1-5) and starts expanding them: every earlier act gets deeper on each loop,
+until the whole game reaches Plague Tree scale.

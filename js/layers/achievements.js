@@ -367,10 +367,90 @@ addLayer("a", {
             done() { return civUnlocked() && player.ex.eternity },
             tooltip: "Finish Act 4.",
         },
+        151: {
+            name: "One Small Step",
+            done() { return spaceUnlocked() && player.pb.launched >= 1 },
+            tooltip: "Launch a probe. Each Act 5 achievement makes everything in Harvest 10% stronger.",
+        },
+        152: {
+            name: "Wire You Doing This?",
+            done() { return spaceUnlocked() && player.hv.wire.gte(1000) },
+            tooltip: "Have 1,000 Wire.",
+        },
+        153: {
+            name: "Two of Everything",
+            done() { return spaceUnlocked() && player.pb.probes.gte(2) },
+            tooltip: "Have 2 probes.",
+        },
+        154: {
+            name: "Brownout",
+            done() { return spaceUnlocked() && hvBuilt(11) > 0 && powerRatio() < 0.5 },
+            tooltip: "Run your drones at under half power.",
+        },
+        155: {
+            name: "Neighbourhood Watch",
+            done() { return spaceUnlocked() && player.pb.explored.gte(100) },
+            tooltip: "Explore 100 systems.",
+        },
+        161: {
+            name: "A Thousand Points of Light",
+            done() { return spaceUnlocked() && player.pb.probes.gte(1000) },
+            tooltip: "Have 1,000 probes.",
+        },
+        162: {
+            name: "Trust Fall",
+            done() { return spaceUnlocked() && probeTrust() >= 20 },
+            tooltip: "Have 20 trust.",
+        },
+        163: {
+            name: "Fine-Tuned",
+            done() { return spaceUnlocked() && STAT_KEYS.every(k => getBuyableAmount("pb", 11 + STAT_KEYS.indexOf(k)).gte(5)) },
+            tooltip: "Calibrate every stat to level 5.",
+        },
+        164: {
+            name: "Million-Man March",
+            done() { return spaceUnlocked() && player.pb.probes.gte(1e6) },
+            tooltip: "Have 1e6 probes.",
+        },
+        165: {
+            name: "Spiral Arm",
+            done() { return spaceUnlocked() && player.pb.explored.gte(1e6) },
+            tooltip: "Explore 1e6 systems.",
+        },
+        171: {
+            name: "Hull Breach",
+            done() { return spaceUnlocked() && player.hv.totalHulls.gte(1e15) },
+            tooltip: "Make 1e15 Hulls.",
+        },
+        172: {
+            name: "Halfway There",
+            done() { return spaceUnlocked() && (player.hv.upgrades.length >= 30 || player.pb.upgrades.length >= 30) },
+            tooltip: "Buy 30 upgrades in one Act 5 layer.",
+        },
+        173: {
+            name: "Lost in Space",
+            done() { return spaceUnlocked() && player.pb.lost.gte(1e6) },
+            tooltip: "Lose 1e6 probes to hazards.",
+        },
+        174: {
+            name: "Billions and Billions",
+            done() { return spaceUnlocked() && player.pb.probes.gte(1e9) },
+            tooltip: "Have 1e9 probes.",
+        },
+        175: {
+            name: "The Milky Way",
+            done() { return spaceUnlocked() && player.pb.explored.gte(GALAXY_SYSTEMS) },
+            tooltip: "Explore every system in the Milky Way.",
+        },
     },
 })
 
 // Act 4 achievements each make the civilization 5% stronger
 function civAchievementBonus() {
-    return 1 + 0.05 * player.a.achievements.filter(id => Number(id) >= 131).length
+    return 1 + 0.05 * player.a.achievements.filter(id => Number(id) >= 131 && Number(id) < 151).length
+}
+
+// Act 5 achievements each make everything in Harvest 10% stronger
+function spaceAchievementBonus() {
+    return new Decimal(1 + 0.1 * player.a.achievements.filter(id => Number(id) >= 151).length)
 }

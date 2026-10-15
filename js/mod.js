@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.0",
-	name: "The Sixth Extinction",
+	num: "2.1",
+	name: "Diaspora",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v2.1 - Diaspora</h3><br>
+		- Act 5: Diaspora has begun! Reach Eternity, then open the new Diaspora node. It retells Universal Paperclips' journey into space, and it's being built in four parts. This is the first: the Milky Way.<br>
+		- Probes: launch probes and split your trust between seven design stats. Probes copy themselves, explore new systems and are lost to hazards. Calibrate each stat with Hulls.<br>
+		- Harvest: Harvester Drones gather Matter from explored systems, Wire Drones spin it into Wire, and Factories press Wire into Hulls. Solar Farms power it all; run short and everything slows down.<br>
+		- 120 upgrades (Probe upgrades are paid for with probes), 23 milestones and 15 achievements. Flight Log: statistics for Act 5.<br>
+		- New ending (for now): explore every system in the Milky Way.<br><br>
 	<h3>v2.0 - The Sixth Extinction</h3><br>
 		- Act 4: Extinction has begun! Spark sentience, then open the new Extinction node. It retells Kittens Game and Evolve.<br>
 		- Settlement: gather food, then build Fields, Huts, Libraries and 24 more buildings. Every building leaves a footprint on the biosphere, and a worn-down biosphere grows less food.<br>
@@ -167,7 +173,9 @@ let changelog = `<h1>Changelog:</h1><br>
 let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid, until one strange ape looked up at the stars and wondered where it all came from.<br><br>
 	<b>Act 3: Species is complete.</b><br><br>
 	Then that ape built fires, and fields, and cities, and very nearly ate the world. It took a few extinctions to learn how to stop.<br><br>
-	<b>Act 4: Extinction is complete.</b> Act 5 is coming soon...`
+	<b>Act 4: Extinction is complete.</b><br><br>
+	Then it sent its children to the stars. They copied themselves, system after system, until every star in the Milky Way had one.<br><br>
+	<b>You've mapped the Milky Way.</b> The rest of Act 5 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -228,6 +236,7 @@ var displayThings = [
 	function() { return cosmicEra() },
 	function() { return lifeUnlocked() ? "<span style='color:#7ed957'>" + format(player.dna) + " DNA (+" + format(dnaGain()) + "/sec)</span>" : "" },
 	function() { return speciesUnlocked() ? "<span style='color:#e0c068'>" + format(player.biomass) + " Biomass (+" + format(biomassGain()) + "/sec)</span>" : "" },
+	function() { return spaceUnlocked() ? "<span style='color:#5b8def'>" + format(player.pb.probes) + " probes, " + format(player.pb.explored) + " systems explored</span>" : "" },
 	function() { return civUnlocked() ? "<span style='color:#d9774b'>" + formatWhole(player.ex.points) + " Strata, " + formatWhole(player.vg.people) + " people (" + civEra().replace("Era: ", "") + ")</span>" : "" },
 ]
 
@@ -244,7 +253,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.ex.eternity
+	return player.pb.explored.gte(GALAXY_SYSTEMS)
 }
 
 
@@ -266,6 +275,8 @@ function maxTickLength() {
 function fixOldSave(oldVersion){
 	// Act 4 moved the ending. If you'd chosen to keep playing after Sentience, the Eternity screen should still show
 	if (parseFloat(oldVersion) < 2 && !player.ex.eternity) player.keepGoing = false
+	// Act 5 moved the ending again: if you'd kept playing after Eternity, the Milky Way's win screen should still show
+	if (oldVersion != "2.1" && parseFloat(oldVersion) < 2.1 && player.pb.explored.lt(GALAXY_SYSTEMS)) player.keepGoing = false
 	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
 	try {
 		DISCOVERIES.forEach((d, n) => {
