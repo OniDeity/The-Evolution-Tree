@@ -44,6 +44,13 @@ addLayer("fl", {
                 ["Seeds planted", formatWhole(player.un.totalSeeds)],
                 ["This universe has lasted", formatTime(player.un.runTime)],
                 ["Most systems explored in one universe", format(player.un.bestExplored)],
+                ["Act 5 speed", "x" + format(spaceSpeed(), 2)],
+                ["Multiverse collapses", formatWhole(player.mv.collapses)],
+                ["Realities earned", formatWhole(player.mv.total)],
+                ["Trials beaten", spaceTrialsBeaten() + " / 8"],
+                ["Contact, Charts, Gardens", format(player.sg.contact) + ", " + formatWhole(player.wh.charts) + ", " + player.tf.gardens],
+                ["Probes in the Hall", hallFound() + " / " + HALL.length],
+                ["Heat Death", player.mv.heatDeath ? "Yes" : "Not yet"],
             ]
             return "<h2 style='color:#9fb4c7'>Flight Log</h2><br><br><table style='margin:auto;text-align:left;border-spacing:12px 4px'>" +
                 rows.map(r => "<tr><td>" + r[0] + "</td><td><b>" + r[1] + "</b></td></tr>").join("") + "</table>"

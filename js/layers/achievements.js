@@ -592,6 +592,81 @@ addLayer("a", {
             done() { return spaceUnlocked() && player.pb.explored.gte(UNIVERSE_SYSTEMS) },
             tooltip: "Explore every system in the observable universe.",
         },
+        241: {
+            name: "Bigger on the Inside",
+            done() { return spaceUnlocked() && player.mv.collapses >= 1 },
+            tooltip: "Collapse the multiverse.",
+        },
+        242: {
+            name: "Many Realities",
+            done() { return spaceUnlocked() && player.mv.realities.gte(100) },
+            tooltip: "Have 100 Realities at once.",
+        },
+        243: {
+            name: "Is Anyone Out There?",
+            done() { return spaceUnlocked() && player.sg.locks >= 1 },
+            tooltip: "Lock on to a signal.",
+        },
+        244: {
+            name: "Shortcut",
+            done() { return spaceUnlocked() && player.wh.charts >= 1 },
+            tooltip: "Jump through a wormhole.",
+        },
+        245: {
+            name: "Green Thumb",
+            done() { return spaceUnlocked() && player.tf.gardens >= 1 },
+            tooltip: "Grow a Garden.",
+        },
+        251: {
+            name: "Against the Odds",
+            done() { return spaceUnlocked() && spaceTrialsBeaten() >= 1 },
+            tooltip: "Beat a Trial.",
+        },
+        252: {
+            name: "All Trials",
+            done() { return spaceUnlocked() && spaceTrialsBeaten() >= 8 },
+            tooltip: "Beat all 8 Trials.",
+        },
+        253: {
+            name: "First Contact",
+            done() { return spaceUnlocked() && player.sg.contact >= 1000 },
+            tooltip: "Have 1,000 Contact.",
+        },
+        254: {
+            name: "Cartographer",
+            done() { return spaceUnlocked() && player.wh.charts >= 100 },
+            tooltip: "Have 100 Charts.",
+        },
+        255: {
+            name: "Garden of Worlds",
+            done() { return spaceUnlocked() && player.tf.gardens >= 25 },
+            tooltip: "Grow 25 Gardens.",
+        },
+        261: {
+            name: "The Whole Collection",
+            done() { return spaceUnlocked() && hallFound() >= 16 },
+            tooltip: "Fill the Hall of Probes.",
+        },
+        262: {
+            name: "Time Flies",
+            done() { return spaceUnlocked() && spaceSpeed() >= 1000 },
+            tooltip: "Make Act 5 run 1,000 times as fast.",
+        },
+        263: {
+            name: "Foam",
+            done() { return spaceUnlocked() && player.mv.collapses >= 5 },
+            tooltip: "Collapse the multiverse 5 times.",
+        },
+        264: {
+            name: "Every Reality",
+            done() { return spaceUnlocked() && player.mv.total.gte(1000) },
+            tooltip: "Earn 1,000 Realities in all.",
+        },
+        265: {
+            name: "Let There Be Light",
+            done() { return spaceUnlocked() && player.mv.heatDeath },
+            tooltip: "Reach the Heat Death and finish Act 5.",
+        },
     },
 })
 

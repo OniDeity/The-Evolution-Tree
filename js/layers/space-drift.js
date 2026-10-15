@@ -42,14 +42,14 @@ function explorationCap() {
 // Boosts to Act 5 targets from Drift and Swarm upgrades
 function extraMult(target) {
     if (!player.dr) return new Decimal(1)
-    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target)).times(spaceMult("pj", PJ_UPGRADES, target)).times(spaceMult("un", UN_UPGRADES, target))
+    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target)).times(spaceMult("pj", PJ_UPGRADES, target)).times(spaceMult("un", UN_UPGRADES, target)).times(spaceMult("mv", MV_UPGRADES, target))
 }
 
 // Crossing the dark between galaxies takes thought: beyond the Milky Way, exploring grows with every Swarm upgrade you buy
 function navigation() {
     // Inside a galaxy there's no void to cross
     if (!driftStarted() || player.pb.explored.lt(GALAXY_SYSTEMS)) return 1
-    return Math.min(1, SPACE_TUNE.navBase * Math.pow(1 + player.sq.upgrades.length, SPACE_TUNE.navExp) * extraMult("nav").toNumber() * physics("nav"))
+    return Math.min(1, SPACE_TUNE.navBase * Math.pow(1 + player.sq.upgrades.length, SPACE_TUNE.navExp) * extraMult("nav").toNumber() * physics("nav") * (inSpaceTrial(23) ? 0.1 : 1) * (spaceTrialDone(23) ? 2 : 1))
 }
 
 function driftSwarmTrust() {
@@ -125,12 +125,13 @@ function driftRate() {
 
 function drifterCopyRate() {
     let fill = Decimal.min(1, player.pb.probes.add(player.dr.drifters).div(probeRoom().max(1))).toNumber()
-    return replicationRate().times(SPACE_TUNE.drifterCopy).times(1 - fill).times(hasMilestone("dr", 7) ? 0.75 : 1)
+    return replicationRate().times(SPACE_TUNE.drifterCopy).times(inSpaceTrial(12) ? 2 / 1.2 : 1).times(1 - fill).times(hasMilestone("dr", 7) ? 0.75 : 1)
 }
 
 function combatPower() {
     let p = statPower("combat").times(speedFactor()).times(extraMult("combat")).times(getBuyableAmount("dr", 11).add(1))
     if (hasMilestone("dr", 1)) p = p.times(2)
+    if (spaceTrialDone(12)) p = p.times(1000)
     return p
 }
 
@@ -316,7 +317,7 @@ function memoryCap() {
 
 function computeRate() {
     // The swarm thinks better the bigger it is, but only by the log, so Compute can't run away with the probes
-    return new Decimal(100).times(Math.pow(1 + player.pb.probes.add(1).log10().toNumber(), 2)).times(thinkShare()).times(physics("compute")).times(processorMult()).times(extraMult("compute")).times(hasMilestone("sq", 8) ? 10 : 1)
+    return new Decimal(100).times(Math.pow(1 + player.pb.probes.add(1).log10().toNumber(), 2)).times(thinkShare()).times(physics("compute")).times(inSpaceTrial(13) ? 0 : 1).times(processorMult()).times(extraMult("compute")).times(hasMilestone("sq", 8) ? 10 : 1)
 }
 
 function tournamentCost() {
@@ -360,7 +361,7 @@ function playTournament(m) {
 }
 
 function yomiMult() {
-    return extraMult("yomi").times(hasMilestone("sq", 7) ? 3 : 1).times(physics("yomi"))
+    return extraMult("yomi").times(hasMilestone("sq", 7) ? 3 : 1).times(physics("yomi")).times(spaceTrialDone(13) ? 100 : 1)
 }
 
 function runTournament(strategy) {

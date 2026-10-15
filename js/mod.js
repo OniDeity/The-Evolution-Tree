@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.3",
-	name: "Many Worlds",
+	num: "2.4",
+	name: "The Last Question",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v2.4 - The Last Question</h3><br>
+		- Act 5 is complete! Its final part adds the Multiverse and the end of everything.<br>
+		- Multiverse: once you've mapped the observable universe, collapse the multiverse for Realities. It starts all of Act 5 over, Universes included, and every Reality makes Seeds worth more and Act 5 faster. 30 Multiverse upgrades and 8 milestones, including universes consumed on their own.<br>
+		- New ending: the Heat Death. Buy the last Multiverse upgrade, Let There Be Light.<br>
+		- Trials: 8 universes with harder rules (Lone Probe, Hostile Universe, Silent Swarm, Heavy Universe, Starless, No Templates, Fog and Entropy). Reach 1e18 systems for a permanent reward.<br>
+		- Three branches: Signals (tune in before the transmission fades), Wormholes (pick one of three and see where it leads) and Terraforming (find a world's ideal climate from hot-and-cold feedback). Each fully automates itself late on.<br>
+		- Hall of Probes: a museum of 16 real and imagined probes, from Sputnik to the Von Neumann probe.<br>
+		- 15 achievements and more Flight Log statistics.<br><br>
 	<h3>v2.3 - Many Worlds</h3><br>
 		- Act 5, part 3. Past the Virgo Supercluster lies the whole observable universe (1e22 systems).<br>
 		- Projects: 150 one-off projects appear as your probes push farther out, each costing a mix of Hulls, Honor, Yomi, Compute and probes.<br>
@@ -198,7 +206,10 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	Some of them stopped listening. It took a war, and a great deal of thinking, but the swarm held together all the way to the Virgo Supercluster.<br><br>
 	<b>You've mapped the Virgo Supercluster.</b><br><br>
 	And when one universe wasn't enough, the swarm learned to plant the next, each with its own strange physics, until a single swarm had mapped everything there is to see.<br><br>
-	<b>You've mapped the observable universe.</b> The end of Act 5 is coming soon...`
+	<b>You've mapped the observable universe.</b><br><br>
+	Universe after universe, until the last stars burned out and only the swarm was left, thinking in the dark. It had been asked, long ago, whether entropy could ever be reversed. Now, at last, it knew how.<br><br>
+	"Let there be light."<br><br>
+	<b>Act 5: Diaspora is complete.</b> Act 6, the first New Game+, is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -276,7 +287,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.pb.explored.gte(UNIVERSE_SYSTEMS)
+	return player.mv.heatDeath
 }
 
 
@@ -302,6 +313,9 @@ function fixOldSave(oldVersion){
 	if (oldVersion != "2.1" && parseFloat(oldVersion) < 2.1 && player.pb.explored.lt(GALAXY_SYSTEMS)) player.keepGoing = false
 	if (parseFloat(oldVersion) < 2.2 && player.pb.explored.lt(VIRGO_SYSTEMS)) player.keepGoing = false
 	if (parseFloat(oldVersion) < 2.3 && player.pb.explored.lt(UNIVERSE_SYSTEMS)) player.keepGoing = false
+	if (parseFloat(oldVersion) < 2.4 && !player.mv.heatDeath) player.keepGoing = false
+	// Seeds planted before the Multiverse existed still count toward your first collapse
+	if (parseFloat(oldVersion) < 2.4 && player.mv.collapses == 0) player.mv.cycleSeeds = player.mv.cycleSeeds.max(player.un.totalSeeds)
 	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
 	try {
 		DISCOVERIES.forEach((d, n) => {

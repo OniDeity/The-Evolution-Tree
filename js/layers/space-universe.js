@@ -187,14 +187,17 @@ function seedMult() {
     let m = extraMult("seeds").times(1 + 0.25 * physicsCollected())
     if (hasMilestone("un", 2)) m = m.times(2)
     if (hasMilestone("un", 4)) m = m.times(2)
-    return m
+    return m.times(mvSeedMult())
 }
 
 // Every Seed you've planted makes Act 5 run faster. Speeding up time compresses everything evenly,
 // so it can't make the swarm run away the way boosting its growth rates would.
 function spaceSpeed() {
     if (!player.un) return 1
-    return (1 + 2 * Math.sqrt(player.un.totalSeeds.toNumber())) * (hasMilestone("un", 7) ? 2 : 1)
+    // Past 10,000 Seeds, more Seeds speed things up far more slowly, so Seeds and speed can't feed each other forever
+    let s = player.un.totalSeeds.toNumber()
+    let base = (1 + 2 * Math.sqrt(Math.min(s, 1e4))) * (s > 1e4 ? Math.pow(s / 1e4, 0.15) : 1)
+    return base * (hasMilestone("un", 7) ? 2 : 1) * mvSpeed() * (hasMilestone("mv", 6) ? 2 : 1)
 }
 
 function seedGain() {
@@ -255,12 +258,17 @@ function resetUniverse() {
     player.un.physics = player.un.next || "standard"
     player.un.plan = deepCopy(player.pb.trust)
     offerPhysics()
+    player.mv.cycleSeeds = player.mv.cycleSeeds.add(gain)
+    universeWipe(false)
+}
 
+// Starts a new universe. Used when consuming one, entering or leaving a Trial, and collapsing the multiverse
+function universeWipe(collapse) {
     let keepPb = ["trust", "autoLaunch"], keepHv = ["auto"], keepDr = ["started"], keepSq = ["think", "strategy", "autoRun"], keepPj = ["auto"]
     // Upgrades and milestones always survive: a universe resets your resources, Calibration and Projects
     for (let keep of [keepPb, keepHv, keepDr, keepSq]) keep.push("milestones", "upgrades")
-    if (hasMilestone("un", 0)) { keepPb.push("buyables"); keepDr.push("buyables"); keepSq.push("buyables") }
-    if (hasMilestone("un", 1)) keepPj.push("upgrades")
+    if (hasMilestone("un", 0) && !collapse) { keepPb.push("buyables"); keepDr.push("buyables"); keepSq.push("buyables") }
+    if (hasMilestone("un", 1) && !collapse) keepPj.push("upgrades")
     resetKeeping("pb", keepPb)
     resetKeeping("hv", keepHv)
     resetKeeping("dr", keepDr)
@@ -274,6 +282,7 @@ function resetUniverse() {
         player.pb.explored = start
         player.pb.probes = player.pb.probes.max(start)
     }
+    if (inSpaceTrial(11)) { player.pb.probes = new Decimal(1); player.pb.launched = 1 }
     keepReplicating()
 }
 
@@ -300,6 +309,8 @@ addLayer("un", {
         bestExplored: new Decimal(0),
         plan: null,
         followPlan: true,
+        auto: true,
+        autoMult: 1,
     }},
     type: "none",
     branches: ["pb", "sq"],
@@ -312,6 +323,9 @@ addLayer("un", {
         player.un.runTime += diff
         player.un.bestExplored = player.un.bestExplored.max(player.pb.explored)
         if (!player.un.offered.length) offerPhysics()
+    },
+    automate() {
+        if (spaceUnlocked() && beyondVirgo() && !player.tl.activeChallenge) autoConsume()
     },
     tabFormat: {
         "Universes": {
@@ -336,6 +350,8 @@ addLayer("un", {
                 ["clickables", [9]],
                 "blank",
                 ["clickables", [2]],
+                "blank",
+                ["clickables", [3]],
                 "blank",
                 "milestones",
             ],
@@ -368,13 +384,29 @@ addLayer("un", {
             onClick() { player.un.followPlan = player.un.followPlan === false },
             style() { return { width: "260px", height: "80px", "min-height": "80px", "font-size": "10px" } },
         },
+        31: {
+            title() { return "Auto-consume: " + (player.un.auto ? "ON" : "OFF") },
+            display() { return "Consume on its own once the next universe would bring in " + AUTO_CONSUME[player.un.autoMult || 0] + "x your current Seeds." },
+            unlocked() { return hasMilestone("mv", 1) },
+            canClick() { return true },
+            onClick() { player.un.auto = !player.un.auto },
+            style() { return { width: "220px", height: "80px", "min-height": "80px", "font-size": "10px" } },
+        },
+        32: {
+            title: "Change threshold",
+            display() { return "Now x" + AUTO_CONSUME[player.un.autoMult || 0] },
+            unlocked() { return hasMilestone("mv", 1) },
+            canClick() { return true },
+            onClick() { player.un.autoMult = ((player.un.autoMult || 0) + 1) % AUTO_CONSUME.length },
+            style() { return { width: "140px", height: "80px", "min-height": "80px", "font-size": "10px" } },
+        },
         91: {
             title: "Consume the universe",
             display() {
                 let g = seedGain()
                 return g.lt(1) ? "Explore " + format(Decimal.pow(10, SEED_THRESHOLD)) + " systems first." : "Plant <b>" + formatWhole(g) + "</b> Seeds in a " + (PHYSICS[player.un.next] || PHYSICS.standard).name + " universe."
             },
-            canClick() { return seedGain().gte(1) },
+            canClick() { return seedGain().gte(1) && !player.tl.activeChallenge },
             onClick() { resetUniverse() },
             style() { return { width: "260px", height: "110px", "min-height": "110px" } },
         },

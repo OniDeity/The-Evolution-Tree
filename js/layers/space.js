@@ -120,6 +120,7 @@ function spaceMult(layer, table, target) {
 function spaceMultRaw(layer, table, target) {
     let m = new Decimal(1)
     if (!player[layer]) return m
+    if (layer == "pb" && inSpaceTrial(22)) return m
     for (let id in table) {
         let u = table[id]
         if ((u.target != target && !(u.target == "all" && ["harvest", "wire", "factory"].includes(target))) || u.kind == "+" || !hasUpgrade(layer, id)) continue
@@ -225,6 +226,7 @@ function powerDemand() {
 }
 
 function powerRatio() {
+    if (inSpaceTrial(21)) return 0
     if (hasMilestone("hv", 8)) return 1
     let d = powerDemand()
     if (d.eq(0)) return 1
@@ -254,6 +256,7 @@ function spaceGlobalMult() {
     if (hasMilestone("hv", 9)) m = m.times(3)
     if (hasMilestone("hv", 11)) m = m.times(5)
     m = m.times(spaceAchievementBonus())
+    if (spaceTrialDone(21)) m = m.times(1e6)
     // The eternal civilization of Act 4 keeps supplying its probes
     m = m.times(player.ex.total.add(10).log10())
     return m
@@ -433,6 +436,8 @@ function probeTrust() {
     t += spaceAdd("pb", PB_UPGRADES, "trust") + spaceAdd("dr", DR_UPGRADES, "trust") + spaceAdd("sq", SQ_UPGRADES, "trust") + spaceAdd("pj", PJ_UPGRADES, "trust") + spaceAdd("un", UN_UPGRADES, "trust") + driftSwarmTrust()
     if (hasMilestone("pb", 15)) t += 3
     if (hasMilestone("un", 5)) t += 5
+    if (hasMilestone("mv", 4)) t += 10
+    t += spaceAdd("mv", MV_UPGRADES, "trust") + signalTrust()
     if (hasMilestone("pb", 0)) t += 1
     if (hasMilestone("pb", 3)) t += 2
     if (hasMilestone("pb", 6)) t += 3
@@ -477,13 +482,13 @@ function replicationPower() {
 
 function replicationRate() {
     // Square root of the log: early boosts matter, and the late game doesn't run away
-    return replicationPower().add(1).log10().sqrt().times(SPACE_TUNE.rep).times(physics("rep"))
+    return replicationPower().add(1).log10().sqrt().times(SPACE_TUNE.rep).times(physics("rep")).times(spaceTrialDone(22) ? 1.1 : 1)
 }
 
 function hazardRate() {
     // The farther out the probes go, the more dangerous it gets
     let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(extraMult("hazard")).times(hasMilestone("pb", 5) ? 2 : 1).times(hasMilestone("pb", 13) ? 2 : 1).times(hasMilestone("pb", 16) ? 2 : 1)
-    return new Decimal(SPACE_TUNE.haz).times(physics("hazard")).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
+    return new Decimal(SPACE_TUNE.haz).times(physics("hazard")).times(inSpaceTrial(14) ? 10 : 1).div(spaceTrialDone(14) ? 10 : 1).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
 }
 
 // A galaxy can only hold so many probes for every system you've explored
@@ -506,7 +511,7 @@ function launchCost() {
 }
 
 function launchProbe() {
-    if (player.hv.hulls.lt(launchCost())) return
+    if (player.hv.hulls.lt(launchCost()) || inSpaceTrial(11)) return
     player.hv.hulls = player.hv.hulls.sub(launchCost())
     player.pb.launched++
     player.pb.probes = player.pb.probes.add(1)
@@ -565,8 +570,9 @@ addLayer("pb", {
         if (!spaceUnlocked()) return
         keepReplicating()
         diff *= spaceSpeed()
-        // Long ticks (offline time) run in steps of at most 10 seconds
-        let steps = Math.min(400, Math.max(1, Math.ceil(diff / 10)))
+        // Long ticks run in steps of at most 10 seconds, but never more than 50 steps a tick (400 for a long offline tick):
+        // late in Act 5 the game runs so fast that more would freeze the browser. Probe growth is exact over any step.
+        let steps = Math.min(diff > 3600 * spaceSpeed() ? 400 : 50, Math.max(1, Math.ceil(diff / 10)))
         for (let i = 0; i < steps; i++) spaceTick(diff / steps)
     },
     automate() {
@@ -786,6 +792,6 @@ addLayer("ds", {
         "blank",
         ["display-text", function() { return gettingStarted() }],
         "blank",
-        ["tree", [["fl"], ["pb", "dr"], ["hv", "sq"], ["pj", "un"]]],
+        ["tree", [["fl", "hp"], ["sg", "pb", "dr", "wh"], ["hv", "sq", "tf"], ["pj", "un", "tl"], ["mv"]]],
     ],
 })
