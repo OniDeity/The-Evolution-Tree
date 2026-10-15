@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-side.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.1",
-	name: "Diaspora",
+	num: "2.2",
+	name: "Value Drift",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v2.2 - Value Drift</h3><br>
+		- Act 5, part 2. Once the Milky Way is mapped, your probes push on toward the Virgo Supercluster (1e15 systems).<br>
+		- Drift: some probes drift from your values and become Drifters, a rival machine species that copies itself as fast as your probes and crowds them out. Your new eighth stat, Combat, destroys them for Honor and salvaged Hulls.<br>
+		- Swarm: set probes thinking instead of working to make Compute, then back a strategy in game-theory tournaments for Yomi.<br>
+		- 120 more upgrades, 6 buyables, 24 milestones (including 4 new Probe milestones) and 15 achievements.<br>
+		- Act 5 now shows a Getting Started checklist, and Self-Replication can never drop below 1 trust, so the swarm can't stall.<br>
+		- The Speciation Instinct now spreads keystones across your tiers instead of stacking them on one.<br>
+		- New ending (for now): explore every system in the Virgo Supercluster.<br><br>
 	<h3>v2.1 - Diaspora</h3><br>
 		- Act 5: Diaspora has begun! Reach Eternity, then open the new Diaspora node. It retells Universal Paperclips' journey into space, and it's being built in four parts. This is the first: the Milky Way.<br>
 		- Probes: launch probes and split your trust between seven design stats. Probes copy themselves, explore new systems and are lost to hazards. Calibrate each stat with Hulls.<br>
@@ -175,7 +183,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	Then that ape built fires, and fields, and cities, and very nearly ate the world. It took a few extinctions to learn how to stop.<br><br>
 	<b>Act 4: Extinction is complete.</b><br><br>
 	Then it sent its children to the stars. They copied themselves, system after system, until every star in the Milky Way had one.<br><br>
-	<b>You've mapped the Milky Way.</b> The rest of Act 5 is coming soon...`
+	<b>You've mapped the Milky Way.</b><br><br>
+	Some of them stopped listening. It took a war, and a great deal of thinking, but the swarm held together all the way to the Virgo Supercluster.<br><br>
+	<b>You've mapped the Virgo Supercluster.</b> The rest of Act 5 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -253,7 +263,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.pb.explored.gte(GALAXY_SYSTEMS)
+	return player.pb.explored.gte(VIRGO_SYSTEMS)
 }
 
 
@@ -277,6 +287,7 @@ function fixOldSave(oldVersion){
 	if (parseFloat(oldVersion) < 2 && !player.ex.eternity) player.keepGoing = false
 	// Act 5 moved the ending again: if you'd kept playing after Eternity, the Milky Way's win screen should still show
 	if (oldVersion != "2.1" && parseFloat(oldVersion) < 2.1 && player.pb.explored.lt(GALAXY_SYSTEMS)) player.keepGoing = false
+	if (parseFloat(oldVersion) < 2.2 && player.pb.explored.lt(VIRGO_SYSTEMS)) player.keepGoing = false
 	// The Observatory arrived in v1.3. Record discoveries you'd already made quietly, instead of a pile of popups.
 	try {
 		DISCOVERIES.forEach((d, n) => {

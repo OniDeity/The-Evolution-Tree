@@ -168,13 +168,15 @@ Opened from the **Diaspora** node after Eternity. Rows 39–41. It never resets 
 | Version | Content |
 |---|---|
 | v2.1 ✅ | **Probes** (trust across seven stats, calibration, replication, hazards that grow with distance, exploration) and **Harvest** (drones, wire, factories, solar power). 120 upgrades, 23 milestones, 15 achievements, Flight Log. Ends when the Milky Way (1e11 systems) is mapped: about 3.6 hours for the bot |
-| v2.2 | **Drift** (Drifters, a rival machine species; combat and Honor) and **Swarm** (computing, Strategic Modeling tournaments) |
+| v2.2 ✅ | **Drift** (Drifters copy themselves 1.2x as fast as your probes and crowd their room; an 8th stat, Combat, destroys them for Honor and salvage) and **Swarm** (a work-or-think slider makes Compute for game-theory tournaments that pay Yomi; Swarm upgrades unlock **Navigation** across the void between galaxies). 120 upgrades, 6 buyables, 24 milestones, 15 achievements. Ends at the Virgo Supercluster (1e15 systems): about 2.4 hours for the bot |
 | v2.3 | **Projects** (150+ one-off projects) and **Universes** (first Act 5 reset: consume a universe, start a new one with different physics) |
 | v2.4 | **Multiverse** (second Act 5 reset), the **Heat Death** ending, Trials, branches, a museum of famous probes and ships, more achievements |
 
 Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 challenges and 60 achievements, 15–25 hours.
 
 **Design rule learned in v2.1:** never multiply a growth *rate* directly. Act 5's rates take the logarithm of their boosts (replication takes the square root of the log), or self-replication runs away.
+
+**Design rule learned in v2.2:** a currency that buys its own multipliers (Yomi) is stable only if each upgrade's cost step outgrows the multiplier it adds; give the cost curve some curvature (`n²` term). Also avoid loops through other systems: Navigation needs Swarm upgrades, so Compute takes only the log of probes, or Yomi, probes and Navigation feed each other and run away.
 
 ## Act 6: the first New Game+
 The heat death of the last universe, and "Let there be light" again. A bigger reset that wipes everything before it (Acts 1–5) and starts expanding them: each loop makes every earlier act deeper, until the whole game reaches Plague Tree scale.

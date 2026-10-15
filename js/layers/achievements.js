@@ -404,7 +404,7 @@ addLayer("a", {
         },
         163: {
             name: "Fine-Tuned",
-            done() { return spaceUnlocked() && STAT_KEYS.every(k => getBuyableAmount("pb", 11 + STAT_KEYS.indexOf(k)).gte(5)) },
+            done() { return spaceUnlocked() && STAT_KEYS.filter(k => k != "combat").every(k => getBuyableAmount("pb", 11 + STAT_KEYS.indexOf(k)).gte(5)) },
             tooltip: "Calibrate every stat to level 5.",
         },
         164: {
@@ -441,6 +441,81 @@ addLayer("a", {
             name: "The Milky Way",
             done() { return spaceUnlocked() && player.pb.explored.gte(GALAXY_SYSTEMS) },
             tooltip: "Explore every system in the Milky Way.",
+        },
+        181: {
+            name: "Mutiny",
+            done() { return spaceUnlocked() && player.dr.drifters.gte(1) },
+            tooltip: "Have a Drifter.",
+        },
+        182: {
+            name: "First Blood",
+            done() { return spaceUnlocked() && player.dr.destroyed.gte(1) },
+            tooltip: "Destroy a Drifter.",
+        },
+        183: {
+            name: "Honor Bound",
+            done() { return spaceUnlocked() && player.dr.totalHonor.gte(1e4) },
+            tooltip: "Earn 10,000 Honor.",
+        },
+        184: {
+            name: "Deep Thought",
+            done() { return spaceUnlocked() && driftStarted() && player.sq.think >= 50 },
+            tooltip: "Set at least half your probes thinking.",
+        },
+        185: {
+            name: "Game Theory",
+            done() { return spaceUnlocked() && player.sq.wins >= 1 },
+            tooltip: "Back the winner of a tournament.",
+        },
+        191: {
+            name: "Andromeda",
+            done() { return spaceUnlocked() && player.pb.explored.gte(1e12) },
+            tooltip: "Explore 1e12 systems.",
+        },
+        192: {
+            name: "Hold the Line",
+            done() { return spaceUnlocked() && player.pb.probes.gte(1e12) && player.dr.drifters.lt(player.pb.probes.div(100)) },
+            tooltip: "Have 1e12 probes and fewer than 1% as many Drifters.",
+        },
+        193: {
+            name: "Read the Room",
+            done() { return spaceUnlocked() && player.sq.totalYomi.gte(1e6) },
+            tooltip: "Earn 1e6 Yomi.",
+        },
+        194: {
+            name: "Tit for Tat",
+            done() { return spaceUnlocked() && player.sq.titForTatWin },
+            tooltip: "Win a tournament backing Tit for Tat.",
+        },
+        195: {
+            name: "Total War",
+            done() { return spaceUnlocked() && player.dr.destroyed.gte(1e15) },
+            tooltip: "Destroy 1e15 Drifters.",
+        },
+        201: {
+            name: "Supercomputer",
+            done() { return spaceUnlocked() && player.sq.bestCompute.gte(1e10) },
+            tooltip: "Hold 1e10 Compute.",
+        },
+        202: {
+            name: "Decorated",
+            done() { return spaceUnlocked() && player.dr.totalHonor.gte(1e20) },
+            tooltip: "Earn 1e20 Honor.",
+        },
+        203: {
+            name: "Grand Strategy",
+            done() { return spaceUnlocked() && player.sq.upgrades.length >= 30 },
+            tooltip: "Buy 30 Swarm upgrades.",
+        },
+        204: {
+            name: "Supercluster",
+            done() { return spaceUnlocked() && player.pb.explored.gte(1e14) },
+            tooltip: "Explore 1e14 systems.",
+        },
+        205: {
+            name: "Virgo",
+            done() { return spaceUnlocked() && player.pb.explored.gte(VIRGO_SYSTEMS) },
+            tooltip: "Explore every system in the Virgo Supercluster.",
         },
     },
 })

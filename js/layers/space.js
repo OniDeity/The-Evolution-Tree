@@ -107,8 +107,17 @@ function upgradeValue(table, layer, id) {
     return u.kind == "dyn" ? new Decimal(u.value()) : new Decimal(u.value)
 }
 
-// Multiplies together every bought upgrade of a layer aimed at the given target ("+" upgrades add instead)
+// Multiplies together every bought upgrade of a layer aimed at the given target ("+" upgrades add instead).
+// Act 5 asks for these many times a tick, so each answer is remembered until the next tick.
+let SPACE_MEMO = {}
+
 function spaceMult(layer, table, target) {
+    let key = layer + "/" + target
+    if (SPACE_MEMO[key]) return SPACE_MEMO[key]
+    return SPACE_MEMO[key] = spaceMultRaw(layer, table, target)
+}
+
+function spaceMultRaw(layer, table, target) {
     let m = new Decimal(1)
     if (!player[layer]) return m
     for (let id in table) {
@@ -130,8 +139,11 @@ function upgradeText(u) {
     let what = {
         harvest: "Harvesters", wire: "Wire Drones", factory: "Factories", power: "Solar Farms", all: "Harvesters, Wire Drones and Factories",
         matter: "Matter in every system", probeDrone: "Probe crews", explore: "Exploring", replicate: "Probes copy themselves",
-        calib: "Calibration", trust: "Trust",
+        calib: "Calibration", trust: "Trust", combat: "Combat", compute: "Compute", memory: "Memory", yomi: "Yomi gain", honor: "Honor gain",
     }[u.target]
+    if (u.target == "loyalty") return "Loyalty x" + format(u.value) + ": fewer probes drift."
+    if (u.target == "armor") return "Armor x" + format(u.value) + ": Drifters destroy fewer probes."
+    if (u.target == "salvage") return "Salvage x" + format(u.value) + ": destroyed Drifters give more Hulls."
     if (u.kind == "+") return "+" + u.value + " Trust."
     if (u.target == "buildCost") return "Drones, Factories and Solar Farms cost /" + format(u.value) + "."
     if (u.target == "wirePerHull") return "A Hull takes /" + format(u.value) + " the Wire."
@@ -249,7 +261,7 @@ function spaceGlobalMult() {
 
 // Probe crews: a share of your probes do drone and factory work wherever they are
 function probeCrews(stat) {
-    return player.pb.probes.times(0.02 * trustIn(stat)).times(calibration(stat)).times(spaceMult("pb", PB_UPGRADES, "probeDrone")).times(spaceMult("hv", HV_UPGRADES, "probeDrone"))
+    return player.pb.probes.times(0.02 * trustIn(stat) * (1 - thinkShare())).times(calibration(stat)).times(spaceMult("pb", PB_UPGRADES, "probeDrone")).times(spaceMult("hv", HV_UPGRADES, "probeDrone"))
 }
 
 let spaceCache = { matter: new Decimal(0), wire: new Decimal(0), hulls: new Decimal(0), power: 1, growth: 0, explore: new Decimal(0), lost: new Decimal(0) }
@@ -262,19 +274,19 @@ function harvestTick(dt) {
     let factories = new Decimal(hvBuilt(13) * ratio).add(probeCrews("factory"))
 
     // Matter: gathered from explored systems, never more than they hold
-    let mRate = harvesters.times(spaceMult("hv", HV_UPGRADES, "harvest")).times(g)
+    let mRate = harvesters.times(spaceMult("hv", HV_UPGRADES, "harvest")).times(extraMult("harvest")).times(g)
     let gather = Decimal.min(mRate.times(dt), unharvested())
     player.hv.matter = player.hv.matter.add(gather)
     player.hv.gathered = player.hv.gathered.add(gather)
 
     // Wire: spun from Matter
-    let wRate = wireDrones.times(spaceMult("hv", HV_UPGRADES, "wire")).times(g)
+    let wRate = wireDrones.times(spaceMult("hv", HV_UPGRADES, "wire")).times(extraMult("wire")).times(g)
     let spin = Decimal.min(wRate.times(dt), player.hv.matter)
     player.hv.matter = player.hv.matter.sub(spin)
     player.hv.wire = player.hv.wire.add(spin)
 
     // Hulls: pressed from Wire
-    let hRate = factories.times(spaceMult("hv", HV_UPGRADES, "factory")).times(g)
+    let hRate = factories.times(spaceMult("hv", HV_UPGRADES, "factory")).times(extraMult("factory")).times(g)
     let press = Decimal.min(hRate.times(dt), player.hv.wire.div(wirePerHull()))
     player.hv.wire = player.hv.wire.sub(press.times(wirePerHull())).max(0)
     // Supply ships from home: a steady Hull a second, so the swarm can never be stranded
@@ -319,6 +331,8 @@ addLayer("hv", {
         "Drones": {
             content: [
                 ["display-text", function() { return harvestHeader() }],
+                "blank",
+                ["display-text", function() { return gettingStarted() }],
                 "blank",
                 lore("The first probes arrive in a new system and get to work: break down an asteroid, spin it into wire, press the wire into hulls, and build more of everything."),
                 "blank",
@@ -407,6 +421,7 @@ const PROBE_STATS = {
     explore: { name: "Exploration", text: "Each probe explores more systems." },
     replicate: { name: "Self-Replication", text: "Probes copy themselves. Without this, they never multiply." },
     hazard: { name: "Hazard Remediation", text: "Fewer probes are lost to hazards, which grow the farther out you go." },
+    combat: { name: "Combat", text: "Probes destroy Drifters. Needed once probes start to drift.", unlock() { return driftStarted() } },
     factory: { name: "Factory Production", text: "Probe crews work as Factories." },
     harvester: { name: "Harvester Production", text: "Probe crews work as Harvester Drones." },
     wire: { name: "Wire Production", text: "Probe crews work as Wire Drones." },
@@ -415,7 +430,7 @@ const STAT_KEYS = Object.keys(PROBE_STATS)
 
 function probeTrust() {
     let t = 3 + Math.floor(player.pb.explored.add(1).log10().toNumber() * SPACE_TUNE.trustPerDecade)
-    t += spaceAdd("pb", PB_UPGRADES, "trust")
+    t += spaceAdd("pb", PB_UPGRADES, "trust") + spaceAdd("dr", DR_UPGRADES, "trust") + spaceAdd("sq", SQ_UPGRADES, "trust") + driftSwarmTrust()
     if (hasMilestone("pb", 0)) t += 1
     if (hasMilestone("pb", 3)) t += 2
     if (hasMilestone("pb", 6)) t += 3
@@ -453,7 +468,7 @@ function speedFactor() {
 // Rates grow with the logarithm of everything that boosts them, so each x10 adds about the same step.
 // (Boosting a growth rate directly would make the swarm explode out of control.)
 function replicationPower() {
-    let p = statPower("replicate").times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "replicate"))
+    let p = statPower("replicate").times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "replicate")).times(extraMult("replicate"))
     if (hasMilestone("pb", 9)) p = p.times(1.5)
     return p
 }
@@ -465,7 +480,7 @@ function replicationRate() {
 
 function hazardRate() {
     // The farther out the probes go, the more dangerous it gets
-    let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(hasMilestone("pb", 5) ? 2 : 1)
+    let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(extraMult("hazard")).times(hasMilestone("pb", 5) ? 2 : 1).times(hasMilestone("pb", 13) ? 2 : 1)
     return new Decimal(SPACE_TUNE.haz).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
 }
 
@@ -480,8 +495,8 @@ function distance() {
 }
 
 function exploreRate() {
-    let power = statPower("explore").add(1).times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "explore")).times(hasMilestone("pb", 7) ? 3 : 1)
-    return player.pb.probes.times(SPACE_TUNE.explore).div(Math.pow(distance(), SPACE_TUNE.exploreDist)).times(power.log10().add(1))
+    let power = statPower("explore").add(1).times(speedFactor()).times(spaceMult("pb", PB_UPGRADES, "explore")).times(extraMult("explore")).times(hasMilestone("pb", 7) ? 3 : 1).times(hasMilestone("pb", 11) ? 2 : 1)
+    return player.pb.probes.times(SPACE_TUNE.explore).div(Math.pow(distance(), SPACE_TUNE.exploreDist)).times(power.log10().add(1)).times(navigation())
 }
 
 function launchCost() {
@@ -499,7 +514,7 @@ function probeTick(dt) {
     let p = player.pb.probes
     if (p.gt(0)) {
         // Copying slows as the probes fill the room their explored systems give them
-        let fill = Decimal.min(1, p.div(probeRoom().max(1))).toNumber()
+        let fill = Decimal.min(1, p.add(player.dr.drifters).div(probeRoom().max(1))).toNumber()
         let r = replicationRate().times(1 - fill)
         let h = hazardRate()
         let lost = p.times(h).times(dt)
@@ -510,13 +525,15 @@ function probeTick(dt) {
     }
     player.pb.probes = p
     let ex = exploreRate()
-    player.pb.explored = Decimal.min(GALAXY_SYSTEMS, player.pb.explored.add(ex.times(dt)))
+    player.pb.explored = Decimal.min(explorationCap(), player.pb.explored.add(ex.times(dt)))
     spaceCache.explore = ex
     player.pb.bestProbes = player.pb.bestProbes.max(p)
 }
 
 function spaceTick(dt) {
+    SPACE_MEMO = {}
     probeTick(dt)
+    if (driftStarted()) { player.dr.started = true; driftTick(dt); swarmTick(dt) }
     harvestTick(dt)
     player.fl.time += dt
 }
@@ -535,7 +552,7 @@ addLayer("pb", {
         explored: new Decimal(1),
         lost: new Decimal(0),
         launched: 0,
-        trust: { speed: 0, explore: 0, replicate: 0, hazard: 0, factory: 0, harvester: 0, wire: 0 },
+        trust: { speed: 0, explore: 0, replicate: 1, hazard: 0, combat: 0, factory: 0, harvester: 0, wire: 0 },
         autoLaunch: true,
     }},
     type: "none",
@@ -543,6 +560,7 @@ addLayer("pb", {
     tooltip() { return format(player.pb.probes) + " probes" },
     update(diff) {
         if (!spaceUnlocked()) return
+        keepReplicating()
         // Long ticks (offline time) run in steps of at most 10 seconds
         let steps = Math.min(400, Math.max(1, Math.ceil(diff / 10)))
         for (let i = 0; i < steps; i++) spaceTick(diff / steps)
@@ -558,6 +576,8 @@ addLayer("pb", {
         "Probes": {
             content: [
                 ["display-text", function() { return probeHeader() }],
+                "blank",
+                ["display-text", function() { return gettingStarted() }],
                 "blank",
                 lore("Every probe is a factory, a ship and a parent. Point it at a star, and some years later there are two of them."),
                 "blank",
@@ -601,19 +621,23 @@ addLayer("pb", {
     }, ...STAT_KEYS.map((k, n) => ({
         [21 + n]: {
             display() { return "+1" },
+            unlocked() { return statUnlocked(k) },
             canClick() { return trustUsed() < probeTrust() },
             onClick() { player.pb.trust[k] = trustIn(k) + 1 },
             style() { return { width: "45px", "min-height": "45px", height: "45px" } },
         },
         [31 + n]: {
             display() { return "-1" },
-            canClick() { return trustIn(k) > 0 },
+            unlocked() { return statUnlocked(k) },
+            // Self-Replication never drops below 1: without it the swarm can never grow
+            canClick() { return trustIn(k) > (k == "replicate" ? 1 : 0) },
             onClick() { player.pb.trust[k] = trustIn(k) - 1 },
             style() { return { width: "45px", "min-height": "45px", height: "45px" } },
         },
     }))),
     buyables: Object.fromEntries(STAT_KEYS.map((k, n) => [11 + n, {
         title() { return "Calibrate" },
+        unlocked() { return statUnlocked(k) },
         cost() { return calibrationCost(k) },
         display() { return "Level " + formatWhole(getBuyableAmount("pb", this.id)) + "<br>" + format(this.cost()) + " Hulls" },
         canAfford() { return player.hv.hulls.gte(this.cost()) },
@@ -641,7 +665,11 @@ addLayer("pb", {
         7: { requirementDescription: "1e8 systems explored", effectDescription: "Exploring x3.", done() { return player.pb.explored.gte(1e8) } },
         8: { requirementDescription: "1e9 systems explored", effectDescription: "+4 trust.", done() { return player.pb.explored.gte(1e9) } },
         9: { requirementDescription: "1e10 systems explored", effectDescription: "Probes copy themselves 1.5x faster.", done() { return player.pb.explored.gte(1e10) } },
-        10: { requirementDescription: "1e11 systems explored", effectDescription: "The whole Milky Way is mapped.", done() { return player.pb.explored.gte(GALAXY_SYSTEMS) } },
+        10: { requirementDescription: "1e11 systems explored", effectDescription: "The whole Milky Way is mapped. Probes push on toward the Virgo Supercluster, and some of them start to drift...", done() { return player.pb.explored.gte(GALAXY_SYSTEMS) } },
+        11: { requirementDescription: "1e12 systems explored", effectDescription: "The Local Group: exploring x2.", done() { return player.pb.explored.gte(1e12) } },
+        12: { requirementDescription: "1e13 systems explored", effectDescription: "+2 trust.", done() { return player.pb.explored.gte(1e13) } },
+        13: { requirementDescription: "1e14 systems explored", effectDescription: "Hazards destroy half as many probes (again).", done() { return player.pb.explored.gte(1e14) } },
+        14: { requirementDescription: "1e15 systems explored", effectDescription: "The whole Virgo Supercluster is mapped.", done() { return player.pb.explored.gte(VIRGO_SYSTEMS) } },
     },
 })
 
@@ -649,12 +677,52 @@ function probeHeader() {
     let g = spaceCache.growth
     return "<h2 style='color:#5b8def'>Probes</h2><br>You have <h2 style='color:#5b8def'>" + format(player.pb.probes) + "</h2> probes " +
         (player.pb.probes.gt(0) ? "(" + (g >= 0 ? "+" : "") + format(g * 100, 3) + "% a second)" : "") + "<br>" +
-        "They have explored <b>" + format(player.pb.explored) + "</b> of the Milky Way's " + format(GALAXY_SYSTEMS) + " systems (+" + format(spaceCache.explore) + "/sec), " +
+        "They have explored <b>" + format(player.pb.explored) + "</b> of " + targetName() + "'s " + format(explorationCap()) + " systems (+" + format(spaceCache.explore) + "/sec), " +
         "which have room for " + format(probeRoom()) + " probes.<br>" +
         "Copying: " + format(replicationRate().times(100), 3) + "% a second. Hazards: -" + format(hazardRate().times(100), 4) + "% a second (" + format(player.pb.lost) + " lost so far)."
 }
 
+function statUnlocked(k) {
+    return !PROBE_STATS[k].unlock || PROBE_STATS[k].unlock()
+}
+
+// Older saves (and anyone who took it all out) get 1 trust back in Self-Replication, taken from the biggest other stat if needed
+function keepReplicating() {
+    if (trustIn("replicate") >= 1) return
+    if (trustUsed() >= probeTrust()) {
+        let biggest = STAT_KEYS.filter(k => k != "replicate").reduce((a, k) => trustIn(k) > trustIn(a) ? k : a, "speed")
+        if (trustIn(biggest) > 0) player.pb.trust[biggest]--
+    }
+    player.pb.trust.replicate = 1
+}
+
+// Where the probes are headed in this part of Act 5
+function targetName() {
+    return driftStarted() ? "the Virgo Supercluster" : "the Milky Way"
+}
+
+function regionName() {
+    if (player.pb.explored.lt(GALAXY_SYSTEMS)) return "the Milky Way"
+    if (player.pb.explored.lt(1e12)) return "the Local Group"
+    return "the Virgo Supercluster"
+}
+
+// A short checklist for the start of Act 5. It disappears once every step is done.
+function gettingStarted() {
+    let steps = [
+        [player.pb.launched >= 1, "Launch your first probe (Probes tab)."],
+        [true, "Self-Replication always keeps at least 1 trust: without it, probes never multiply. Spare trust is best spent there, on Hazard Remediation and on Exploration."],
+        [hvBuilt(11) >= 1 && hvBuilt(12) >= 1, "Build Harvester Drones and Wire Drones (Harvest tab): they turn explored systems into Wire."],
+        [hvBuilt(13) >= 1, "Build a Factory early. It's the only way to press Wire into Hulls, and Hulls buy everything."],
+        [hvBuilt(14) >= 1, "Build Solar Farms whenever power runs short."],
+    ]
+    if (steps.every(s => s[0]) && player.pb.explored.gte(1000)) return ""
+    return "<div style='border:2px solid #5b8def;border-radius:10px;padding:8px;max-width:520px;margin:auto;text-align:left'><b>Getting started</b><br>" +
+        steps.map(s => (s[0] ? "<span style='color:#8fce00'>✔</span> " : "<span style='color:#f1c232'>➜</span> ") + s[1]).join("<br>") + "</div>"
+}
+
 function statRowText(k) {
+    if (!statUnlocked(k)) return ""
     return "<div style='width:400px;text-align:left'><b>" + PROBE_STATS[k].name + "</b>: " + trustIn(k) + " trust, x" + format(calibration(k), 2) + " calibration<br><span style='font-size:12px'>" + PROBE_STATS[k].text + "</span></div>"
 }
 
@@ -678,9 +746,11 @@ addLayer("ds", {
         "blank",
         ["display-text", function() {
             return "<h2 style='color:#5b8def'>Act 5: Diaspora</h2><br>You have <h2 style='color:#5b8def;text-shadow:0 0 10px #5b8def'>" + format(player.pb.probes) + "</h2> probes, and have explored " +
-                format(player.pb.explored) + " systems (" + format(player.pb.explored.div(GALAXY_SYSTEMS).times(100), 4) + "% of the Milky Way)."
+                format(player.pb.explored) + " systems (" + format(player.pb.explored.div(explorationCap()).times(100), 4) + "% of " + targetName() + "). They're out in " + regionName() + "."
         }],
         "blank",
-        ["tree", [["fl"], ["pb"], ["hv"]]],
+        ["display-text", function() { return gettingStarted() }],
+        "blank",
+        ["tree", [["fl"], ["pb", "dr"], ["hv", "sq"]]],
     ],
 })

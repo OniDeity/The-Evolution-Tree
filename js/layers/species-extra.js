@@ -17,7 +17,7 @@ const PRESSURES = {
     14: { name: "Crowded Niche", text: "Every 10 purchases of a tier only multiply it by 1.5 instead of 2.", goal: "1e100",
           instinct: "t56", reward: "Instinct: buy Birds and Mammals on their own." },
     21: { name: "Fragmented Range", text: "Populations are cut off from each other. Speciation needs twice as many purchases.", goal: "1e90",
-          instinct: "sn", reward: "Instinct: speciate on its own." },
+          instinct: "sn", reward: "Instinct: speciate on its own, spreading keystones across your tiers." },
     22: { name: "Famine", text: "The food pyramid is merciless. A starving tier makes nothing at all.", goal: "1e160",
           instinct: "t78", reward: "Instinct: buy Primates and Humans on their own." },
     23: { name: "Invasive Species", text: "Competitors drive prices up. Every tier's cost grows 10x faster.", goal: "1e90",
@@ -59,7 +59,13 @@ function runInstincts() {
     buyTiers(tiers)
     if (instinctOn("cu") && tmp.cu.layerShown && competitionGain(player.cu.winner).gte(2) && layers.cu.clickables[91].canClick()) layers.cu.clickables[91].onClick()
     if (instinctOn("ar") && layers.ar.clickables[91].canClick()) layers.ar.clickables[91].onClick()
-    else if (instinctOn("sn") && layers.sn.clickables[91].canClick()) layers.sn.clickables[91].onClick()
+    else if (instinctOn("sn") && layers.sn.clickables[91].canClick()) {
+        // Spread the keystones out: each automatic speciation centers on the unlocked tier with the fewest (the higher one on a tie)
+        let tiers = []
+        for (let t = 1; t <= tiersUnlocked(); t++) tiers.push(t)
+        player.sn.keystone = tiers.reduce((a, t) => (player.sn.keystones[t] || 0) <= (player.sn.keystones[a] || 0) ? t : a, tiers[0])
+        layers.sn.clickables[91].onClick()
+    }
 }
 
 addLayer("pz", {

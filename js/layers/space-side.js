@@ -24,12 +24,19 @@ addLayer("fl", {
                 ["Probes launched by hand or by Hulls", formatWhole(player.pb.launched)],
                 ["Probes lost to hazards", format(player.pb.lost)],
                 ["Systems explored", format(player.pb.explored)],
-                ["Share of the Milky Way explored", format(player.pb.explored.div(GALAXY_SYSTEMS).times(100), 4) + "%"],
+                ["Share of " + targetName() + " explored", format(player.pb.explored.div(explorationCap()).times(100), 4) + "%"],
                 ["Matter gathered", format(player.hv.gathered)],
                 ["Hulls made", format(player.hv.totalHulls)],
                 ["Harvest upgrades", player.hv.upgrades.length + " / 60"],
                 ["Probe upgrades", player.pb.upgrades.length + " / 60"],
                 ["Trust", probeTrust()],
+                ["Drifters", format(player.dr.drifters)],
+                ["Drifters destroyed", format(player.dr.destroyed)],
+                ["Probes lost to Drifters", format(player.dr.lost)],
+                ["Honor earned", format(player.dr.totalHonor)],
+                ["Tournaments run (won)", formatWhole(player.sq.tournaments) + " (" + formatWhole(player.sq.wins) + ")"],
+                ["Yomi earned", format(player.sq.totalYomi)],
+                ["Drift and Swarm upgrades", player.dr.upgrades.length + " / 60, " + player.sq.upgrades.length + " / 60"],
             ]
             return "<h2 style='color:#9fb4c7'>Flight Log</h2><br><br><table style='margin:auto;text-align:left;border-spacing:12px 4px'>" +
                 rows.map(r => "<tr><td>" + r[0] + "</td><td><b>" + r[1] + "</b></td></tr>").join("") + "</table>"
