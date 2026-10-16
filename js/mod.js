@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.0",
-	name: "Let There Be Light, Again",
+	num: "3.1",
+	name: "Back to One Cell",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.1 - Back to One Cell</h3><br>
+		- Act 6 deepens Act 2. From the first Loop on, the Life tree has two new layers, and both survive every Genesis.<br>
+		- Genetic Engineering: Base Pairs come from DNA. Reroll the trait draft, lock a trait into every offer, see a third option, and finally design traits outright (CRISPR). Each trait can be enhanced.<br>
+		- Devolution: after the Tree of Life, start Act 2 over from one cell for Vestiges. They grow a mirror of the Life tree from Predators down to Cells: every level triples DNA gain, and each node takes one of Act 2's choices off your hands (predators, routine, partners, body plan, colonists, adaptations, Heritage upgrades, Fecundity and Longevity, the trait draft, and finally every Cell upgrade from the start).<br>
+		- Act 2 balance: Instincts open at 1e4 Heritage instead of 1e6, so the long wait between reaching land and the first multicellular form has something to do. Predators fight back: later goals are higher, and DNA gain is weaker while you fight one.<br>
+		- 2 Memories, 2 Light upgrades and 5 achievements.<br>
+		- Endgame: reach the Heat Death in Loop 2.<br>
 	<h3>v3.0 - Let There Be Light, Again</h3><br>
 		- Act 6: Genesis, the first New Game+ (Antimatter Dimensions' Reality, retold). After the Heat Death, a Genesis starts Acts 1 to 5 over from the Big Bang. You keep your achievements.<br>
 		- Light: every act ending you reach in a Loop pays Light, and so does the Genesis. 15 Light upgrades and 5 act speeds (each act can run faster on its own).<br>
@@ -220,7 +227,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	"Let there be light."<br><br>
 	<b>Act 5: Diaspora is complete.</b><br><br>
 	And then it all began again: the same quarks, the same first cells, the same long climb, only faster, and a little different, because this time the universe remembered.<br><br>
-	<b>You've finished your first Loop.</b> More of Act 6 is coming soon...`
+	<b>You've finished your first Loop.</b><br><br>
+	The second time, life went backwards before it went forwards, all the way down to one cell, and came back stronger for it.<br><br>
+	<b>You've finished Loop 2.</b> More of Act 6 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -301,7 +310,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 1 && player.mv.heatDeath
+	return player.lt.genesis >= 2 && player.mv.heatDeath
 }
 
 

@@ -384,7 +384,7 @@ addLayer("in", {
         clock: 0,
     }},
     color: "#f2c94c",
-    requires: new Decimal(1e6),
+    requires: new Decimal(1e4),
     resource: "instincts",
     baseResource: "Heritage",
     baseAmount() { return player.ge.heritage },
@@ -491,7 +491,7 @@ function predatorGoal(id) {
 }
 
 // log10 of the DNA goal for each win (first, second, third)
-const PREDATOR_GOALS = { 11: [60, 85, 110], 12: [66, 95, 115], 21: [88, 112, 120] }
+const PREDATOR_GOALS = { 11: [60, 105, 155], 12: [66, 115, 160], 21: [88, 130, 165] }
 
 addLayer("pr", {
     name: "predators",
@@ -530,7 +530,7 @@ addLayer("pr", {
         "blank",
         lore("Once something figured out how to eat other living things, nothing was ever safe again. Every defense breeds a better attack, and every attack a better defense."),
         "blank",
-        ["display-text", "<h3>Arms Race</h3><br>Each predator can be beaten 3 times. Every win makes the predator stronger, the goal higher, and the reward bigger.<br>Starting a challenge does a Row 4 reset."],
+        ["display-text", "<h3>Arms Race</h3><br>Each predator can be beaten 3 times. Every win makes the predator stronger, the goal higher, and the reward bigger.<br>While you fight one, DNA gain is raised to ^0.97 for its first fight, ^0.94 for the second and ^0.91 for the third.<br>Starting a challenge does a Row 4 reset."],
         "blank",
         "challenges",
         "blank",

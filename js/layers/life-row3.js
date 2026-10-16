@@ -319,7 +319,7 @@ addLayer("ad", {
         },
     }),
     automate() {
-        if (!hasMilestone("ad", 4)) return
+        if (!hasMilestone("ad", 4) && !devolved("ad")) return
         for (let i = 0; i < 20; i++) {
             let cheapest = [11, 12, 13, 14].reduce((a, b) => tmp.ad.buyables[b].cost.lt(tmp.ad.buyables[a].cost) ? b : a)
             if (!layers.ad.buyables[cheapest].canAfford()) break
@@ -538,7 +538,7 @@ addLayer("hb", {
         },
     }),
     automate() {
-        if (!hasMilestone("hb", 5) || player.hb.abandon) return
+        if ((!hasMilestone("hb", 5) && !devolved("hb")) || player.hb.abandon) return
         let shoreReady = hasUpgrade("ad", 13) && player.ge.best.gte(8)
         if (shoreReady && !reachedLand()) {
             // Save up for the Shoreline once it's next to a colony; until then, settle toward it

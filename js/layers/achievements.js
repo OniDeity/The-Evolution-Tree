@@ -678,6 +678,11 @@ addLayer("a", {
         283: { name: "Echo Chamber", done() { return Object.values(player.cn.echoes).reduce((a, x) => a + x, 0) >= 100 }, tooltip: "Gather 100 Echoes in all." },
         284: { name: "Second Light", done() { return player.lt.genesis >= 1 && player.mv.heatDeath }, tooltip: "Reach the Heat Death again, in a Loop." },
         285: { name: "Radiant", done() { return player.lt.total.gte(500) }, tooltip: "Earn 500 Light in all." },
+        291: { name: "Playing God", done() { return hasUpgrade("gx", 22) }, tooltip: "Learn CRISPR and design traits outright." },
+        292: { name: "Designer Genes", done() { return Object.keys(TRAITS).some((id, n) => getBuyableAmount("gx", 11 + n).gte(5)) }, tooltip: "Enhance one trait 5 times." },
+        293: { name: "Backwards", done() { return player.dv.count >= 1 }, tooltip: "Devolve." },
+        294: { name: "One Cell", done() { return getBuyableAmount("dv", 51).gte(1) }, tooltip: "Grow the mirror tree all the way down to the Last Common Ancestor." },
+        295: { name: "Fully Vestigial", done() { return devolutionLevels() >= 50 }, tooltip: "Raise every Devolution node to level 5." },
     },
 })
 

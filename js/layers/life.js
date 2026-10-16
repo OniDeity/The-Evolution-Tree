@@ -32,8 +32,12 @@ function dnaGain() {
     gain = gain.times(traitEffect("flagellum")).times(traitEffect("photo")).times(traitEffect("chemo"))
     gain = gain.times(lifeBonus("dna"))
     if (hasUpgrade("lt", 14)) gain = gain.times(10)
+    gain = gain.times(devolutionDNA())
     // Pacing: stretches Act 2 evenly so something new unlocks about once a minute
-    return gain.max(1).pow(DNA_PACING)
+    gain = gain.max(1).pow(DNA_PACING)
+    // Predators: every fight is harder than the last
+    if (player.pr && player.pr.activeChallenge) gain = gain.pow(1 - 0.03 * predatorLevel(player.pr.activeChallenge))
+    return gain
 }
 
 // Prestiging in Act 2 resets DNA and every Act 2 layer in a lower row, keeping what that layer's milestones protect
@@ -84,7 +88,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["fo", "bd", "fn"], ["c", "ph"], ["gt", "mu", "re", "eg"], ["ge", "ad", "hb", "oc"], ["mc", "in", "pr", "sy"], ["hs", "ho", "te", "se"]]],
+        ["tree", [["fo", "gx", "bd", "dv", "fn"], ["c", "ph"], ["gt", "mu", "re", "eg"], ["ge", "ad", "hb", "oc"], ["mc", "in", "pr", "sy"], ["hs", "ho", "te", "se"]]],
     ],
 })
 
@@ -280,21 +284,22 @@ const TRAITS = {
     repair: { name: "DNA Repair", text: "Mutations are 2x cheaper.", per: lvl => Decimal.pow(2, lvl) },
 }
 
-// After 5 copies of the same trait, extra copies count for less (as a square root)
+// After 5 copies of the same trait (8 with Gene Duplication), extra copies count for less (as a square root)
 function effectiveTraitLevel(n) {
-    return n <= 5 ? n : 5 + Math.sqrt(n - 5)
+    let cap = traitSoftcap()
+    return n <= cap ? n : cap + Math.sqrt(n - cap)
 }
 
 function traitEffect(id) {
     if (!player.mu || !player.mu.traits) return new Decimal(1)
-    return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0) + borrowedLevel(id))
+    return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0) + borrowedLevel(id)).pow(traitEnhancement(id))
 }
 
-// Take one of the two traits on offer; the other drifts into the Gene Transfer pool
+// Take one of the traits on offer; the next one along drifts into the Gene Transfer pool
 function pickTrait(n) {
     let offers = traitOffers()
     player.mu.traits[offers[n]]++
-    passTrait(offers[1 - n])
+    passTrait(offers[(n + 1) % offers.length])
 }
 
 function traitsPicked() {
@@ -307,15 +312,19 @@ function pendingTraits() {
     return Math.max(0, player.mu.points.toNumber() - traitsPicked())
 }
 
-// The two traits on offer depend only on how many you've picked, so reloading doesn't reroll them
-function traitOffers() {
+// The traits on offer depend only on how many you've picked (and how often you've rerolled), so reloading doesn't reroll them
+function traitOffers(ahead = 0) {
     let ids = Object.keys(TRAITS)
-    let seed = (traitsPicked() + 1) * 2654435761 % 4294967296
+    if (offerCount() >= ids.length) return ids
+    let seed = ((traitsPicked() + 1 + ahead) * 2654435761 + (player.gx ? player.gx.shift : 0) * 97531) % 4294967296
     let rand = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296 }
-    let first = ids[Math.floor(rand() * ids.length)]
-    let rest = ids.filter(id => id != first)
-    let second = rest[Math.floor(rand() * rest.length)]
-    return [first, second]
+    let offers = []
+    if (lockedTrait()) offers.push(lockedTrait())
+    while (offers.length < offerCount()) {
+        let rest = ids.filter(id => !offers.includes(id))
+        offers.push(rest[Math.floor(rand() * rest.length)])
+    }
+    return offers
 }
 
 addLayer("mu", {
@@ -367,8 +376,9 @@ addLayer("mu", {
         "blank",
         ["display-text", function() {
             let pending = pendingTraits()
-            return "<h3>Natural Selection</h3><br>Every mutation offers two random traits. Pick one to keep." +
-                (pending > 0 ? "<br><b>You have " + pending + " trait" + (pending > 1 ? "s" : "") + " to pick.</b>" : "<br>Get another mutation to pick a new trait.")
+            return "<h3>Natural Selection</h3><br>" + (offerCount() > 3 ? "Design mode: every trait is on offer." : "Every mutation offers " + ["", "", "two", "three"][offerCount()] + " random traits.") + " Pick one to keep." +
+                (pending > 0 ? "<br><b>You have " + pending + " trait" + (pending > 1 ? "s" : "") + " to pick.</b>" : "<br>Get another mutation to pick a new trait.") +
+                (hasUpgrade("gx", 11) && pending > 0 ? "<br><i>Next offer: " + traitOffers(1).map(id => TRAITS[id].name).join(", ") + "</i>" : "")
         }],
         "blank",
         ["clickables", [1, 2]],
@@ -381,8 +391,9 @@ addLayer("mu", {
         "blank",
         "milestones",
     ],
-    clickables: Object.assign({}, ...[0, 1].map(n => ({
+    clickables: Object.assign({}, ...[0, 1, 2, 3, 4, 5, 6, 7].map(n => ({
         [11 + n]: {
+            unlocked() { return n < offerCount() },
             title() { return pendingTraits() > 0 ? TRAITS[traitOffers()[n]].name : "?" },
             display() {
                 if (pendingTraits() <= 0) return "Get another mutation to see what natural selection offers."
@@ -391,9 +402,17 @@ addLayer("mu", {
             },
             canClick() { return pendingTraits() > 0 },
             onClick() { pickTrait(n) },
-            style() { return { width: "200px", height: "150px" } },
+            style() { return offerCount() > 3 ? { width: "130px", height: "120px", "font-size": "10px" } : { width: "200px", height: "150px" } },
         },
     })), {
+        22: {
+            title: "Reroll",
+            display() { return "New offers for " + formatWhole(rerollCost()) + " Base Pairs." },
+            unlocked() { return hasUpgrade("gx", 12) && offerCount() < 8 },
+            canClick() { return pendingTraits() > 0 && player.gx.points.gte(rerollCost()) },
+            onClick() { rerollTraits() },
+            style() { return { width: "200px", height: "80px" } },
+        },
         21: {
             title: "Let nature decide",
             display() { return "Take the first offer for all " + pendingTraits() + " traits you have waiting." },
@@ -421,11 +440,8 @@ addLayer("mu", {
         },
     },
     automate() {
-        if (!hasMilestone("mu", 2)) return
-        for (let i = 0; i < 50 && pendingTraits() > 0; i++) {
-            let o = traitOffers()
-            pickTrait((player.mu.traits[o[1]] || 0) < (player.mu.traits[o[0]] || 0) ? 1 : 0)
-        }
+        if (!hasMilestone("mu", 2) && !devolved("mu")) return
+        for (let i = 0; i < 50 && pendingTraits() > 0; i++) pickTrait(autoTraitPick(traitOffers()))
     },
 })
 
@@ -483,7 +499,7 @@ addLayer("re", {
         return player.re.offspring.add(1).pow(0.15)
     },
     automate() {
-        if (hasLifeRow3Milestone(2)) buyBuyable("re", getBuyableAmount("re", 11).lte(getBuyableAmount("re", 12)) ? 11 : 12)
+        if (hasLifeRow3Milestone(2) || devolved("re")) buyBuyable("re", getBuyableAmount("re", 11).lte(getBuyableAmount("re", 12)) ? 11 : 12)
     },
     // Births add offspring and deaths remove them: dO/dt = births - O / lifespan, solved exactly
     // When offspring live a long time, a tick only changes the population by a sliver, and the exact
