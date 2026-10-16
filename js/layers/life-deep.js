@@ -209,6 +209,8 @@ function devolve() {
     let g = vestigeGain()
     if (!canDevolve()) return
     player.dv.cooldown = DEVOLVE_COOLDOWN
+    player.dv.peak = new Decimal(0)
+    player.dv.stall = 0
     player.dv.points = player.dv.points.add(g)
     player.dv.total = player.dv.total.add(g)
     player.dv.count++
@@ -310,18 +312,26 @@ addLayer("dv", {
         routineAt: 0,
         cooldown: 0,
         auto: true,
+        peak: new Decimal(0),
+        stall: 0,
     }},
     type: "none",
     resource: "Vestiges",
     layerShown() { return devolutionUnlocked() },
     tooltip() { return formatWhole(player.dv.points) + " Vestiges" },
-    update(diff) { if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - diff) },
+    update(diff) {
+        if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - diff)
+        // For the automatic devolve: how long since the Vestige gain last grew (in real time)
+        let g = vestigeGain()
+        if (g.gt(player.dv.peak)) { player.dv.peak = g; player.dv.stall = 0 } else player.dv.stall += diff
+    },
     automate() {
         devolutionAutomation()
-        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve()) devolve()
+        // Devolve on its own once the cooldown is over and the gain has stopped growing for a minute
+        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60) devolve()
     },
     milestones: {
-        0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own whenever you can (see the switch below).", done() { return player.dv.count >= 5 } },
+        0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own once the cooldown is over and your Vestige gain has stopped growing for a minute (see the switch below).", done() { return player.dv.count >= 5 } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#8fb3a0'>Devolution</h2><br>You have <h2 style='color:#8fb3a0'>" + formatWhole(player.dv.points) + "</h2> Vestiges, from " + formatWhole(player.dv.count) + " devolution" + (player.dv.count == 1 ? "" : "s") + "." }],
