@@ -18,6 +18,9 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2.4</h3><br>
+		- Act 5 can no longer be broken by an invalid number (NaN): if Matter, Seeds or any other Act 5 resource ever goes NaN, it's put back to its last good value.<br>
+		- Very fast Act 5 time (in later Loops, or after a long time offline) no longer makes the swarm collapse: probes settle at the room your systems give them.<br>
 	<h3>v3.3 - The March of Progress</h3><br>
 		- Act 6 deepens Act 4, from Loop 4 on (Synergism, retold). Everything here survives every Genesis.<br>
 		- Ingenuity: made by your people and techs. Buy Accelerators and Multipliers with it.<br>

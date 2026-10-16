@@ -276,11 +276,18 @@ function spaceSnapshot() {
     return s
 }
 
+// The last good value of each, so a NaN that appears anywhere (not just in this step) can be undone next tick
+let spaceLastGood = {}
+
 function spaceRescue(snap) {
     for (let key in snap) {
         let [l, k] = key.split(".")
         let v = player[l][k]
-        if (!(v instanceof Decimal) || isNaN(v.mag) || isNaN(v.layer) || isNaN(v.sign)) player[l][k] = snap[key]
+        if (!(v instanceof Decimal) || isNaN(v.mag) || isNaN(v.layer) || isNaN(v.sign)) {
+            let good = spaceLastGood[key] || snap[key]
+            player[l][k] = good && !isNaN(good.mag) ? good : new Decimal(0)
+            console.warn("Act 5: " + key + " was NaN and has been restored")
+        } else spaceLastGood[key] = v
     }
 }
 
@@ -596,6 +603,8 @@ addLayer("pb", {
     tooltip() { return format(player.pb.probes) + " probes" },
     update(diff) {
         if (!spaceUnlocked()) return
+        // Catch anything that went NaN since the last tick, before it spreads
+        spaceRescue(spaceSnapshot())
         keepReplicating()
         diff *= spaceSpeed()
         let snap = spaceSnapshot()
