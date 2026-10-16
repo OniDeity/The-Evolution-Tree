@@ -205,9 +205,9 @@ Target for Act 5 alone: about 600 upgrades, 150 buyables, 150 milestones, 20 cha
 
 | Version | Content |
 |---|---|
-| v3.0 ✅ | **Genesis**, Light (15 upgrades, 5 act speeds), Memories (16 perks), the Singularity (3 buyables), **Constants** (Act 1's deepening: 4 kinds, 12 effects, Echoes) and 10 achievements. Loop 1 takes the bot about 6.9 hours (Habitable Zone 24m, Tree of Life +56m, Sentience +19m, Eternity +185m, Heat Death +130m) |
-| v3.1 | Act 2: **Genetic Engineering** (reroll, lock, then design traits) and **Devolution** (a mirror tree from Humans back to one cell). Also fix what the v3.0 bot found: a 40-minute wall between reaching land and the first multicellular form (40 mutations), Predators that never push back (DNA leaps past every goal once the body plan cascades), and Instincts that arrive too late to matter |
-| v3.2 | Act 3: **Mass Extinctions** (Infinity Challenges), **Viruses** (Replicanti) and **Geological Eras** (Eternity), past 1.8e308 |
+| v3.0 ✅ | Loop 1. **Genesis**, Light (15 upgrades, 5 act speeds), Memories (16 perks), the Singularity (3 buyables), **Constants** (Act 1's deepening: 4 kinds, 12 effects, Echoes) and 10 achievements. Loop 1 takes the bot about 6.9 hours (Habitable Zone 24m, Tree of Life +56m, Sentience +19m, Eternity +185m, Heat Death +130m) |
+| v3.1 ✅ | Act 2, from Loop 2 on: **Genetic Engineering** (Base Pairs from DNA; reroll, lock, a third offer, CRISPR design, Directed Evolution, 8 trait enhancements) and **Devolution** (reset Act 2 to one cell for Vestiges, on a 10-minute real-time cooldown; a 10-node mirror tree, 5 levels each, that triples DNA per level and automates every Act 2 choice). **Loop goals**: each Loop's Genesis also needs its act's deepening done (Loop 2: Fully Vestigial). Act 2 fixes: Instincts at 1e4 Heritage, Predators fight back. Branch milestones count resources earned. Loop 2 takes the bot about 9.2 hours, most of it the mirror tree; Act 6 so far about 16 hours |
+| v3.2 | Act 3, from Loop 3 on: **Mass Extinctions** (Infinity Challenges), **Viruses** (Replicanti) and **Geological Eras** (Eternity), past 1.8e308 |
 | v3.3 | Act 4: **Eras**, Synergism-style (Tools → Agriculture → Industry → Information → Space) |
 | v3.4 | Act 5: **Reversal**, entropy run backwards across universes |
 | v3.5 | **Autopilot**, full automation of Acts 1–5, and the Act 6 ending |
