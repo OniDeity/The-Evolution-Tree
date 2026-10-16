@@ -114,8 +114,17 @@ function checkEndings() {
 // ------------------------------------------------------------
 //  GENESIS
 // ------------------------------------------------------------
+// Each Loop opens the next act's deepening, and its Genesis also needs that deepening's goal
+const LOOP_GOALS = {
+    2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
+}
+
+function loopGoal() {
+    return LOOP_GOALS[player.lt.genesis]
+}
+
 function canGenesis() {
-    return genesisUnlocked() && player.mv.heatDeath
+    return genesisUnlocked() && player.mv.heatDeath && (!loopGoal() || loopGoal().done())
 }
 
 function doGenesis() {
@@ -250,7 +259,8 @@ function genesisGuide() {
     let next = ENDINGS.find(e => !player.lt.endings.includes(e.key))
     let speeds = []
     for (let a = 1; a <= 5; a++) speeds.push("Act " + a + " x" + format(actSpeedCache[a], 2))
-    return (next ? "Next ending: <b>" + next.name + "</b> (+" + formatWhole(endingLight(next)) + " Light). " : "Every ending reached: the Genesis is ready. ") + "<br>Speeds: " + speeds.join(", ")
+    let goal = loopGoal() ? "<br>This Loop's goal: <b>" + loopGoal().name + "</b>, " + loopGoal().text + (loopGoal().done() ? " ✓" : "") + "." : ""
+    return (next ? "Next ending: <b>" + next.name + "</b> (+" + formatWhole(endingLight(next)) + " Light). " : canGenesis() ? "Every ending reached: the Genesis is ready. " : "Every ending reached. ") + goal + "<br>Speeds: " + speeds.join(", ")
 }
 
 // ------------------------------------------------------------
@@ -348,7 +358,11 @@ addLayer("lt", {
     clickables: {
         91: {
             title: "Let there be light",
-            display() { return canGenesis() ? "Start a new Loop and gain <b>" + formatWhole(genesisLight()) + "</b> Light and 2 Memories." : "Reach the Heat Death first (the last Multiverse upgrade)." },
+            display() {
+                if (canGenesis()) return "Start a new Loop and gain <b>" + formatWhole(genesisLight()) + "</b> Light and 2 Memories."
+                if (!player.mv.heatDeath) return "Reach the Heat Death first (the last Multiverse upgrade)." + (loopGoal() ? "<br>This Loop's goal too: " + loopGoal().text + "." : "")
+                return "This Loop's goal first: <b>" + loopGoal().name + "</b> (" + loopGoal().text + ")."
+            },
             canClick() { return canGenesis() },
             onClick() {
                 if (player.lt.genesis == 0 && !confirm("Genesis starts Acts 1 to 5 over from the Big Bang. You keep achievements, Light, Memories, Constants and the Singularity. Ready?")) return

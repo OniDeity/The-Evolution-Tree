@@ -1,6 +1,6 @@
 // ============================================================
 //  ACT 6 IN ACT 2: GENETIC ENGINEERING AND DEVOLUTION (v3.1)
-//  From the first Loop on, Act 2 gets two new layers. Both survive every Genesis.
+//  From Loop 2 on, Act 2 gets two new layers. Both survive every Genesis.
 //
 //  Genetic Engineering (gx): the payoff for the trait draft. Base Pairs come from DNA; spend them to
 //      reroll offers, lock a trait into every offer, see a third option, and finally design traits outright.
@@ -10,7 +10,7 @@
 // ============================================================
 
 function geneticsUnlocked() {
-    return !!(player.lt && player.lt.genesis > 0 && lifeUnlocked())
+    return !!(player.lt && player.lt.genesis >= 2 && lifeUnlocked())
 }
 
 // ------------------------------------------------------------
@@ -168,7 +168,7 @@ const DEVOLUTION_MAX = 5
 const DEFAULT_BODY_PLAN = ["a", "a", "b", "b", "a", "a"]
 
 function devolutionUnlocked() {
-    return !!(player.dv && player.lt && player.lt.genesis > 0 && (player.dv.count > 0 || hasUpgrade("mc", 11)))
+    return !!(player.dv && player.lt && player.lt.genesis >= 2 && (player.dv.count > 0 || hasUpgrade("mc", 11)))
 }
 
 function devolved(layer) {
@@ -198,9 +198,17 @@ function vestigeGain() {
     return new Decimal(Math.pow(player.dna.log10().toNumber() / 50, 3)).times(vestigeMult()).floor()
 }
 
+// Life needs time to forget: devolving has a cooldown in real time, so faster acts don't shorten it
+const DEVOLVE_COOLDOWN = 600
+
+function canDevolve() {
+    return vestigeGain().gte(1) && player.dv.cooldown <= 0
+}
+
 function devolve() {
     let g = vestigeGain()
-    if (g.lt(1)) return
+    if (!canDevolve()) return
+    player.dv.cooldown = DEVOLVE_COOLDOWN
     player.dv.points = player.dv.points.add(g)
     player.dv.total = player.dv.total.add(g)
     player.dv.count++
@@ -300,24 +308,35 @@ addLayer("dv", {
         loopCount: 0,
         plan: null,
         routineAt: 0,
+        cooldown: 0,
+        auto: true,
     }},
     type: "none",
     resource: "Vestiges",
     layerShown() { return devolutionUnlocked() },
     tooltip() { return formatWhole(player.dv.points) + " Vestiges" },
-    automate() { devolutionAutomation() },
+    update(diff) { if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - diff) },
+    automate() {
+        devolutionAutomation()
+        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve()) devolve()
+    },
+    milestones: {
+        0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own whenever you can (see the switch below).", done() { return player.dv.count >= 5 } },
+    },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#8fb3a0'>Devolution</h2><br>You have <h2 style='color:#8fb3a0'>" + formatWhole(player.dv.points) + "</h2> Vestiges, from " + formatWhole(player.dv.count) + " devolution" + (player.dv.count == 1 ? "" : "s") + "." }],
         "blank",
         lore("Evolution has no direction. Blind cave fish lose their eyes, whales lose their legs, and parasites lose almost everything. Sometimes the way forward is back."),
         "blank",
         ["display-text", function() {
-            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50).<br>" +
+            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50). After each devolution, life needs 10 minutes of real time to forget before the next.<br>" +
                 "Vestiges grow a mirror of the Life tree, from Predators down to Cells. Each node opens the row below it. Every level anywhere triples DNA gain (now <b>x" + format(devolutionDNA()) + "</b>), and each node's first level takes one of Act 2's choices off your hands. Nodes last through every Genesis."
         }],
         "blank",
         ["clickables", [9]],
+        ["clickables", [1]],
         "blank",
+        "milestones",
         ["row", [["buyable", 11]]],
         ["row", [["buyable", 21], ["buyable", 22], ["buyable", 23]]],
         ["row", [["buyable", 31], ["buyable", 32], ["buyable", 33]]],
@@ -325,10 +344,23 @@ addLayer("dv", {
         ["row", [["buyable", 51]]],
     ],
     clickables: {
+        11: {
+            title: "Devolving on its own",
+            display() { return player.dv.auto ? "On" : "Off" },
+            unlocked() { return hasMilestone("dv", 0) },
+            canClick() { return true },
+            onClick() { player.dv.auto = !player.dv.auto },
+            style() { return { width: "160px", "min-height": "50px", height: "50px" } },
+        },
         91: {
             title: "Devolve",
-            display() { let g = vestigeGain(); return g.lt(1) ? "Reach 1e100 DNA first." : "Start Act 2 over from one cell for <b>" + formatWhole(g) + "</b> Vestiges." },
-            canClick() { return vestigeGain().gte(1) },
+            display() {
+                let g = vestigeGain()
+                if (g.lt(1)) return "Reach 1e100 DNA first."
+                if (player.dv.cooldown > 0) return "Life needs time to forget: " + formatTime(player.dv.cooldown) + " more (" + formatWhole(g) + " Vestiges waiting)."
+                return "Start Act 2 over from one cell for <b>" + formatWhole(g) + "</b> Vestiges."
+            },
+            canClick() { return canDevolve() },
             onClick() {
                 if (player.dv.count == 0 && !confirm("Devolving starts all of Act 2 over from one cell (the Tree of Life stays). Ready?")) return
                 devolve()

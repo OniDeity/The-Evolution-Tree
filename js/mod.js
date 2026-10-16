@@ -19,12 +19,13 @@ let VERSION = {
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v3.1 - Back to One Cell</h3><br>
-		- Act 6 deepens Act 2. From the first Loop on, the Life tree has two new layers, and both survive every Genesis.<br>
+		- Act 6 deepens Act 2. From Loop 2 on, the Life tree has two new layers, and both survive every Genesis.<br>
+		- Each Loop now has a goal from its act's deepening, and the Genesis that ends it needs that goal as well as the Heat Death. Loop 2's goal is Fully Vestigial: every Devolution node at level 5.<br>
 		- Genetic Engineering: Base Pairs come from DNA. Reroll the trait draft, lock a trait into every offer, see a third option, and finally design traits outright (CRISPR). Each trait can be enhanced.<br>
-		- Devolution: after the Tree of Life, start Act 2 over from one cell for Vestiges. They grow a mirror of the Life tree from Predators down to Cells: every level triples DNA gain, and each node takes one of Act 2's choices off your hands (predators, routine, partners, body plan, colonists, adaptations, Heritage upgrades, Fecundity and Longevity, the trait draft, and finally every Cell upgrade from the start).<br>
+		- Devolution: after the Tree of Life, start Act 2 over from one cell for Vestiges (every 10 minutes at most, and on its own after 5 devolutions). They grow a mirror of the Life tree from Predators down to Cells: every level triples DNA gain, and each node takes one of Act 2's choices off your hands (predators, routine, partners, body plan, colonists, adaptations, Heritage upgrades, Fecundity and Longevity, the trait draft, and finally every Cell upgrade from the start).<br>
 		- Act 2 balance: Instincts open at 1e4 Heritage instead of 1e6, so the long wait between reaching land and the first multicellular form has something to do. Predators fight back: later goals are higher, and DNA gain is weaker while you fight one.<br>
 		- 2 Memories, 2 Light upgrades and 5 achievements.<br>
-		- Endgame: reach the Heat Death in Loop 2.<br>
+		- Endgame: reach the Heat Death in Loop 2, Fully Vestigial.<br>
 	<h3>v3.0 - Let There Be Light, Again</h3><br>
 		- Act 6: Genesis, the first New Game+ (Antimatter Dimensions' Reality, retold). After the Heat Death, a Genesis starts Acts 1 to 5 over from the Big Bang. You keep your achievements.<br>
 		- Light: every act ending you reach in a Loop pays Light, and so does the Genesis. 15 Light upgrades and 5 act speeds (each act can run faster on its own).<br>
@@ -310,7 +311,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 2 && player.mv.heatDeath
+	return player.lt.genesis >= 2 && canGenesis()
 }
 
 
