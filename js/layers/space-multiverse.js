@@ -251,27 +251,73 @@ addLayer("tl", {
 })
 
 // ------------------------------------------------------------
-//  SIGNALS. Every so often a transmission arrives on some frequency. Tune in close and lock on
-//  before it fades: the closer and the sooner, the more Contact.
+//  SIGNALS. Every so often a transmission arrives: a short pattern of symbols. Tap the symbols back
+//  in the same order before it fades. Longer patterns and faster decoding earn more Contact.
 // ------------------------------------------------------------
+const SIGNAL_SYMBOLS = ["▲", "●", "■", "◆"]
+const SIGNAL_COLORS = ["#e06666", "#f1c232", "#6fa8dc", "#93c47d"]
+
 function signalLife() {
     return hasMilestone("sg", 0) ? 15 : 10
 }
 
-function lockOn() {
-    if (player.sg.target === null) return
-    let off = Math.abs(player.sg.freq - player.sg.target) / 100
-    let accuracy = Math.pow(Math.max(0, 1 - off * 4), 2)
-    let gain = accuracy * (player.sg.timer / signalLife()) * 10
+// Patterns grow from 3 symbols to 6 as you decode more
+function signalLength() {
+    return Math.min(6, 3 + Math.floor(player.sg.locks / 10))
+}
+
+// At first the pattern hides after 4 seconds, so you have to remember it
+function patternVisible() {
+    return hasMilestone("sg", 1) || signalLife() - player.sg.timer < 4
+}
+
+function newSignal() {
+    player.sg.pattern = []
+    for (let i = 0; i < signalLength(); i++) player.sg.pattern.push(Math.floor(Math.random() * SIGNAL_SYMBOLS.length))
+    player.sg.entered = 0
+    player.sg.target = 1
+    player.sg.timer = signalLife()
+}
+
+function endSignal(gain) {
     player.sg.contact += gain
     player.sg.last = gain
-    player.sg.locks++
+    if (gain > 0) player.sg.locks++
     player.sg.target = null
+    player.sg.pattern = []
+    player.sg.entered = 0
     player.sg.timer = 10 + Math.random() * 10
+}
+
+function signalGain() {
+    return 10 * (player.sg.pattern.length / 3) * Math.max(0, player.sg.timer / signalLife())
+}
+
+function tapSymbol(n) {
+    if (player.sg.target === null) return
+    if (player.sg.pattern[player.sg.entered] != n) { endSignal(0); return }
+    player.sg.entered++
+    if (player.sg.entered >= player.sg.pattern.length) endSignal(signalGain())
+}
+
+// Decodes the whole pattern perfectly (the milestone, and older code that "locks on")
+function lockOn() {
+    if (player.sg.target === null) return
+    endSignal(signalGain())
 }
 
 function signalTrust() {
     return player.sg ? Math.floor(Math.log10(player.sg.contact + 1) * 2) : 0
+}
+
+function signalDisplay() {
+    if (player.sg.target === null) return "No signal right now. The next one comes in " + formatTime(Math.max(0, player.sg.timer)) + "." + (player.sg.last > 0 ? "<br>Last one decoded: +" + format(player.sg.last) + " Contact." : player.sg.locks > 0 ? "<br>Last one was lost." : "")
+    let shown = player.sg.pattern.map((n, i) => {
+        let done = i < player.sg.entered
+        let sym = done || patternVisible() ? SIGNAL_SYMBOLS[n] : "?"
+        return "<span style='font-size:44px;margin:0 8px;color:" + (done ? "#666" : SIGNAL_COLORS[n]) + "'>" + sym + "</span>"
+    }).join("")
+    return "<b>A signal!</b> Fading in " + formatTime(player.sg.timer) + ". Worth " + format(signalGain()) + " Contact now.<br>" + shown
 }
 
 addLayer("sg", {
@@ -280,7 +326,7 @@ addLayer("sg", {
     row: 40,
     position: -1,
     color: "#76a5af",
-    startData() { return { unlocked: true, points: new Decimal(0), freq: 50, target: null, timer: 10, contact: 0, last: 0, locks: 0 } },
+    startData() { return { unlocked: true, points: new Decimal(0), freq: 50, target: null, timer: 10, contact: 0, last: 0, locks: 0, pattern: [], entered: 0 } },
     type: "none",
     branches: ["pb"],
     layerShown() { return spaceUnlocked() && player.pb.explored.gte(1e6) },
@@ -289,40 +335,33 @@ addLayer("sg", {
         if (!tmp.sg.layerShown) return
         player.sg.timer -= diff
         if (player.sg.target === null) {
-            if (player.sg.timer <= 0) { player.sg.target = Math.floor(Math.random() * 101); player.sg.timer = signalLife() }
+            if (player.sg.timer <= 0) newSignal()
+        } else if (!player.sg.pattern || !player.sg.pattern.length) {
+            newSignal()
         } else {
-            if (hasMilestone("sg", 2)) { player.sg.freq = player.sg.target; lockOn() }
-            else if (player.sg.timer <= 0) { player.sg.target = null; player.sg.timer = 10 + Math.random() * 10 }
+            if (hasMilestone("sg", 2)) lockOn()
+            else if (player.sg.timer <= 0) endSignal(0)
         }
     },
-    clickables: {
-        11: {
-            title: "Lock on",
-            display() { return player.sg.target === null ? "Waiting for a signal..." : "Fading in " + formatTime(player.sg.timer) },
-            canClick() { return player.sg.target !== null },
-            onClick() { lockOn() },
-            style() { return { width: "200px", height: "80px", "min-height": "80px" } },
-        },
-    },
+    clickables: Object.fromEntries(SIGNAL_SYMBOLS.map((sym, n) => [11 + n, {
+        title() { return "<span style='font-size:40px'>" + sym + "</span>" },
+        canClick() { return player.sg.target !== null },
+        onClick() { tapSymbol(n) },
+        style() { return { width: "90px", height: "90px", "min-height": "90px", "background-color": player.sg.target !== null ? SIGNAL_COLORS[n] : undefined } },
+    }])),
     milestones: {
         0: { requirementDescription: "50 Contact earned", effectDescription: "Signals last 15 seconds instead of 10.", done() { return earned("sg").gte(50) } },
-        1: { requirementDescription: "500 Contact earned", effectDescription: "The receiver shows how far off you are.", done() { return earned("sg").gte(500) } },
-        2: { requirementDescription: "5,000 Contact earned", effectDescription: "The receiver tunes in and locks on by itself, perfectly.", done() { return earned("sg").gte(5000) } },
+        1: { requirementDescription: "500 Contact earned", effectDescription: "The pattern stays on screen until you've decoded it.", done() { return earned("sg").gte(500) } },
+        2: { requirementDescription: "5,000 Contact earned", effectDescription: "The receiver decodes every signal by itself, perfectly.", done() { return earned("sg").gte(5000) } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#76a5af'>Signals</h2><br>You have <h2 style='color:#76a5af'>" + format(player.sg.contact) + "</h2> Contact, worth <b>+" + signalTrust() + "</b> trust." }],
         "blank",
         lore("Something out there is talking. It might be other swarms. It might be the Drifters. It might be something else."),
         "blank",
-        ["display-text", "<b>Tune in:</b> a transmission arrives every so often on an unknown frequency. Tune the dial close to it and lock on before it fades. Closer and sooner earn more Contact."],
+        ["display-text", function() { return "<b>Decode:</b> every so often a transmission arrives as a short pattern of symbols. Tap them back in the same order before it fades" + (hasMilestone("sg", 1) ? "" : " (the pattern hides after 4 seconds, so remember it)") + ". One wrong symbol and the signal is lost. Faster decoding and longer patterns (" + signalLength() + " symbols now) earn more Contact." }],
         "blank",
-        ["display-text", function() {
-            if (player.sg.target === null) return "The dial is at " + player.sg.freq + ". No signal right now."
-            let off = Math.abs(player.sg.freq - player.sg.target)
-            let strength = off < 3 ? "<span style='color:#8fce00'>loud and clear</span>" : off < 10 ? "<span style='color:#f1c232'>strong</span>" : off < 25 ? "faint" : "static"
-            return "The dial is at " + player.sg.freq + ". The signal is " + strength + (hasMilestone("sg", 1) ? " (" + (player.sg.freq < player.sg.target ? "tune up" : player.sg.freq > player.sg.target ? "tune down" : "spot on") + ")" : "") + "."
-        }],
-        ["slider", ["freq", 0, 100]],
+        ["display-text", function() { return signalDisplay() }],
         "blank",
         "clickables",
         "blank",

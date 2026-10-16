@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.1",
+	num: "3.1.1",
 	name: "Back to One Cell",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.1.1</h3><br>
+		- Signals (Act 5) is now a tap game instead of a slider, so it works on phones: decode each transmission by tapping its symbols in order before it fades.<br>
 	<h3>v3.1 - Back to One Cell</h3><br>
 		- Act 6 deepens Act 2. From Loop 2 on, the Life tree has two new layers, and both survive every Genesis.<br>
 		- Each Loop now has a goal from its act's deepening, and the Genesis that ends it needs that goal as well as the Heat Death. Loop 2's goal is Fully Vestigial: every Devolution node at level 5.<br>
