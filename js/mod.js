@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.3.1",
+	num: "3.3.2",
 	name: "The March of Progress",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.3.2</h3><br>
+		- Fixed: the game froze (until you refreshed) whenever a Mutation left a trait waiting while the Mutations tab was open.<br>
 	<h3>v3.3.1</h3><br>
 		- Fixed: Constants couldn't be selected, so they couldn't be equipped or dissolved by hand.<br>
 	<h3>v3.3 - The March of Progress</h3><br>

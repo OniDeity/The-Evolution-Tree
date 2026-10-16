@@ -394,10 +394,11 @@ addLayer("mu", {
     clickables: Object.assign({}, ...[0, 1, 2, 3, 4, 5, 6, 7].map(n => ({
         [11 + n]: {
             unlocked() { return n < offerCount() },
-            title() { return pendingTraits() > 0 ? TRAITS[traitOffers()[n]].name : "?" },
+            // Hidden slots (beyond the offers you have) still get their text worked out, so they must not look up a missing trait
+            title() { let id = traitOffers()[n]; return pendingTraits() > 0 && id ? TRAITS[id].name : "?" },
             display() {
-                if (pendingTraits() <= 0) return "Get another mutation to see what natural selection offers."
                 let id = traitOffers()[n]
+                if (pendingTraits() <= 0 || !id) return "Get another mutation to see what natural selection offers."
                 return TRAITS[id].text + "<br><br>You have: " + (player.mu.traits[id] || 0)
             },
             canClick() { return pendingTraits() > 0 },
