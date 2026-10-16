@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "cn", "gx", "dv", "mx", "vi", "er"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -39,6 +39,7 @@ function actSpeed(act) {
     if (!player.lt || !genesisUnlocked()) return 1
     let s = 1 + 0.5 * getBuyableAmount("lt", 10 + act).toNumber()
     if (hasUpgrade("lt", 35)) s *= 1.5
+    s *= 1 + 0.1 * getBuyableAmount("lt", 16).toNumber()
     if (act == 2 && hasMilestone("lt", 1)) s *= 1.25
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
     s *= singularityFactor()
@@ -118,6 +119,7 @@ function checkEndings() {
 // Each Loop opens the next act's deepening, and its Genesis also needs that deepening's goal
 const LOOP_GOALS = {
     2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
+    4: { name: "The Space Age", text: "buy The Space Age, the last upgrade of the Space Age", done() { return hasUpgrade("ag5", 14) } },
     3: { name: "The Phanerozoic", text: "survive all of the Big Five and reach the 10th Geological Era", done() { return bigFiveBeaten() >= 5 && player.er.count >= 10 } },
 }
 
@@ -152,6 +154,7 @@ function rememberLoop() {
     for (let id of ["11", "12", "21", "22", "31", "32"]) if (hasChallenge("hz", id) && !player.mm.hazards.includes(id)) player.mm.hazards.push(id)
     for (let id of PRESSURE_IDS) if (hasChallenge("pz", id) && !player.mm.pressures.includes(id)) player.mm.pressures.push(id)
     player.mm.deepTime = player.dt.upgrades.map(Number)
+    player.mm.trials4 = (player.mm.trials4 || []).concat(Object.keys(player.ex.challenges).filter(id => hasChallenge("ex", id) && !(player.mm.trials4 || []).includes(id)))
     player.cn.loopBest = new Decimal(0)
     player.cn.measured = 0
     player.dv.loopCount = 0
@@ -203,6 +206,8 @@ function headStarts() {
     if (hasUpgrade("mm", 33)) player.biomass = new Decimal(1e50)
     if (hasUpgrade("mm", 43)) for (let id in layers.ti.upgrades) if (!isNaN(id) && !player.ti.upgrades.includes(Number(id))) player.ti.upgrades.push(Number(id))
     if (hasUpgrade("mm", 14)) grantMilestones("ex", [0, 1, 2, 3])
+    if (hasUpgrade("mm", 34)) for (let id of (player.mm.trials4 || [])) player.ex.challenges[id] = 1
+    if (hasUpgrade("mm", 44)) for (let id in WORKSHOP) if (!player.wk.upgrades.includes(Number(id))) player.wk.upgrades.push(Number(id))
     if (hasUpgrade("mm", 24)) for (let id of player.mm.deepTime) if (!player.dt.upgrades.includes(id)) player.dt.upgrades.push(id)
     if (hasUpgrade("mm", 15)) { grantMilestones("hv", [0, 1, 2, 3, 4, 5]); grantMilestones("pb", [1, 2, 4]) }
     if (hasUpgrade("mm", 25)) { grantMilestones("un", [0, 1, 2, 3]); grantMilestones("mv", [0, 1, 2, 3]) }
@@ -377,7 +382,17 @@ addLayer("lt", {
             style() { return { width: "300px", height: "120px", "min-height": "120px", "background-color": canGenesis() ? "#fff4c2" : undefined, color: "#3a3220" } },
         },
     },
-    buyables: Object.fromEntries([1, 2, 3, 4, 5].map(a => [10 + a, {
+    buyables: Object.assign({
+        16: {
+            title: "Radiance",
+            cost(x) { return Decimal.pow(1.6, x).times(100).ceil() },
+            display() { let n = getBuyableAmount("lt", 16).toNumber(); return "Acts 1 to 5 all run x" + format(1 + 0.1 * n, 1) + " as fast (+0.1x a level).<br>Level " + n + "<br>Cost: " + formatWhole(this.cost()) + " Light" },
+            unlocked() { return player.lt.genesis >= 3 },
+            canAfford() { return player.lt.points.gte(this.cost()) },
+            buy() { player.lt.points = player.lt.points.sub(this.cost()); setBuyableAmount("lt", 16, getBuyableAmount("lt", 16).add(1)) },
+            style() { return { width: "140px", height: "120px" } },
+        },
+    }, Object.fromEntries([1, 2, 3, 4, 5].map(a => [10 + a, {
         title() { return ACT_SPEED_NAMES[a][0] },
         cost(x) { return speedCost(x) },
         display() {
@@ -390,7 +405,7 @@ addLayer("lt", {
             setBuyableAmount("lt", this.id, getBuyableAmount("lt", this.id).add(1))
         },
         style() { return { width: "140px", height: "120px" } },
-    }])),
+    }]))),
     upgrades: {
         11: lightUpgrade("Event Horizon", "Unlock the <b>Singularity</b>: every so often, Acts 1 to 5 run many times as fast for a while.", 5),
         12: lightUpgrade("Afterglow", "Light x1.5.", 10),
@@ -411,6 +426,7 @@ addLayer("lt", {
         42: lightUpgrade("Atavism", "Vestiges x2.", 90, { unlocked() { return player.lt.genesis > 0 } }),
         43: lightUpgrade("Lineage Memory", "Lineages x2.", 120, { unlocked() { return player.lt.genesis >= 2 } }),
         44: lightUpgrade("Viral Load", "Viruses copy themselves twice as often.", 150, { unlocked() { return player.lt.genesis >= 2 } }),
+        45: lightUpgrade("Inventive", "Ingenuity x3.", 200, { unlocked() { return player.lt.genesis >= 3 } }),
     },
     milestones: {
         0: { requirementDescription: "1 Genesis", effectDescription: "Dissolving a constant leaves twice the Echo.", done() { return player.lt.genesis >= 1 } },
@@ -459,6 +475,8 @@ const MEMORIES = {
     43: ["Long Lineage", "Every Loop starts with every Evolutionary milestone already bought."],
     14: ["Oral History", "Every Loop starts with Act 4's first four Extinction milestones."],
     24: ["Deep Memory", "Every Loop starts with the Deep Time upgrades you had when the last one ended."],
+    34: ["Founding Myths", "Every Loop starts with each of Act 4's Trials you've ever beaten."],
+    44: ["Inherited Workshop", "Every Loop starts with every Workshop improvement."],
     15: ["Flight Plans", "Every Loop starts with Harvest's first six milestones and the Probe milestones that launch, calibrate and upgrade on their own."],
     25: ["Remembered Universes", "Every Loop starts with the first four Universe and Multiverse milestones."],
     16: ["The Observatory", "A Genesis keeps the Observatory and the Star Log."],

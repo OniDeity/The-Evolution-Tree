@@ -688,6 +688,11 @@ addLayer("a", {
         303: { name: "Patient Zero", done() { return player.vi.radiations >= 1 }, tooltip: "Let the viruses burst into a viral radiation." },
         304: { name: "The Big Five", done() { return bigFiveBeaten() >= 5 }, tooltip: "Survive all five mass extinctions." },
         305: { name: "Deep Time", done() { return player.er.count >= 10 }, tooltip: "Reach the 10th Geological Era." },
+        311: { name: "Stone Tools", done() { return player.ag1.unlocked }, tooltip: "Enter the Age of Tools." },
+        312: { name: "Surplus", done() { return player.ag2.unlocked }, tooltip: "Enter the Age of Agriculture." },
+        313: { name: "Dark Satanic Mills", done() { return player.ag3.unlocked }, tooltip: "Enter the Age of Industry." },
+        314: { name: "Information Wants to Be Free", done() { return player.ag4.unlocked }, tooltip: "Enter the Age of Information." },
+        315: { name: "Liftoff", done() { return hasUpgrade("ag5", 14) }, tooltip: "Reach the Space Age." },
         295: { name: "Fully Vestigial", done() { return devolutionLevels() >= 50 }, tooltip: "Raise every Devolution node to level 5." },
     },
 })

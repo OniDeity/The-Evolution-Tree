@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.2.3",
-	name: "The Big Five",
+	num: "3.3",
+	name: "The March of Progress",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.3 - The March of Progress</h3><br>
+		- Act 6 deepens Act 4, from Loop 4 on (Synergism, retold). Everything here survives every Genesis.<br>
+		- Ingenuity: made by your people and techs. Buy Accelerators and Multipliers with it.<br>
+		- Five Ages, each a prestige layer on top of the last: Tools, Agriculture, Industry, Information and Space. Each resets the Ages below it (their currency, never their upgrades) and makes Ingenuity grow faster. Their upgrades make your civilization stronger and automate Act 4: jobs, buildings, extinctions, Trials and Eternity.<br>
+		- Loop 4's goal: The Space Age.<br>
+		- Radiance: a Light upgrade you can buy forever, making Acts 1 to 5 faster.<br>
+		- 2 Memories, 1 Light upgrade and 5 achievements.<br>
+		- Endgame: reach the Heat Death in Loop 4, in the Space Age.<br>
 	<h3>v3.2.3</h3><br>
 		- New Probe upgrade, Trust Autopilot (500 probes, on the Probes tab): trust spends itself as you earn it, either keeping the split you've set up or using a balanced split that moves trust into Combat whenever the Drifters start to outpace you.<br>
 	<h3>v3.2.2</h3><br>
@@ -251,7 +259,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	The second time, life went backwards before it went forwards, all the way down to one cell, and came back stronger for it.<br><br>
 	<b>You've finished Loop 2.</b><br><br>
 	The third time, the sentient ape was not the end of the story but a layer in the rock: five great extinctions, a plague of viruses, and era after era of survivors.<br><br>
-	<b>You've finished Loop 3.</b> More of Act 6 is coming soon...`
+	<b>You've finished Loop 3.</b><br><br>
+	The fourth time, the civilization did not stop at Eternity. Tools became fields, fields became factories, factories became networks, and the networks reached for the sky.<br><br>
+	<b>You've finished Loop 4.</b> More of Act 6 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -357,7 +367,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 3 && canGenesis()
+	return player.lt.genesis >= 4 && canGenesis()
 }
 
 
