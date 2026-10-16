@@ -71,9 +71,9 @@ addLayer("ix", {
         },
     },
     milestones: {
-        0: { requirementDescription: "50 Chitin", effectDescription: "Bacteria x2.", done() { return player.ix.chitin.gte(50) } },
-        1: { requirementDescription: "200 Chitin", effectDescription: "The swarm recovers in 15 seconds instead of 30.", done() { return player.ix.chitin.gte(200) } },
-        2: { requirementDescription: "800 Chitin", effectDescription: "Harvest the swarm on its own when it's near its peak.", done() { return player.ix.chitin.gte(800) } },
+        0: { requirementDescription: "50 Chitin earned", effectDescription: "Bacteria x2.", done() { return earned("ix").gte(50) } },
+        1: { requirementDescription: "200 Chitin earned", effectDescription: "The swarm recovers in 15 seconds instead of 30.", done() { return earned("ix").gte(200) } },
+        2: { requirementDescription: "800 Chitin earned", effectDescription: "Harvest the swarm on its own when it's near its peak.", done() { return earned("ix").gte(800) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -154,10 +154,10 @@ addLayer("cf", {
         },
     },
     milestones: {
-        0: { requirementDescription: "500 Coal", effectDescription: "Ready seams are dug up on their own.", done() { return player.cf.coal.gte(500) } },
-        1: { requirementDescription: "1,500 Coal", effectDescription: "You can have 5 seams at once.", done() { return player.cf.coal.gte(1500) } },
-        2: { requirementDescription: "5,000 Coal", effectDescription: "Seams give 1.5x Coal.", done() { return player.cf.coal.gte(5000) } },
-        3: { requirementDescription: "10,000 Coal", effectDescription: "Right before you speciate or radiate, Biomass is buried on its own in any free seam.", done() { return player.cf.coal.gte(10000) } },
+        0: { requirementDescription: "500 Coal earned", effectDescription: "Ready seams are dug up on their own.", done() { return earned("cf").gte(500) } },
+        1: { requirementDescription: "1,500 Coal earned", effectDescription: "You can have 5 seams at once.", done() { return earned("cf").gte(1500) } },
+        2: { requirementDescription: "5,000 Coal earned", effectDescription: "Seams give 1.5x Coal.", done() { return earned("cf").gte(5000) } },
+        3: { requirementDescription: "10,000 Coal earned", effectDescription: "Right before you speciate or radiate, Biomass is buried on its own in any free seam.", done() { return earned("cf").gte(10000) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -247,10 +247,10 @@ addLayer("cv", {
         },
     },
     milestones: {
-        0: { requirementDescription: "300 Fitness", effectDescription: "Each nudge moves the balance 25 instead of 15.", done() { return player.cv.fitness.gte(300) } },
-        1: { requirementDescription: "1,000 Fitness", effectDescription: "The arms race wanders more slowly.", done() { return player.cv.fitness.gte(1000) } },
-        2: { requirementDescription: "3,000 Fitness", effectDescription: "Fitness gain x2.", done() { return player.cv.fitness.gte(3000) } },
-        3: { requirementDescription: "10,000 Fitness", effectDescription: "The balance is nudged back on its own whenever it drifts past 20.", done() { return player.cv.fitness.gte(10000) } },
+        0: { requirementDescription: "300 Fitness earned", effectDescription: "Each nudge moves the balance 25 instead of 15.", done() { return earned("cv").gte(300) } },
+        1: { requirementDescription: "1,000 Fitness earned", effectDescription: "The arms race wanders more slowly.", done() { return earned("cv").gte(1000) } },
+        2: { requirementDescription: "3,000 Fitness earned", effectDescription: "Fitness gain x2.", done() { return earned("cv").gte(3000) } },
+        3: { requirementDescription: "10,000 Fitness earned", effectDescription: "The balance is nudged back on its own whenever it drifts past 20.", done() { return earned("cv").gte(10000) } },
     },
     tabFormat: [
         ["display-text", function() {

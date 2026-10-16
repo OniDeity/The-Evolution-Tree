@@ -173,6 +173,7 @@ function genesisReset() {
     player.points = fresh.points
     player.dna = fresh.dna
     player.biomass = fresh.biomass
+    player.earned = {}
     player.lt.endings = []
     player.lt.splits = {}
     player.lt.loopTime = 0

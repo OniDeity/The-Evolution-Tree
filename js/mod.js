@@ -24,6 +24,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Genetic Engineering: Base Pairs come from DNA. Reroll the trait draft, lock a trait into every offer, see a third option, and finally design traits outright (CRISPR). Each trait can be enhanced.<br>
 		- Devolution: after the Tree of Life, start Act 2 over from one cell for Vestiges (every 10 minutes at most, and on its own after 5 devolutions). They grow a mirror of the Life tree from Predators down to Cells: every level triples DNA gain, and each node takes one of Act 2's choices off your hands (predators, routine, partners, body plan, colonists, adaptations, Heritage upgrades, Fecundity and Longevity, the trait draft, and finally every Cell upgrade from the start).<br>
 		- Act 2 balance: Instincts open at 1e4 Heritage instead of 1e6, so the long wait between reaching land and the first multicellular form has something to do. Predators fight back: later goals are higher, and DNA gain is weaker while you fight one.<br>
+		- Branch milestones that ask for an amount of something you can spend or lose (Goodwill, ore, Banded Iron, Drift, Chitin, Coal and the rest) now count everything you've earned, not what you hold right now.<br>
 		- 2 Memories, 2 Light upgrades and 5 achievements.<br>
 		- Endgame: reach the Heat Death in Loop 2, Fully Vestigial.<br>
 	<h3>v3.0 - Let There Be Light, Again</h3><br>
@@ -287,7 +288,32 @@ function getPointGen() {
 function addedPlayerData() { return {
 	dna: new Decimal(0),
 	biomass: new Decimal(0),
+	earned: {},
 }}
+
+// Branch resources you can spend or lose: milestones count everything you've ever earned, not what you hold now
+const EARNED = { tr: "goodwill", nu: "caught", ps: "radio", as: "ore", ph: "iron", eg: "hatchlings", oc: "drift", hs: "stability", te: "range", se: "fat", sg: "contact", wh: "charts", ix: "chitin", cf: "coal", cv: "fitness" }
+
+function trackEarned() {
+	if (!player.earned) player.earned = {}
+	for (let l in EARNED) {
+		if (!player[l]) continue
+		let cur = new Decimal(player[l][EARNED[l]] || 0)
+		let e = player.earned[l]
+		if (!e) {
+			// Start from what you hold now (older saves never tracked this)
+			player.earned[l] = { total: cur, last: cur }
+			continue
+		}
+		let last = new Decimal(e.last)
+		if (cur.gt(last)) e.total = new Decimal(e.total).add(cur.sub(last))
+		e.last = cur
+	}
+}
+
+function earned(l) {
+	return player.earned && player.earned[l] ? new Decimal(player.earned[l].total) : new Decimal(0)
+}
 
 // Display extra things at the top of the page
 var displayThings = [

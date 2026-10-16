@@ -10,6 +10,7 @@ addLayer("a", {
     row: "side",
     type: "none",
     layerShown() { return true },
+    update(diff) { trackEarned() },
     tooltip() { return formatWhole(player.a.achievements.length) + " achievements" },
     tabFormat: [
         ["display-text", function() { return "You have <h2 style='color:#f5e663'>" + formatWhole(player.a.achievements.length) + "</h2> achievements" }],

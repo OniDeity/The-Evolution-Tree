@@ -86,9 +86,9 @@ addLayer("tr", {
         style() { return { width: "170px", height: "110px", "min-height": "110px" } },
     }])),
     milestones: {
-        0: { requirementDescription: "25 Goodwill", effectDescription: "Caravans carry 25% of what you have instead of 10%.", done() { return player.tr.goodwill >= 25 } },
-        1: { requirementDescription: "100 Goodwill", effectDescription: "Caravans come back in 8 seconds instead of 15.", done() { return player.tr.goodwill >= 100 } },
-        2: { requirementDescription: "400 Goodwill", effectDescription: "A caravan sets out on its own whenever a price is x1.5 or better.", done() { return player.tr.goodwill >= 400 } },
+        0: { requirementDescription: "25 Goodwill earned", effectDescription: "Caravans carry 25% of what you have instead of 10%.", done() { return earned("tr").gte(25) } },
+        1: { requirementDescription: "100 Goodwill earned", effectDescription: "Caravans come back in 8 seconds instead of 15.", done() { return earned("tr").gte(100) } },
+        2: { requirementDescription: "400 Goodwill earned", effectDescription: "A caravan sets out on its own whenever a price is x1.5 or better.", done() { return earned("tr").gte(400) } },
     },
     tabFormat: [
         ["display-text", function() {

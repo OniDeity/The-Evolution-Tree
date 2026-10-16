@@ -70,9 +70,9 @@ addLayer("nu", {
         },
     },
     milestones: {
-        0: { requirementDescription: "10 neutrinos", effectDescription: "Particle gain x1.25.", done() { return player.nu.caught.gte(10) } },
-        1: { requirementDescription: "40 neutrinos", effectDescription: "Bursts last 20 seconds instead of 10.", done() { return player.nu.caught.gte(40) } },
-        2: { requirementDescription: "150 neutrinos", effectDescription: "The detector catches every burst on its own.", done() { return player.nu.caught.gte(150) } },
+        0: { requirementDescription: "10 neutrinos earned", effectDescription: "Particle gain x1.25.", done() { return earned("nu").gte(10) } },
+        1: { requirementDescription: "40 neutrinos earned", effectDescription: "Bursts last 20 seconds instead of 10.", done() { return earned("nu").gte(40) } },
+        2: { requirementDescription: "150 neutrinos earned", effectDescription: "The detector catches every burst on its own.", done() { return earned("nu").gte(150) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -163,9 +163,9 @@ addLayer("ps", {
         },
     },
     milestones: {
-        0: { requirementDescription: "100 Radio Waves", effectDescription: "Stars are 1.5x cheaper.", done() { return player.ps.radio.gte(100) } },
+        0: { requirementDescription: "100 Radio Waves earned", effectDescription: "Stars are 1.5x cheaper.", done() { return earned("ps").gte(100) } },
         1: { requirementDescription: "A streak of 15", effectDescription: "Streaks can go up to 30.", done() { return player.ps.best >= 15 } },
-        2: { requirementDescription: "2,000 Radio Waves", effectDescription: "Gain 5 Radio Waves every beat on your own.", done() { return player.ps.radio.gte(2000) } },
+        2: { requirementDescription: "2,000 Radio Waves earned", effectDescription: "Gain 5 Radio Waves every beat on your own.", done() { return earned("ps").gte(2000) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -260,10 +260,10 @@ addLayer("as", {
         },
     }])),
     milestones: {
-        0: { requirementDescription: "20 ore", effectDescription: "4 picks per field.", done() { return player.as.ore.gte(20) } },
-        1: { requirementDescription: "80 ore", effectDescription: "A new field drifts in every 40 seconds.", done() { return player.as.ore.gte(80) } },
-        2: { requirementDescription: "250 ore", effectDescription: "Energy gain x1.5.", done() { return player.as.ore.gte(250) } },
-        3: { requirementDescription: "600 ore", effectDescription: "Prospect on your own: picks are made for you.", done() { return player.as.ore.gte(600) } },
+        0: { requirementDescription: "20 ore earned", effectDescription: "4 picks per field.", done() { return earned("as").gte(20) } },
+        1: { requirementDescription: "80 ore earned", effectDescription: "A new field drifts in every 40 seconds.", done() { return earned("as").gte(80) } },
+        2: { requirementDescription: "250 ore earned", effectDescription: "Energy gain x1.5.", done() { return earned("as").gte(250) } },
+        3: { requirementDescription: "600 ore earned", effectDescription: "Prospect on your own: picks are made for you.", done() { return earned("as").gte(600) } },
     },
     tabFormat: [
         ["display-text", function() {

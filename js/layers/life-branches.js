@@ -85,10 +85,10 @@ addLayer("ph", {
         },
     },
     milestones: {
-        0: { requirementDescription: "5 Banded Iron", effectDescription: "Carrying capacity x1.25.", done() { return player.ph.iron.gte(5) } },
-        1: { requirementDescription: "15 Banded Iron", effectDescription: "Oxygen fills in 45 seconds instead of 60.", done() { return player.ph.iron.gte(15) } },
-        2: { requirementDescription: "40 Banded Iron", effectDescription: "Oxygen vents itself at 75%.", done() { return player.ph.iron.gte(40) } },
-        3: { requirementDescription: "100 Banded Iron", effectDescription: "Cells divide 1.1x faster.", done() { return player.ph.iron.gte(100) } },
+        0: { requirementDescription: "5 Banded Iron earned", effectDescription: "Carrying capacity x1.25.", done() { return earned("ph").gte(5) } },
+        1: { requirementDescription: "15 Banded Iron earned", effectDescription: "Oxygen fills in 45 seconds instead of 60.", done() { return earned("ph").gte(15) } },
+        2: { requirementDescription: "40 Banded Iron earned", effectDescription: "Oxygen vents itself at 75%.", done() { return earned("ph").gte(40) } },
+        3: { requirementDescription: "100 Banded Iron earned", effectDescription: "Cells divide 1.1x faster.", done() { return earned("ph").gte(100) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -300,10 +300,10 @@ addLayer("eg", {
         },
     },
     milestones: {
-        0: { requirementDescription: "25 hatchlings", effectDescription: "Births x1.2.", done() { return player.eg.hatchlings.gte(25) } },
-        1: { requirementDescription: "100 hatchlings", effectDescription: "Eggs incubate 1.5x faster.", done() { return player.eg.hatchlings.gte(100) } },
-        2: { requirementDescription: "250 hatchlings", effectDescription: "Offspring live 1.25x longer.", done() { return player.eg.hatchlings.gte(250) } },
-        3: { requirementDescription: "600 hatchlings", effectDescription: "Clutches hatch and are laid again on their own, and Banded Iron vents give 25% more.", done() { return player.eg.hatchlings.gte(600) } },
+        0: { requirementDescription: "25 hatchlings earned", effectDescription: "Births x1.2.", done() { return earned("eg").gte(25) } },
+        1: { requirementDescription: "100 hatchlings earned", effectDescription: "Eggs incubate 1.5x faster.", done() { return earned("eg").gte(100) } },
+        2: { requirementDescription: "250 hatchlings earned", effectDescription: "Offspring live 1.25x longer.", done() { return earned("eg").gte(250) } },
+        3: { requirementDescription: "600 hatchlings earned", effectDescription: "Clutches hatch and are laid again on their own, and Banded Iron vents give 25% more.", done() { return earned("eg").gte(600) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -393,11 +393,11 @@ addLayer("oc", {
         },
     },
     milestones: {
-        0: { requirementDescription: "100 Drift", effectDescription: "Steering holds the current for 90 seconds.", done() { return player.oc.drift.gte(100) } },
-        1: { requirementDescription: "1,000 Drift", effectDescription: "Drift also boosts DNA gain a little.", done() { return player.oc.drift.gte(1000) } },
-        2: { requirementDescription: "5,000 Drift", effectDescription: "Drift gain x2.", done() { return player.oc.drift.gte(5000) } },
-        3: { requirementDescription: "20,000 Drift", effectDescription: "Steering is ready again a minute sooner.", done() { return player.oc.drift.gte(20000) } },
-        4: { requirementDescription: "50,000 Drift", effectDescription: "Steer on your own whenever the current flows toward at least half of your tiles.", done() { return player.oc.drift.gte(50000) } },
+        0: { requirementDescription: "100 Drift earned", effectDescription: "Steering holds the current for 90 seconds.", done() { return earned("oc").gte(100) } },
+        1: { requirementDescription: "1,000 Drift earned", effectDescription: "Drift also boosts DNA gain a little.", done() { return earned("oc").gte(1000) } },
+        2: { requirementDescription: "5,000 Drift earned", effectDescription: "Drift gain x2.", done() { return earned("oc").gte(5000) } },
+        3: { requirementDescription: "20,000 Drift earned", effectDescription: "Steering is ready again a minute sooner.", done() { return earned("oc").gte(20000) } },
+        4: { requirementDescription: "50,000 Drift earned", effectDescription: "Steer on your own whenever the current flows toward at least half of your tiles.", done() { return earned("oc").gte(50000) } },
     },
     tabFormat: [
         ["display-text", function() {

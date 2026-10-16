@@ -305,9 +305,9 @@ addLayer("sg", {
         },
     },
     milestones: {
-        0: { requirementDescription: "50 Contact", effectDescription: "Signals last 15 seconds instead of 10.", done() { return player.sg.contact >= 50 } },
-        1: { requirementDescription: "500 Contact", effectDescription: "The receiver shows how far off you are.", done() { return player.sg.contact >= 500 } },
-        2: { requirementDescription: "5,000 Contact", effectDescription: "The receiver tunes in and locks on by itself, perfectly.", done() { return player.sg.contact >= 5000 } },
+        0: { requirementDescription: "50 Contact earned", effectDescription: "Signals last 15 seconds instead of 10.", done() { return earned("sg").gte(50) } },
+        1: { requirementDescription: "500 Contact earned", effectDescription: "The receiver shows how far off you are.", done() { return earned("sg").gte(500) } },
+        2: { requirementDescription: "5,000 Contact earned", effectDescription: "The receiver tunes in and locks on by itself, perfectly.", done() { return earned("sg").gte(5000) } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#76a5af'>Signals</h2><br>You have <h2 style='color:#76a5af'>" + format(player.sg.contact) + "</h2> Contact, worth <b>+" + signalTrust() + "</b> trust." }],
@@ -396,9 +396,9 @@ addLayer("wh", {
         style() { return { width: "150px", height: "100px", "min-height": "100px" } },
     }])),
     milestones: {
-        0: { requirementDescription: "10 Charts", effectDescription: "You can see where the first wormhole leads.", done() { return player.wh.charts >= 10 } },
-        1: { requirementDescription: "50 Charts", effectDescription: "Ambushes cost 2% of your probes instead of 5%.", done() { return player.wh.charts >= 50 } },
-        2: { requirementDescription: "200 Charts", effectDescription: "You can see where every wormhole leads, and your probes jump through the best one on their own.", done() { return player.wh.charts >= 200 } },
+        0: { requirementDescription: "10 Charts earned", effectDescription: "You can see where the first wormhole leads.", done() { return earned("wh").gte(10) } },
+        1: { requirementDescription: "50 Charts earned", effectDescription: "Ambushes cost 2% of your probes instead of 5%.", done() { return earned("wh").gte(50) } },
+        2: { requirementDescription: "200 Charts earned", effectDescription: "You can see where every wormhole leads, and your probes jump through the best one on their own.", done() { return earned("wh").gte(200) } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#a64d79'>Wormholes</h2><br>You have <h2 style='color:#a64d79'>" + formatWhole(player.wh.charts) + "</h2> Charts, making Act 5 run <b>x" + format(wormholeSpeed(), 2) + "</b> as fast." }],

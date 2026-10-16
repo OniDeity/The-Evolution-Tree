@@ -208,9 +208,9 @@ addLayer("hs", {
         style() { return { width: "110px", "min-height": "70px", height: "70px", "background-color": NEEDS[k].color } },
     }])),
     milestones: {
-        0: { requirementDescription: "100 Stability", effectDescription: "Your needs drain 30% slower.", done() { return player.hs.stability.gte(100) } },
-        1: { requirementDescription: "1,000 Stability", effectDescription: "Stability gain x2.", done() { return player.hs.stability.gte(1000) } },
-        2: { requirementDescription: "5,000 Stability", effectDescription: "Your body tops up any need that drops below 35 on its own.", done() { return player.hs.stability.gte(5000) } },
+        0: { requirementDescription: "100 Stability earned", effectDescription: "Your needs drain 30% slower.", done() { return earned("hs").gte(100) } },
+        1: { requirementDescription: "1,000 Stability earned", effectDescription: "Stability gain x2.", done() { return earned("hs").gte(1000) } },
+        2: { requirementDescription: "5,000 Stability earned", effectDescription: "Your body tops up any need that drops below 35 on its own.", done() { return earned("hs").gte(5000) } },
     },
     tabFormat: [
         ["display-text", function() {
@@ -301,7 +301,7 @@ addLayer("te", {
     }])),
     milestones: {
         0: { requirementDescription: "Chase off 25 rivals", effectDescription: "Rivals show up half as often.", done() { return player.te.chased >= 25 } },
-        1: { requirementDescription: "500 Range", effectDescription: "Range gain x2.", done() { return player.te.range.gte(500) } },
+        1: { requirementDescription: "500 Range earned", effectDescription: "Range gain x2.", done() { return earned("te").gte(500) } },
         2: { requirementDescription: "Chase off 100 rivals", effectDescription: "Rivals are chased off on their own.", done() { return player.te.chased >= 100 } },
     },
     tabFormat: [
@@ -387,8 +387,8 @@ addLayer("se", {
     },
     milestones: {
         0: { requirementDescription: "Survive 3 winters with food to spare", effectDescription: "Foraging finds twice as much.", done() { return player.se.spared >= 3 } },
-        1: { requirementDescription: "100 Fat", effectDescription: "Winter eats half as much.", done() { return player.se.fat.gte(100) } },
-        2: { requirementDescription: "1,000 Fat", effectDescription: "Food turns up 5x faster on its own.", done() { return player.se.fat.gte(1000) } },
+        1: { requirementDescription: "100 Fat earned", effectDescription: "Winter eats half as much.", done() { return earned("se").gte(100) } },
+        2: { requirementDescription: "1,000 Fat earned", effectDescription: "Food turns up 5x faster on its own.", done() { return earned("se").gte(1000) } },
     },
     tabFormat: [
         ["display-text", function() {
