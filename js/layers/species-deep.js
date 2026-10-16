@@ -46,6 +46,8 @@ function extinctionWipe() {
     player.ar.points = new Decimal(hasUpgrade("mx", 14) ? 1 : 0)
     if (hasUpgrade("mx", 13)) player.sn.points = new Decimal(2)
     player.mx.runTime = 0
+    player.mx.peak = new Decimal(0)
+    player.mx.stall = 0
 }
 
 function massExtinction() {
@@ -72,7 +74,7 @@ const MX_UPGRADES = {
     24: ["Viruses", "Unlock <b>Viruses</b>.", 21],
     31: ["Bounce Back", "Biomass gain x(mass extinctions + 1)².", 50, () => new Decimal(player.mx.crunches + 1).pow(2), "biomass"],
     32: ["Lazarus Taxa", "Lineages x2.", 100],
-    33: ["Mass Extinction Events", "Mass extinctions happen on their own as soon as they'd pay at least what your last one did.", 200],
+    33: ["Mass Extinction Events", "Mass extinctions happen on their own: at once, or after Break the Cycle, once your Lineage gain has stopped growing for 30 seconds.", 200],
     34: ["Break the Cycle", "Biomass past 1.8e308 counts: every 308 more digits make a mass extinction worth 10x as many Lineages.", 500],
     41: ["Hothouse", "Every tier gets stronger with your best Lineage gain.", 2000, () => player.mx.best.add(1).pow(0.5), "tiers"],
     42: ["Adaptive Radiation, Again", "Radiations make Metabolism +0.01 stronger each.", 1e4],
@@ -141,6 +143,8 @@ addLayer("mx", {
         runTime: 0,
         auto: true,
         meteor: 0,
+        peak: new Decimal(0),
+        stall: 0,
     }},
     type: "none",
     resource: "Lineages",
@@ -150,6 +154,9 @@ addLayer("mx", {
         if (!speciesDeepUnlocked()) return
         let d = diff * actSpeedCache[3]
         player.mx.runTime += d
+        // For automatic mass extinctions: how long (in Act 3 time) since the Lineage gain last grew by 1%
+        let g = lineageGain()
+        if (g.gt(player.mx.peak.times(1.01))) { player.mx.peak = g; player.mx.stall = 0 } else player.mx.stall += d
         // The Cretaceous: every minute the meteor strikes again
         if (inExtinction(31)) {
             player.mx.meteor += d
@@ -162,8 +169,7 @@ addLayer("mx", {
     automate() {
         if (!speciesDeepUnlocked()) return
         if ((hasUpgrade("mx", 33) || hasMilestone("er", 1)) && player.mx.auto && !player.mx.activeChallenge) {
-            let g = lineageGain()
-            if (g.gte(1) && g.gte(player.mx.last || 1)) { player.mx.last = g; massExtinction() }
+            if (lineageGain().gte(1) && (!hasUpgrade("mx", 34) || player.mx.stall >= 30)) massExtinction()
         }
         if (player.mx.activeChallenge && canCompleteChallenge("mx", player.mx.activeChallenge)) startChallenge("mx", player.mx.activeChallenge)
         if (hasMilestone("er", 6) && !player.mx.activeChallenge) {
