@@ -563,6 +563,8 @@ addLayer("pb", {
         launched: 0,
         trust: { speed: 0, explore: 0, replicate: 1, hazard: 0, combat: 0, factory: 0, harvester: 0, wire: 0 },
         autoLaunch: true,
+        autoTrust: 0,
+        trustSplit: null,
     }},
     type: "none",
     layerShown() { return spaceUnlocked() },
@@ -582,6 +584,7 @@ addLayer("pb", {
         if (hasMilestone("pb", 2)) for (let k of STAT_KEYS) { let id = 11 + STAT_KEYS.indexOf(k); for (let i = 0; i < 10 && layers.pb.buyables[id].canAfford(); i++) layers.pb.buyables[id].buy() }
         // Only buys a probe upgrade once it costs under 1% of your probes, so automation never stalls the swarm
         if (hasMilestone("pb", 4)) for (let id in PB_UPGRADES) if (tmp.pb.upgrades[id] && tmp.pb.upgrades[id].unlocked && player.pb.probes.times(0.01).gte(tmp.pb.upgrades[id].cost)) buyUpg("pb", id)
+        autoTrust()
     },
     tabFormat: {
         "Probes": {
@@ -600,6 +603,8 @@ addLayer("pb", {
                 }],
                 "blank",
                 ...STAT_KEYS.map((k, n) => ["row", [["display-text", function() { return statRowText(k) }], ["clickable", 21 + n], ["clickable", 31 + n], ["buyable", 11 + n]]]),
+                "blank",
+                ["row", [["upgrade", 141], ["clickable", 81], ["clickable", 82]]],
                 "blank",
                 "milestones",
             ],
@@ -621,6 +626,25 @@ addLayer("pb", {
             canClick() { return player.hv.hulls.gte(launchCost()) },
             onClick() { launchProbe() },
             style() { return { width: "200px", "min-height": "80px", height: "80px" } },
+        },
+        81: {
+            title() { return ["Autopilot off", "Keeping your split", "Balanced"][player.pb.autoTrust || 0] },
+            display() { return ["Click to keep the split you have now", "Click for the balanced split", "Click to turn it off"][player.pb.autoTrust || 0] },
+            unlocked() { return hasUpgrade("pb", 141) },
+            canClick() { return true },
+            onClick() {
+                player.pb.autoTrust = ((player.pb.autoTrust || 0) + 1) % 3
+                if (player.pb.autoTrust == 1) player.pb.trustSplit = deepCopy(player.pb.trust)
+            },
+            style() { return { width: "160px", "min-height": "80px", height: "80px" } },
+        },
+        82: {
+            title: "Remember this split",
+            display() { return "Use the trust you've set by hand as your split from now on." },
+            unlocked() { return hasUpgrade("pb", 141) && player.pb.autoTrust == 1 },
+            canClick() { return true },
+            onClick() { player.pb.trustSplit = deepCopy(player.pb.trust) },
+            style() { return { width: "160px", "min-height": "80px", height: "80px" } },
         },
         92: {
             title() { return "Auto-launch: " + (player.pb.autoLaunch ? "ON" : "OFF") },
@@ -659,12 +683,22 @@ addLayer("pb", {
         },
         style() { return { width: "110px", height: "60px", "min-height": "60px", "font-size": "10px" } },
     }])),
-    upgrades: Object.fromEntries(Object.keys(PB_UPGRADES).map(id => {
+    upgrades: Object.assign(Object.fromEntries(Object.keys(PB_UPGRADES).map(id => {
         let u = spaceUpgrade("pb", PB_UPGRADES, id, "probes", pbUpgradeCost, n => function() { return rowUnlocked("pb", n) })
         u.currencyInternalName = "probes"
         u.currencyLayer = "pb"
         return [id, u]
-    })),
+    })), {
+        141: {
+            title: "Trust Autopilot",
+            description: "Trust spends itself as you earn it: keeping the split you've set up, or a balanced split that also shifts trust into Combat whenever the Drifters start to outpace you.",
+            cost: new Decimal(500),
+            currencyDisplayName: "probes",
+            currencyInternalName: "probes",
+            currencyLayer: "pb",
+            style: { width: "220px", height: "120px" },
+        },
+    }),
     milestones: {
         0: { requirementDescription: "10 systems explored", effectDescription: "+1 trust.", done() { return player.pb.explored.gte(10) } },
         1: { requirementDescription: "100 systems explored", effectDescription: "Probes are launched on their own.", done() { return player.pb.explored.gte(100) } },
@@ -739,6 +773,35 @@ function fitTrust() {
         let used = trustUsed() + 1
         let k = STAT_KEYS.filter(k => statUnlocked(k)).reduce((a, k) => ((plan[k] || 0) / planTotal - trustIn(k) / used) > ((plan[a] || 0) / planTotal - trustIn(a) / used) ? k : a, "replicate")
         player.pb.trust[k] = trustIn(k) + 1
+    }
+}
+
+// Trust Autopilot. "Keep your split" only spends free trust, in the proportions you saved;
+// "Balanced" rebuilds the whole split, then moves trust into Combat while the Drifters outpace you
+const BALANCED_SPLIT = { replicate: 0.3, hazard: 0.15, explore: 0.15, speed: 0.1, harvester: 0.1, wire: 0.1, factory: 0.1, combat: 0 }
+
+function spendTrust(split) {
+    let total = STAT_KEYS.reduce((a, k) => a + (statUnlocked(k) ? split[k] || 0 : 0), 0)
+    if (total <= 0) return
+    for (let i = 0; i < 2000 && trustUsed() < probeTrust(); i++) {
+        let used = trustUsed() + 1
+        let k = STAT_KEYS.filter(k => statUnlocked(k)).reduce((a, k) => ((split[k] || 0) / total - trustIn(k) / used) > ((split[a] || 0) / total - trustIn(a) / used) ? k : a, "replicate")
+        player.pb.trust[k] = trustIn(k) + 1
+    }
+}
+
+function autoTrust() {
+    if (!hasUpgrade("pb", 141) || !player.pb.autoTrust) return
+    if (player.pb.autoTrust == 1) { spendTrust(player.pb.trustSplit || player.pb.trust); return }
+    for (let k of STAT_KEYS) player.pb.trust[k] = 0
+    player.pb.trust.replicate = 1
+    spendTrust(BALANCED_SPLIT)
+    if (!driftStarted()) return
+    for (let i = 0; i < 60 && combatRate().lte(drifterCopyRate().times(1.3)); i++) {
+        let from = STAT_KEYS.filter(k => k != "combat" && k != "replicate" && trustIn(k) > 0).reduce((a, k) => a === null || trustIn(k) > trustIn(a) ? k : a, null)
+        if (!from) break
+        player.pb.trust[from]--
+        player.pb.trust.combat = trustIn("combat") + 1
     }
 }
 

@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.2.2",
+	num: "3.2.3",
 	name: "The Big Five",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2.3</h3><br>
+		- New Probe upgrade, Trust Autopilot (500 probes, on the Probes tab): trust spends itself as you earn it, either keeping the split you've set up or using a balanced split that moves trust into Combat whenever the Drifters start to outpace you.<br>
 	<h3>v3.2.2</h3><br>
 		- The Heavy Universe Trial could never be won: hazards caught up with copying long before 1e18 systems. Hazards there are now 4 times as deadly instead of 10.<br>
 		- Hazards can no longer destroy your last probe, so a swarm can always recover.<br>
