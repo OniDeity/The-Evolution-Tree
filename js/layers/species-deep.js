@@ -29,10 +29,10 @@ function lineageMult() {
     return m
 }
 
-// Before Break the Cycle a mass extinction is worth 1 Lineage (times boosts); after it, every 308 more digits of Biomass are worth 10x
+// Before Break the Cycle a mass extinction is worth 1 Lineage (times boosts); after it, every 154 more digits of Biomass are worth 10x
 function lineageGain() {
     if (!speciesDeepUnlocked() || player.biomass.lt(SENTIENCE)) return new Decimal(0)
-    let base = hasUpgrade("mx", 34) ? Decimal.pow(10, player.biomass.log10().div(308).sub(1)) : new Decimal(1)
+    let base = hasUpgrade("mx", 34) ? Decimal.pow(10, player.biomass.log10().sub(308).div(154)) : new Decimal(1)
     return base.times(lineageMult()).floor().max(1)
 }
 
@@ -75,7 +75,7 @@ const MX_UPGRADES = {
     31: ["Bounce Back", "Biomass gain x(mass extinctions + 1)².", 50, () => new Decimal(player.mx.crunches + 1).pow(2), "biomass"],
     32: ["Lazarus Taxa", "Lineages x2.", 100],
     33: ["Mass Extinction Events", "Mass extinctions happen on their own: at once, or after Break the Cycle, once your Lineage gain has stopped growing for 30 seconds.", 200],
-    34: ["Break the Cycle", "Biomass past 1.8e308 counts: every 308 more digits make a mass extinction worth 10x as many Lineages.", 500],
+    34: ["Break the Cycle", "Biomass past 1.8e308 counts: every 154 more digits make a mass extinction worth 10x as many Lineages.", 500],
     41: ["Hothouse", "Every tier gets stronger with your best Lineage gain.", 2000, () => player.mx.best.add(1).pow(0.5), "tiers"],
     42: ["Adaptive Radiation, Again", "Radiations make Metabolism +0.01 stronger each.", 1e4],
     43: ["The Big Five", "Unlock the Big Five, five extinctions that change the rules.", 5e4],
@@ -186,7 +186,7 @@ addLayer("mx", {
                 "blank",
                 ["display-text", function() {
                     return "With 1.8e308 Biomass, <b>end it all</b>: Act 3 starts over from 10 Biomass, speciations and radiations included, but the Spark of Sentience stays lit. Each mass extinction pays Lineages" +
-                        (hasUpgrade("mx", 34) ? " (10x for every 308 more digits of Biomass)" : "") + ", and every one you've lived through makes the next pay 20% more." + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
+                        (hasUpgrade("mx", 34) ? " (10x for every 154 more digits of Biomass)" : "") + ", and every one you've lived through makes the next pay 20% more." + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
                 }],
                 "blank",
                 ["clickables", [9]],
