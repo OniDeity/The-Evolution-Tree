@@ -19,7 +19,8 @@ function speciesDeepUnlocked() {
 //  MASS EXTINCTIONS
 // ------------------------------------------------------------
 function lineageMult() {
-    let m = new Decimal(1)
+    // Survivors carry on: every mass extinction you've lived through adds 20%
+    let m = new Decimal(1 + player.mx.crunches / 5)
     if (hasUpgrade("mx", 32)) m = m.times(2)
     if (hasChallenge("mx", 31)) m = m.times(2)
     if (hasUpgrade("lt", 43)) m = m.times(2)
@@ -179,7 +180,7 @@ addLayer("mx", {
                 "blank",
                 ["display-text", function() {
                     return "With 1.8e308 Biomass, <b>end it all</b>: Act 3 starts over from 10 Biomass, speciations and radiations included, but the Spark of Sentience stays lit. Each mass extinction pays Lineages" +
-                        (hasUpgrade("mx", 34) ? " (10x for every 308 more digits of Biomass)." : " (1 each, for now).") + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
+                        (hasUpgrade("mx", 34) ? " (10x for every 308 more digits of Biomass)" : "") + ", and every one you've lived through makes the next pay 20% more." + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
                 }],
                 "blank",
                 ["clickables", [9]],
