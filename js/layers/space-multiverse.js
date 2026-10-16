@@ -193,7 +193,7 @@ const SPACE_TRIALS = {
     11: { name: "Lone Probe", text: "You start with one probe and can't launch any more.", reward: "Seed gain x2." },
     12: { name: "Hostile Universe", text: "Drifters copy themselves twice as fast as your probes.", reward: "Combat x1,000." },
     13: { name: "Silent Swarm", text: "The Swarm can't think: no Compute at all.", reward: "Yomi gain x100." },
-    14: { name: "Heavy Universe", text: "Hazards are 10 times as deadly.", reward: "Hazards destroy a tenth as many probes." },
+    14: { name: "Heavy Universe", text: "Hazards are 4 times as deadly.", reward: "Hazards destroy a tenth as many probes." },
     21: { name: "Starless", text: "No power at all: only probe crews work in Harvest.", reward: "Everything in Harvest x1e6." },
     22: { name: "No Templates", text: "Probe upgrades do nothing.", reward: "Probes copy themselves 10% faster." },
     23: { name: "Fog", text: "Navigation is a tenth as fast.", reward: "Navigation x2." },

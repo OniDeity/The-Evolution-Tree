@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.2.1",
+	num: "3.2.2",
 	name: "The Big Five",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2.2</h3><br>
+		- The Heavy Universe Trial could never be won: hazards caught up with copying long before 1e18 systems. Hazards there are now 4 times as deadly instead of 10.<br>
+		- Hazards can no longer destroy your last probe, so a swarm can always recover.<br>
 	<h3>v3.2.1</h3><br>
 		- Signals automates much sooner: decoding pays twice the Contact, and its milestones need 30, 150 and 600 Contact earned (was 50, 500 and 5,000). About 20 decodes instead of 300.<br>
 	<h3>v3.2 - The Big Five</h3><br>

@@ -488,7 +488,7 @@ function replicationRate() {
 function hazardRate() {
     // The farther out the probes go, the more dangerous it gets
     let shield = statPower("hazard").add(1).times(spaceMult("pb", PB_UPGRADES, "hazard")).times(extraMult("hazard")).times(hasMilestone("pb", 5) ? 2 : 1).times(hasMilestone("pb", 13) ? 2 : 1).times(hasMilestone("pb", 16) ? 2 : 1)
-    return new Decimal(SPACE_TUNE.haz).times(physics("hazard")).times(inSpaceTrial(14) ? 10 : 1).div(spaceTrialDone(14) ? 10 : 1).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
+    return new Decimal(SPACE_TUNE.haz).times(physics("hazard")).times(inSpaceTrial(14) ? 4 : 1).div(spaceTrialDone(14) ? 10 : 1).times(Math.pow(distance(), SPACE_TUNE.hazDist)).div(shield.log10().add(1))
 }
 
 // A galaxy can only hold so many probes for every system you've explored
@@ -525,7 +525,8 @@ function probeTick(dt) {
         let r = replicationRate().times(1 - fill)
         let h = hazardRate()
         let lost = p.times(h).times(dt)
-        p = p.times(Decimal.exp(r.sub(h).times(dt))).max(0)
+        // Hazards can thin the swarm out, but never destroy the last probe
+        p = p.times(Decimal.exp(r.sub(h).times(dt))).max(Decimal.min(1, p))
         player.pb.lost = player.pb.lost.add(lost)
         spaceCache.growth = r.sub(h).toNumber()
         spaceCache.lost = lost.div(dt)
