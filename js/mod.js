@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.3",
+	num: "3.3.1",
 	name: "The March of Progress",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.3.1</h3><br>
+		- Fixed: Constants couldn't be selected, so they couldn't be equipped or dissolved by hand.<br>
 	<h3>v3.3 - The March of Progress</h3><br>
 		- Act 6 deepens Act 4, from Loop 4 on (Synergism, retold). Everything here survives every Genesis.<br>
 		- Ingenuity: made by your people and techs. Buy Accelerators and Multipliers with it.<br>

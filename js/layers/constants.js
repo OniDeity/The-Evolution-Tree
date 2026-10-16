@@ -198,7 +198,7 @@ addLayer("cn", {
         cols: 4,
         getStartData(id) { return 0 },
         getUnlocked(id) { return true },
-        getCanClick(id) { return !!constantAt(id) },
+        getCanClick(data, id) { return !!constantAt(id) },
         onClick(data, id) { let k = constantAt(id); if (k) player.cn.selected = player.cn.selected == k.id ? null : k.id },
         getDisplay(data, id) { let k = constantAt(id); return k ? constantCard(k) : "<span style='opacity:0.4'>empty</span>" },
         getStyle(data, id) {
