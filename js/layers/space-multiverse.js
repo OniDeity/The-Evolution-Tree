@@ -290,7 +290,7 @@ function endSignal(gain) {
 }
 
 function signalGain() {
-    return 10 * (player.sg.pattern.length / 3) * Math.max(0, player.sg.timer / signalLife())
+    return 20 * (player.sg.pattern.length / 3) * Math.max(0, player.sg.timer / signalLife())
 }
 
 function tapSymbol(n) {
@@ -350,9 +350,9 @@ addLayer("sg", {
         style() { return { width: "90px", height: "90px", "min-height": "90px", "background-color": player.sg.target !== null ? SIGNAL_COLORS[n] : undefined } },
     }])),
     milestones: {
-        0: { requirementDescription: "50 Contact earned", effectDescription: "Signals last 15 seconds instead of 10.", done() { return earned("sg").gte(50) } },
-        1: { requirementDescription: "500 Contact earned", effectDescription: "The pattern stays on screen until you've decoded it.", done() { return earned("sg").gte(500) } },
-        2: { requirementDescription: "5,000 Contact earned", effectDescription: "The receiver decodes every signal by itself, perfectly.", done() { return earned("sg").gte(5000) } },
+        0: { requirementDescription: "30 Contact earned", effectDescription: "Signals last 15 seconds instead of 10.", done() { return earned("sg").gte(30) } },
+        1: { requirementDescription: "150 Contact earned", effectDescription: "The pattern stays on screen until you've decoded it.", done() { return earned("sg").gte(150) } },
+        2: { requirementDescription: "600 Contact earned", effectDescription: "The receiver decodes every signal by itself, perfectly.", done() { return earned("sg").gte(600) } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#76a5af'>Signals</h2><br>You have <h2 style='color:#76a5af'>" + format(player.sg.contact) + "</h2> Contact, worth <b>+" + signalTrust() + "</b> trust." }],

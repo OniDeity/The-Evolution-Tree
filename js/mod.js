@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.2",
+	num: "3.2.1",
 	name: "The Big Five",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2.1</h3><br>
+		- Signals automates much sooner: decoding pays twice the Contact, and its milestones need 30, 150 and 600 Contact earned (was 50, 500 and 5,000). About 20 decodes instead of 300.<br>
 	<h3>v3.2 - The Big Five</h3><br>
 		- Act 6 deepens Act 3, from Loop 3 on (Antimatter Dimensions' Infinity and Eternity, retold). All three new layers survive every Genesis, and none of them undo the Spark.<br>
 		- Mass Extinctions: with 1.8e308 Biomass, wipe Act 3 out for Lineages. 16 upgrades, including Break the Cycle (Biomass past 1.8e308 counts) and automatic mass extinctions.<br>
