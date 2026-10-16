@@ -267,6 +267,23 @@ function probeCrews(stat) {
     return player.pb.probes.times(0.02 * trustIn(stat) * (1 - thinkShare())).times(calibration(stat)).times(spaceMult("pb", PB_UPGRADES, "probeDrone")).times(spaceMult("hv", HV_UPGRADES, "probeDrone"))
 }
 
+// If anything in Act 5 ever turns into NaN, put it back as it was before this tick instead of breaking the save
+const SPACE_SAFE = { pb: ["probes", "explored", "lost", "bestProbes"], hv: ["matter", "wire", "hulls", "gathered", "totalHulls"], dr: ["drifters", "honor", "totalHonor"], sq: ["compute", "yomi", "totalYomi"], un: ["seeds", "totalSeeds"] }
+
+function spaceSnapshot() {
+    let s = {}
+    for (let l in SPACE_SAFE) if (player[l]) for (let k of SPACE_SAFE[l]) if (player[l][k] instanceof Decimal) s[l + "." + k] = player[l][k]
+    return s
+}
+
+function spaceRescue(snap) {
+    for (let key in snap) {
+        let [l, k] = key.split(".")
+        let v = player[l][k]
+        if (!(v instanceof Decimal) || isNaN(v.mag) || isNaN(v.layer) || isNaN(v.sign)) player[l][k] = snap[key]
+    }
+}
+
 let spaceCache = { matter: new Decimal(0), wire: new Decimal(0), hulls: new Decimal(0), power: 1, growth: 0, explore: new Decimal(0), lost: new Decimal(0) }
 
 function harvestTick(dt) {
@@ -522,11 +539,19 @@ function probeTick(dt) {
     if (p.gt(0)) {
         // Copying slows as the probes fill the room their explored systems give them
         let fill = Decimal.min(1, p.add(player.dr.drifters).div(probeRoom().max(1))).toNumber()
-        let r = replicationRate().times(1 - fill)
+        let r0 = replicationRate()
+        let r = r0.times(1 - fill)
         let h = hazardRate()
         let lost = p.times(h).times(dt)
+        let next = p.times(Decimal.exp(r.sub(h).times(dt)))
+        // A long step can't overshoot: the swarm settles where copying (slowed by the room left) balances hazards
+        if (r0.gt(h)) {
+            let settle = probeRoom().times(Decimal.sub(1, h.div(r0))).sub(player.dr.drifters).max(1)
+            next = p.lte(settle) ? Decimal.min(next, settle) : Decimal.max(next, settle)
+        }
         // Hazards can thin the swarm out, but never destroy the last probe
-        p = p.times(Decimal.exp(r.sub(h).times(dt))).max(Decimal.min(1, p))
+        p = next.max(Decimal.min(1, p))
+        if (isNaN(p.mag)) p = player.pb.probes
         player.pb.lost = player.pb.lost.add(lost)
         spaceCache.growth = r.sub(h).toNumber()
         spaceCache.lost = lost.div(dt)
@@ -573,10 +598,12 @@ addLayer("pb", {
         if (!spaceUnlocked()) return
         keepReplicating()
         diff *= spaceSpeed()
+        let snap = spaceSnapshot()
         // Long ticks run in steps of at most 10 seconds, but never more than 50 steps a tick (400 for a long offline tick):
         // late in Act 5 the game runs so fast that more would freeze the browser. Probe growth is exact over any step.
         let steps = Math.min(diff > 3600 * spaceSpeed() ? 400 : 50, Math.max(1, Math.ceil(diff / 10)))
         for (let i = 0; i < steps; i++) spaceTick(diff / steps)
+        spaceRescue(snap)
     },
     automate() {
         if (!spaceUnlocked()) return
