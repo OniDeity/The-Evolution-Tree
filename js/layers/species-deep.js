@@ -26,8 +26,8 @@ function lineageMult() {
     if (hasUpgrade("lt", 43)) m = m.times(2)
     if (hasMilestone("er", 7)) m = m.times(10)
     m = m.times(eonEffect("lineages"))
-    // Every era you've closed makes Lineages 3x as plentiful
-    if (player.er) m = m.times(Decimal.pow(3, player.er.count))
+    // Every era you've closed makes Lineages 5x as plentiful
+    if (player.er) m = m.times(Decimal.pow(5, player.er.count))
     return m
 }
 
@@ -414,7 +414,7 @@ addLayer("er", {
         "blank",
         lore("Rock remembers. Every era leaves a layer, and every layer holds the ones who lived and died in it."),
         "blank",
-        ["display-text", function() { return "<b>Close the era</b> to start Mass Extinctions over (Lineages, their upgrades and the Big Five, unless milestones keep them) for Eons. You need 1e6 Lineages; Eons come from their digits past 5, squared. Every era you've closed makes Lineages 3x as plentiful." }],
+        ["display-text", function() { return "<b>Close the era</b> to start Mass Extinctions over (Lineages, their upgrades and the Big Five, unless milestones keep them) for Eons. You need 1e6 Lineages; Eons come from their digits past 5, squared. Every era you've closed makes Lineages 5x as plentiful." }],
         "blank",
         ["clickables", [9]],
         "blank",
