@@ -39,7 +39,7 @@ function actSpeed(act) {
     if (!player.lt || !genesisUnlocked()) return 1
     let s = 1 + 0.5 * getBuyableAmount("lt", 10 + act).toNumber()
     if (hasUpgrade("lt", 35)) s *= 1.5
-    s *= 1 + 0.1 * getBuyableAmount("lt", 16).toNumber()
+    s *= 1 + 0.05 * getBuyableAmount("lt", 16).toNumber()
     if (act == 2 && hasMilestone("lt", 1)) s *= 1.25
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
     s *= singularityFactor()
@@ -385,8 +385,8 @@ addLayer("lt", {
     buyables: Object.assign({
         16: {
             title: "Radiance",
-            cost(x) { return Decimal.pow(1.6, x).times(100).ceil() },
-            display() { let n = getBuyableAmount("lt", 16).toNumber(); return "Acts 1 to 5 all run x" + format(1 + 0.1 * n, 1) + " as fast (+0.1x a level).<br>Level " + n + "<br>Cost: " + formatWhole(this.cost()) + " Light" },
+            cost(x) { return Decimal.pow(2, x).times(100).ceil() },
+            display() { let n = getBuyableAmount("lt", 16).toNumber(); return "Acts 1 to 5 all run x" + format(1 + 0.05 * n, 2) + " as fast (+0.05x a level).<br>Level " + n + "<br>Cost: " + formatWhole(this.cost()) + " Light" },
             unlocked() { return player.lt.genesis >= 3 },
             canAfford() { return player.lt.points.gte(this.cost()) },
             buy() { player.lt.points = player.lt.points.sub(this.cost()); setBuyableAmount("lt", 16, getBuyableAmount("lt", 16).add(1)) },
