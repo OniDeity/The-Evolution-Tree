@@ -365,14 +365,15 @@ function closeEra() {
     player.er.points = player.er.points.add(g)
     player.er.total = player.er.total.add(g)
     player.er.count++
+    // Milestones count the era you've just closed
     let keepMx = ["auto"]
-    if (hasMilestone("er", 0)) keepMx.push("challenges")
-    if (hasMilestone("er", 2)) keepMx.push("upgrades")
+    if (player.er.count >= 1) keepMx.push("challenges")
+    if (player.er.count >= 3) keepMx.push("upgrades")
     let crunches = player.mx.crunches
     resetKeeping("mx", keepMx)
     player.mx.crunches = crunches
     if (hasUpgrade("er", 14)) { player.mx.points = new Decimal(100); player.mx.crunches += 10 }
-    if (!hasMilestone("er", 5)) resetKeeping("vi", [])
+    if (player.er.count < 6) resetKeeping("vi", [])
     extinctionWipe()
 }
 
