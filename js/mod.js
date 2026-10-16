@@ -18,9 +18,6 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v3.2.4</h3><br>
-		- Act 5 can no longer be broken by an invalid number (NaN): if Matter, Seeds or any other Act 5 resource ever goes NaN, it's put back to its last good value.<br>
-		- Very fast Act 5 time (in later Loops, or after a long time offline) no longer makes the swarm collapse: probes settle at the room your systems give them.<br>
 	<h3>v3.3 - The March of Progress</h3><br>
 		- Act 6 deepens Act 4, from Loop 4 on (Synergism, retold). Everything here survives every Genesis.<br>
 		- Ingenuity: made by your people and techs. Buy Accelerators and Multipliers with it.<br>
@@ -29,6 +26,9 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Radiance: a Light upgrade you can buy forever, making Acts 1 to 5 faster.<br>
 		- 2 Memories, 1 Light upgrade and 5 achievements.<br>
 		- Endgame: reach the Heat Death in Loop 4, in the Space Age.<br>
+	<h3>v3.2.4</h3><br>
+		- Act 5 can no longer be broken by an invalid number (NaN): if Matter, Seeds or any other Act 5 resource ever goes NaN, it's put back to its last good value.<br>
+		- Very fast Act 5 time (in later Loops, or after a long time offline) no longer makes the swarm collapse: probes settle at the room your systems give them.<br>
 	<h3>v3.2.3</h3><br>
 		- New Probe upgrade, Trust Autopilot (500 probes, on the Probes tab): trust spends itself as you earn it, either keeping the split you've set up or using a balanced split that moves trust into Combat whenever the Drifters start to outpace you.<br>
 	<h3>v3.2.2</h3><br>
