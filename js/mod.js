@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.2.3",
+	num: "3.2.4",
 	name: "The Big Five",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2.4</h3><br>
+		- Act 5 can no longer be broken by an invalid number (NaN): if Matter, Seeds or any other Act 5 resource ever goes NaN, it's put back to its last good value.<br>
+		- Very fast Act 5 time (in later Loops, or after a long time offline) no longer makes the swarm collapse: probes settle at the room your systems give them.<br>
 	<h3>v3.2.3</h3><br>
 		- New Probe upgrade, Trust Autopilot (500 probes, on the Probes tab): trust spends itself as you earn it, either keeping the split you've set up or using a balanced split that moves trust into Combat whenever the Drifters start to outpace you.<br>
 	<h3>v3.2.2</h3><br>
