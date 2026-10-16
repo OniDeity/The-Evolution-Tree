@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "cn", "gx", "dv"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "cn", "gx", "dv", "mx", "vi", "er"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -40,6 +40,7 @@ function actSpeed(act) {
     let s = 1 + 0.5 * getBuyableAmount("lt", 10 + act).toNumber()
     if (hasUpgrade("lt", 35)) s *= 1.5
     if (act == 2 && hasMilestone("lt", 1)) s *= 1.25
+    if (act == 3 && hasUpgrade("er", 21)) s *= 2
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")
     return s
@@ -117,6 +118,7 @@ function checkEndings() {
 // Each Loop opens the next act's deepening, and its Genesis also needs that deepening's goal
 const LOOP_GOALS = {
     2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
+    3: { name: "The Phanerozoic", text: "survive all of the Big Five and reach the 10th Geological Era", done() { return bigFiveBeaten() >= 5 && player.er.count >= 10 } },
 }
 
 function loopGoal() {
@@ -153,6 +155,7 @@ function rememberLoop() {
     player.cn.loopBest = new Decimal(0)
     player.cn.measured = 0
     player.dv.loopCount = 0
+    player.mx.runTime = 0
 }
 
 function genesisKeeps() {
@@ -197,6 +200,8 @@ function headStarts() {
     act2HeadStarts()
     if (hasUpgrade("mm", 13)) for (let id of player.mm.pressures) player.pz.challenges[id] = 1
     if (hasUpgrade("mm", 23)) grantMilestones("pz", [0])
+    if (hasUpgrade("mm", 33)) player.biomass = new Decimal(1e50)
+    if (hasUpgrade("mm", 43)) for (let id in layers.ti.upgrades) if (!isNaN(id) && !player.ti.upgrades.includes(Number(id))) player.ti.upgrades.push(Number(id))
     if (hasUpgrade("mm", 14)) grantMilestones("ex", [0, 1, 2, 3])
     if (hasUpgrade("mm", 24)) for (let id of player.mm.deepTime) if (!player.dt.upgrades.includes(id)) player.dt.upgrades.push(id)
     if (hasUpgrade("mm", 15)) { grantMilestones("hv", [0, 1, 2, 3, 4, 5]); grantMilestones("pb", [1, 2, 4]) }
@@ -404,6 +409,8 @@ addLayer("lt", {
         35: lightUpgrade("Clockwork Universe", "Acts 1 to 5 run 1.5x as fast.", 80, { unlocked() { return player.lt.genesis > 0 } }),
         41: lightUpgrade("Genetic Memory", "Base Pairs x2.", 60, { unlocked() { return player.lt.genesis > 0 } }),
         42: lightUpgrade("Atavism", "Vestiges x2.", 90, { unlocked() { return player.lt.genesis > 0 } }),
+        43: lightUpgrade("Lineage Memory", "Lineages x2.", 120, { unlocked() { return player.lt.genesis >= 2 } }),
+        44: lightUpgrade("Viral Load", "Viruses copy themselves twice as often.", 150, { unlocked() { return player.lt.genesis >= 2 } }),
     },
     milestones: {
         0: { requirementDescription: "1 Genesis", effectDescription: "Dissolving a constant leaves twice the Echo.", done() { return player.lt.genesis >= 1 } },
@@ -448,6 +455,8 @@ const MEMORIES = {
     42: ["Old Body", "Every Loop starts with the Multicellular milestone that makes forms on their own."],
     13: ["Old Instincts", "Every Loop starts with each Selection Pressure you've ever beaten, and its Instinct."],
     23: ["Evolutionary Memory", "Every Loop starts with the Selection Pressure milestone: Evolutionary milestones and Metabolism upgrades are bought on their own."],
+    33: ["Quick Spark", "Every Loop starts Act 3 with 1e50 Biomass."],
+    43: ["Long Lineage", "Every Loop starts with every Evolutionary milestone already bought."],
     14: ["Oral History", "Every Loop starts with Act 4's first four Extinction milestones."],
     24: ["Deep Memory", "Every Loop starts with the Deep Time upgrades you had when the last one ended."],
     15: ["Flight Plans", "Every Loop starts with Harvest's first six milestones and the Probe milestones that launch, calibrate and upgrade on their own."],

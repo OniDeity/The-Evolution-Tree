@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.1.1",
-	name: "Back to One Cell",
+	num: "3.2",
+	name: "The Big Five",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.2 - The Big Five</h3><br>
+		- Act 6 deepens Act 3, from Loop 3 on (Antimatter Dimensions' Infinity and Eternity, retold). All three new layers survive every Genesis, and none of them undo the Spark.<br>
+		- Mass Extinctions: with 1.8e308 Biomass, wipe Act 3 out for Lineages. 16 upgrades, including Break the Cycle (Biomass past 1.8e308 counts) and automatic mass extinctions.<br>
+		- The Big Five: Ordovician, Devonian, Permian, Triassic and Cretaceous, five runs with harder rules and permanent rewards.<br>
+		- Viruses: a population that copies itself up to 1.8e308 and makes every tier stronger, bursting into free viral radiations at the cap.<br>
+		- Geological Eras: start Mass Extinctions over for Eons. 8 milestones take Act 3's last choices off your hands (Selection Pressures, competition, the founder, the Big Five), and 8 Eon upgrades.<br>
+		- Loop 3's goal: The Phanerozoic, all of the Big Five and the 10th era.<br>
+		- 2 Memories, 2 Light upgrades and 5 achievements.<br>
+		- Endgame: reach the Heat Death in Loop 3, with the Phanerozoic.<br>
 	<h3>v3.1.1</h3><br>
 		- Signals (Act 5) is now a tap game instead of a slider, so it works on phones: decode each transmission by tapping its symbols in order before it fades.<br>
 	<h3>v3.1 - Back to One Cell</h3><br>
@@ -233,7 +242,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	And then it all began again: the same quarks, the same first cells, the same long climb, only faster, and a little different, because this time the universe remembered.<br><br>
 	<b>You've finished your first Loop.</b><br><br>
 	The second time, life went backwards before it went forwards, all the way down to one cell, and came back stronger for it.<br><br>
-	<b>You've finished Loop 2.</b> More of Act 6 is coming soon...`
+	<b>You've finished Loop 2.</b><br><br>
+	The third time, the sentient ape was not the end of the story but a layer in the rock: five great extinctions, a plague of viruses, and era after era of survivors.<br><br>
+	<b>You've finished Loop 3.</b> More of Act 6 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -339,7 +350,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 2 && canGenesis()
+	return player.lt.genesis >= 3 && canGenesis()
 }
 
 

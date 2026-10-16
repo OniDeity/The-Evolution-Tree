@@ -34,7 +34,7 @@ function tierBought(t) {
 }
 
 function tiersUnlocked() {
-    return Math.min(inPressure(11) ? 4 : 8, 4 + player.sn.points.toNumber())
+    return Math.min(inPressure(11) ? 4 : inExtinction(12) ? 6 : 8, 4 + player.sn.points.toNumber())
 }
 
 function tierCost(t, bought) {
@@ -61,6 +61,7 @@ function tierMult(t) {
     m = m.times(landGift("tiers"))
     // Act 4: life grows back faster on top of every extinction's Strata
     m = m.times(strataTierBoost())
+    m = m.times(speciesDeepTierMult(t))
     return m
 }
 
@@ -74,11 +75,12 @@ function metabolismLevel() {
 function metabolismBase() {
     let b = 1.125 + 0.03 * player.ar.points.toNumber()
     if (hasUpgrade("me", 11)) b += 0.01
+    b += speciesDeepMetabolism()
     return b
 }
 
 function metabolismSpeed() {
-    if (inPressure(13)) return new Decimal(1)
+    if (inPressure(13) || inExtinction(11)) return new Decimal(1)
     return Decimal.pow(metabolismBase(), metabolismLevel())
 }
 
@@ -94,6 +96,7 @@ function foodDemandScale() {
     k /= coalDemandDivider()
     k /= homeostasisDemandDivider()
     if (inPressure(12)) k *= 4
+    if (inExtinction(11)) k *= 2
     return k
 }
 
@@ -116,6 +119,7 @@ function biomassGain() {
     // Pacing: stretches the act so something new comes along about once a minute
     g = g.max(1).pow(BIOMASS_PACING)
     if (inPressure(24)) g = g.pow(0.9)
+    g = speciesDeepBiomass(g)
     // Act 4: a civilization's footprint wears the living world down
     if (civUnlocked()) g = g.pow(0.8 + 0.2 * civCache.health)
     if (player.ti.amounts[1].eq(0)) g = new Decimal(0)
@@ -155,7 +159,7 @@ addLayer("species", {
         "blank",
         ["display-text", function() { return sentienceGoalText() }],
         "blank",
-        ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"]]],
+        ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"], ["mx", "vi", "er"]]],
     ],
 })
 
@@ -479,7 +483,7 @@ function foodDemandAt(level) {
 // ------------------------------------------------------------
 function speciationReq() {
     let n = player.sn.points.toNumber()
-    let mult = inPressure(21) ? 2 : 1
+    let mult = (inPressure(21) ? 2 : 1) * (inExtinction(22) ? 3 : 1) * (hasChallenge("mx", 22) ? 0.8 : 1)
     if (n < 4) return { tier: n + 4, amount: 20 * mult }
     return { tier: 8, amount: (20 + 15 * (n - 4) - (hasUpgrade("ti", 33) ? 5 : 0)) * mult }
 }

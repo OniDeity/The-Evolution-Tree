@@ -683,6 +683,11 @@ addLayer("a", {
         292: { name: "Designer Genes", done() { return Object.keys(TRAITS).some((id, n) => getBuyableAmount("gx", 11 + n).gte(5)) }, tooltip: "Enhance one trait 5 times." },
         293: { name: "Backwards", done() { return player.dv.count >= 1 }, tooltip: "Devolve." },
         294: { name: "One Cell", done() { return getBuyableAmount("dv", 51).gte(1) }, tooltip: "Grow the mirror tree all the way down to the Last Common Ancestor." },
+        301: { name: "Extinction Event", done() { return player.mx.crunches >= 1 }, tooltip: "Wipe out Act 3 in a mass extinction." },
+        302: { name: "Break the Cycle", done() { return hasUpgrade("mx", 34) }, tooltip: "Make Biomass past 1.8e308 count." },
+        303: { name: "Patient Zero", done() { return player.vi.radiations >= 1 }, tooltip: "Let the viruses burst into a viral radiation." },
+        304: { name: "The Big Five", done() { return bigFiveBeaten() >= 5 }, tooltip: "Survive all five mass extinctions." },
+        305: { name: "Deep Time", done() { return player.er.count >= 10 }, tooltip: "Reach the 10th Geological Era." },
         295: { name: "Fully Vestigial", done() { return devolutionLevels() >= 50 }, tooltip: "Raise every Devolution node to level 5." },
     },
 })
