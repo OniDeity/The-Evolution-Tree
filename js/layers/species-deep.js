@@ -26,6 +26,8 @@ function lineageMult() {
     if (hasUpgrade("lt", 43)) m = m.times(2)
     if (hasMilestone("er", 7)) m = m.times(10)
     m = m.times(eonEffect("lineages"))
+    // Every era you've closed makes Lineages 3x as plentiful
+    if (player.er) m = m.times(Decimal.pow(3, player.er.count))
     return m
 }
 
@@ -368,7 +370,7 @@ function closeEra() {
     // Milestones count the era you've just closed
     let keepMx = ["auto"]
     if (player.er.count >= 1) keepMx.push("challenges")
-    if (player.er.count >= 3) keepMx.push("upgrades")
+    if (player.er.count >= 2) keepMx.push("upgrades")
     let crunches = player.mx.crunches
     resetKeeping("mx", keepMx)
     player.mx.crunches = crunches
@@ -412,7 +414,7 @@ addLayer("er", {
         "blank",
         lore("Rock remembers. Every era leaves a layer, and every layer holds the ones who lived and died in it."),
         "blank",
-        ["display-text", function() { return "<b>Close the era</b> to start Mass Extinctions over (Lineages, their upgrades and the Big Five, unless milestones keep them) for Eons. You need 1e6 Lineages; Eons come from their digits past 5, squared." }],
+        ["display-text", function() { return "<b>Close the era</b> to start Mass Extinctions over (Lineages, their upgrades and the Big Five, unless milestones keep them) for Eons. You need 1e6 Lineages; Eons come from their digits past 5, squared. Every era you've closed makes Lineages 3x as plentiful." }],
         "blank",
         ["clickables", [9]],
         "blank",
@@ -432,7 +434,7 @@ addLayer("er", {
     milestones: {
         0: { requirementDescription: "1 era", effectDescription: "Keep the Big Five you've survived.", done() { return player.er.count >= 1 } },
         1: { requirementDescription: "2 eras", effectDescription: "Mass extinctions happen on their own (see the switch in Mass Extinctions).", done() { return player.er.count >= 2 } },
-        2: { requirementDescription: "3 eras", effectDescription: "Keep Lineage upgrades.", done() { return player.er.count >= 3 } },
+        2: { requirementDescription: "2 eras", effectDescription: "Keep Lineage upgrades.", done() { return player.er.count >= 2 } },
         3: { requirementDescription: "4 eras", effectDescription: "Selection Pressures you haven't beaten are fought on their own.", done() { return player.er.count >= 4 } },
         4: { requirementDescription: "5 eras", effectDescription: "Competition backs your top tier, and the founder is chosen for you.", done() { return player.er.count >= 5 } },
         5: { requirementDescription: "6 eras", effectDescription: "Viruses survive a new era.", done() { return player.er.count >= 6 } },
