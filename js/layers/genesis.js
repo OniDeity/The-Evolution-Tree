@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -55,8 +55,10 @@ function updateActSpeeds() {
 
 function layerSpeed(layer) {
     let a = LAYER_ACT[layer]
-    if (!a || SPEED_EXEMPT.includes(layer)) return 1
-    return actSpeedCache[a]
+    if (!a) return 1
+    // Branches you play against the clock ignore act speeds, but Branch Memory can still speed them up
+    let s = SPEED_EXEMPT.includes(layer) ? 1 : actSpeedCache[a]
+    return s * branchSpeed(layer)
 }
 
 // ------------------------------------------------------------
@@ -170,6 +172,7 @@ function genesisKeeps() {
 }
 
 function genesisReset() {
+    let keptBranches = saveBranchMilestones()
     let keep = genesisKeeps()
     let fresh = getStartPlayer()
     for (let l in layers) {
@@ -188,6 +191,7 @@ function genesisReset() {
     player.keepGoing = false
     tmp.gameEnded = false
     headStarts()
+    restoreBranchMilestones(keptBranches)
     updateTemp()
 }
 
@@ -261,7 +265,7 @@ addLayer("gn", {
         "blank",
         ["display-text", function() { return genesisGuide() }],
         "blank",
-        ["tree", [["lt"], ["mm", "si"]]],
+        ["tree", [["lt"], ["mm", "si", "bx"]]],
     ],
 })
 

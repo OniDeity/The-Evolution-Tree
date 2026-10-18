@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.3.2",
+	num: "3.3.3",
 	name: "The March of Progress",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.3.3</h3><br>
+		- New Act 6 layer, Branch Memory (in the Genesis tree): every side branch of Acts 1 to 5 gets two Light upgrades. One keeps the branch's milestones through every Genesis; the other makes it run faster (1.5x a level, up to 5 levels), even the ones you play against the clock. Each act's branches open in the Loop that deepens that act.<br>
 	<h3>v3.3.2</h3><br>
 		- Fixed: the game froze (until you refreshed) whenever a Mutation left a trait waiting while the Mutations tab was open.<br>
 	<h3>v3.3.1</h3><br>
