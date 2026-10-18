@@ -13,7 +13,7 @@ function reversalUnlocked() {
 
 // Entropy: a Reversal pays its Negentropy only once the universe has finished rewinding, in real time.
 // Every Reversal so far makes the next rewind take longer, (1 + reversals)^2 times
-const REWIND_BASE = 165
+const REWIND_BASE = 150
 function rewindTime() {
     return REWIND_BASE * Math.pow(1 + player.rv.count, 2)
 }
@@ -106,8 +106,8 @@ const RV_UPGRADES = {
     22: ["Self-Organization", "Negentropy x2.", 60],
     23: ["Boltzmann Brains", "Yomi and Honor x1e6.", 100],
     24: ["Arrow Reversed", "Acts 1 to 5 all run faster with all the Negentropy you've ever made.", 200],
-    31: ["The Big Bounce", "Rewinds go twice as fast.", 400],
-    32: ["Let There Be Light, Again", "The universe remembers how it began. <b>Light up a new universe.</b>", 1000],
+    31: ["The Big Bounce", "Rewinds go twice as fast.", 250],
+    32: ["Let There Be Light, Again", "The universe remembers how it began. <b>Light up a new universe.</b>", 500],
 }
 
 addLayer("rv", {
