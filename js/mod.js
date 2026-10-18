@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.3.3",
-	name: "The March of Progress",
+	num: "3.4",
+	name: "Reversal",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.4 - Reversal</h3><br>
+		- Act 6 deepens Act 5, from Loop 5 on ("The Last Question", turned around). After the Heat Death, Reverse it: all of Act 5 rewinds, the multiverse too, for Negentropy.<br>
+		- Entropy: every Reversal makes Act 5 slower, (1 + Reversals)^2 times. Negentropy upgrades more than make up for it.<br>
+		- 10 Negentropy upgrades and 7 milestones: the last of Act 5 is automated (Multiverse and Seed upgrades, collapsing the multiverse, Trials and the Heat Death itself).<br>
+		- Loop 5's goal: Let There Be Light, Again.<br>
+		- 1 Light upgrade and 5 achievements.<br>
+		- Endgame: reach the Heat Death in Loop 5, having bought Let There Be Light, Again.<br>
 	<h3>v3.3.3</h3><br>
 		- New Act 6 layer, Branch Memory (in the Genesis tree): every side branch of Acts 1 to 5 gets two Light upgrades. One keeps the branch's milestones through every Genesis; the other makes it run faster (1.5x a level, up to 5 levels), even the ones you play against the clock. Each act's branches open in the Loop that deepens that act.<br>
 	<h3>v3.3.2</h3><br>
@@ -270,7 +277,9 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	The third time, the sentient ape was not the end of the story but a layer in the rock: five great extinctions, a plague of viruses, and era after era of survivors.<br><br>
 	<b>You've finished Loop 3.</b><br><br>
 	The fourth time, the civilization did not stop at Eternity. Tools became fields, fields became factories, factories became networks, and the networks reached for the sky.<br><br>
-	<b>You've finished Loop 4.</b> More of Act 6 is coming soon...`
+	<b>You've finished Loop 4.</b><br><br>
+	The fifth time, the swarm reached the Heat Death and refused it. It ran the universe backwards, again and again, each time a little older, until it remembered exactly how the light had begun.<br><br>
+	<b>You've finished Loop 5.</b> More of Act 6 is coming soon...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -376,7 +385,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 4 && canGenesis()
+	return player.lt.genesis >= 5 && canGenesis()
 }
 
 

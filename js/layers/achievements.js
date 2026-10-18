@@ -693,6 +693,11 @@ addLayer("a", {
         313: { name: "Dark Satanic Mills", done() { return player.ag3.unlocked }, tooltip: "Enter the Age of Industry." },
         314: { name: "Information Wants to Be Free", done() { return player.ag4.unlocked }, tooltip: "Enter the Age of Information." },
         315: { name: "Liftoff", done() { return hasUpgrade("ag5", 14) }, tooltip: "Reach the Space Age." },
+        321: { name: "Insufficient Data", done() { return player.rv.count >= 1 }, tooltip: "Reverse the Heat Death." },
+        322: { name: "Groundhog Universe", done() { return player.rv.count >= 5 }, tooltip: "Reverse the Heat Death 5 times." },
+        323: { name: "Demon in the Machine", done() { return hasUpgrade("rv", 14) }, tooltip: "Hire Maxwell's Demon." },
+        324: { name: "Time Runs Backwards", done() { return hasUpgrade("rv", 24) }, tooltip: "Reverse the Arrow of Time." },
+        325: { name: "Let There Be Light, Again", done() { return hasUpgrade("rv", 32) }, tooltip: "Light up a new universe." },
         295: { name: "Fully Vestigial", done() { return devolutionLevels() >= 50 }, tooltip: "Raise every Devolution node to level 5." },
     },
 })

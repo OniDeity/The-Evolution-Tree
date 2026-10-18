@@ -892,6 +892,6 @@ addLayer("ds", {
         "blank",
         ["display-text", function() { return gettingStarted() }],
         "blank",
-        ["tree", [["fl", "hp"], ["sg", "pb", "dr", "wh"], ["hv", "sq", "tf"], ["pj", "un", "tl"], ["mv"]]],
+        ["tree", [["fl", "hp"], ["sg", "pb", "dr", "wh"], ["hv", "sq", "tf"], ["pj", "un", "tl"], ["mv", "rv"]]],
     ],
 })

@@ -42,7 +42,7 @@ function explorationCap() {
 // Boosts to Act 5 targets from Drift and Swarm upgrades
 function extraMult(target) {
     if (!player.dr) return new Decimal(1)
-    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target)).times(spaceMult("pj", PJ_UPGRADES, target)).times(spaceMult("un", UN_UPGRADES, target)).times(spaceMult("mv", MV_UPGRADES, target))
+    return spaceMult("dr", DR_UPGRADES, target).times(spaceMult("sq", SQ_UPGRADES, target)).times(spaceMult("pj", PJ_UPGRADES, target)).times(spaceMult("un", UN_UPGRADES, target)).times(spaceMult("mv", MV_UPGRADES, target)).times(reversalMult(target))
 }
 
 // Crossing the dark between galaxies takes thought: beyond the Milky Way, exploring grows with every Swarm upgrade you buy

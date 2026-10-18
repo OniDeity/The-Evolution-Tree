@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -44,6 +44,7 @@ function actSpeed(act) {
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")
+    s *= negentropyAllSpeed()
     return s
 }
 
@@ -122,6 +123,7 @@ function checkEndings() {
 const LOOP_GOALS = {
     2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
     4: { name: "The Space Age", text: "buy The Space Age, the last upgrade of the Space Age", done() { return hasUpgrade("ag5", 14) } },
+    5: { name: "Let There Be Light, Again", text: "buy Let There Be Light, Again, the last Negentropy upgrade", done() { return hasUpgrade("rv", 32) } },
     3: { name: "The Phanerozoic", text: "survive all of the Big Five and reach the 10th Geological Era", done() { return bigFiveBeaten() >= 5 && player.er.count >= 10 } },
 }
 
@@ -431,6 +433,7 @@ addLayer("lt", {
         43: lightUpgrade("Lineage Memory", "Lineages x2.", 120, { unlocked() { return player.lt.genesis >= 2 } }),
         44: lightUpgrade("Viral Load", "Viruses copy themselves twice as often.", 150, { unlocked() { return player.lt.genesis >= 2 } }),
         45: lightUpgrade("Inventive", "Ingenuity x3.", 200, { unlocked() { return player.lt.genesis >= 3 } }),
+        46: lightUpgrade("Second Law", "Negentropy x2.", 300, { unlocked() { return player.lt.genesis >= 4 } }),
     },
     milestones: {
         0: { requirementDescription: "1 Genesis", effectDescription: "Dissolving a constant leaves twice the Echo.", done() { return player.lt.genesis >= 1 } },
