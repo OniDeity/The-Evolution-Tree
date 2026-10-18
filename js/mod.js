@@ -24,6 +24,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- 10 Negentropy upgrades and 7 milestones: the last of Act 5 is automated (Multiverse and Seed upgrades, collapsing the multiverse, Trials and the Heat Death itself).<br>
 		- Loop 5's goal: Let There Be Light, Again.<br>
 		- 1 Light upgrade and 5 achievements.<br>
+		- Fixed the cause of NaN in Act 5 (Matter, Seeds and the rest): auto-bought Projects could spend more Hulls and probes than you had when several finished at once.<br>
 		- Endgame: reach the Heat Death in Loop 5, having bought Let There Be Light, Again.<br>
 	<h3>v3.3.3</h3><br>
 		- New Act 6 layer, Branch Memory (in the Genesis tree): every side branch of Acts 1 to 5 gets two Light upgrades. One keeps the branch's milestones through every Genesis; the other makes it run faster (1.5x a level, up to 5 levels), even the ones you play against the clock. Each act's branches open in the Loop that deepens that act.<br>
