@@ -64,6 +64,8 @@ function reverse() {
     let keepUn = ["auto", "autoMult"]
     if (hasMilestone("rv", 1)) keepUn.push("milestones")
     resetKeeping("mv", keepMv)
+    // The Heat Death itself is never kept: it has to be bought again
+    player.mv.upgrades = player.mv.upgrades.filter(id => id != 65)
     resetKeeping("un", keepUn)
     player.rv.bestRate = 0
     player.rv.cycleTime = 0
