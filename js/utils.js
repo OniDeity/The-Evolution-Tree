@@ -13,6 +13,8 @@ function canAffordUpgrade(layer, id) {
 	let upg = tmp[layer].upgrades[id]
 	if(tmp[layer].deactivated) return false
 	if (tmp[layer].upgrades[id].canAfford === false) return false
+	// A custom canAfford is checked live: the cached one can be stale when several upgrades are bought in one tick
+	if (typeof layers[layer].upgrades[id].canAfford == "function" && !layers[layer].upgrades[id].canAfford()) return false
 	let cost = tmp[layer].upgrades[id].cost
 	if (cost !== undefined) 
 		return canAffordPurchase(layer, upg, cost)

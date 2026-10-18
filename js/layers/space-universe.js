@@ -150,7 +150,7 @@ addLayer("pj", {
         // Finished projects leave the list (but keep working)
         unlocked() { return projectAvailable(p) && !hasUpgrade("pj", p.id) },
         canAfford() { return projectCosts(p).every(([c, v]) => CURRENCY[c].get().gte(v)) },
-        pay() { for (let [c, v] of projectCosts(p)) CURRENCY[c].set(CURRENCY[c].get().sub(v)) },
+        pay() { for (let [c, v] of projectCosts(p)) CURRENCY[c].set(CURRENCY[c].get().sub(v).max(0)) },
         style() { return { width: "160px", height: "150px", "font-size": "10px" } },
     }])),
 })
