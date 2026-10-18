@@ -20,7 +20,7 @@ let VERSION = {
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v3.4 - Reversal</h3><br>
 		- Act 6 deepens Act 5, from Loop 5 on ("The Last Question", turned around). After the Heat Death, Reverse it: all of Act 5 rewinds, the multiverse too, for Negentropy.<br>
-		- Entropy: every Reversal makes Act 5 slower, (1 + Reversals)^2 times. Negentropy upgrades more than make up for it.<br>
+		- Entropy: a Reversal's Negentropy only arrives once the universe has finished rewinding (in real time), and every Reversal makes the next rewind take longer. Negentropy upgrades speed rewinds up.<br>
 		- 10 Negentropy upgrades and 7 milestones: the last of Act 5 is automated (Multiverse and Seed upgrades, collapsing the multiverse, Trials and the Heat Death itself).<br>
 		- Loop 5's goal: Let There Be Light, Again.<br>
 		- 1 Light upgrade and 5 achievements.<br>
