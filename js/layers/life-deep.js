@@ -53,9 +53,9 @@ function rerollTraits() {
     player.gx.shift++
 }
 
-// Which offer the automatic draft takes: your chosen trait if it's there, or else the one you have fewest of
+// Which offer the automatic draft takes: your chosen trait if it's there and still counts fully, or else the one you have fewest of
 function autoTraitPick(offers) {
-    if (hasUpgrade("gx", 24) && player.gx.target && offers.includes(player.gx.target)) return offers.indexOf(player.gx.target)
+    if (hasUpgrade("gx", 24) && player.gx.target && offers.includes(player.gx.target) && (player.mu.traits[player.gx.target] || 0) < traitSoftcap()) return offers.indexOf(player.gx.target)
     let best = 0
     offers.forEach((id, n) => { if ((player.mu.traits[id] || 0) < (player.mu.traits[offers[best]] || 0)) best = n })
     return best
@@ -69,7 +69,7 @@ const GX_UPGRADES = {
     21: ["Gene Duplication", "Traits count fully up to 8 copies instead of 5.", 5e4],
     22: ["CRISPR", "Design traits outright: switch on design mode and every trait is on offer.", 2e5],
     23: ["Polymerase", "Base Pairs x2.", 1e5],
-    24: ["Directed Evolution", "The automatic draft always takes your chosen trait when it's offered.", 1e6],
+    24: ["Directed Evolution", "The automatic draft always takes your chosen trait when it's offered, until it stops counting fully.", 1e6],
 }
 
 addLayer("gx", {
