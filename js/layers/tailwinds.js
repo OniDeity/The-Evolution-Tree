@@ -28,7 +28,7 @@ function tailwindCost(act, n) {
 
 function tailwind(act) {
     if (!player.tw || !TAILWINDS[act]) return 1
-    return Math.pow(TAILWIND_MULT, getBuyableAmount("tw", 10 + act).toNumber())
+    return Math.pow(TAILWIND_MULT, getBuyableAmount("tw", 10 + Number(act)).toNumber())
 }
 
 addLayer("tw", {
