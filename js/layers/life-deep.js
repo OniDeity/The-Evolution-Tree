@@ -192,8 +192,8 @@ function vestigeMult() {
     if (hasUpgrade("lt", 42)) m = m.times(2)
     if (hasUpgrade("dv", 11)) m = m.times(2)
     if (regressionBeaten(81)) m = m.times(2)
-    if (hasUpgrade("dv", 21)) m = m.times(1 + player.dv.count / 5)
-    if (hasUpgrade("dv", 23)) m = m.times(1 + Object.keys(DEVOLUTION).filter(id => getBuyableAmount("dv", id).gte(DEVOLUTION_MAX)).length)
+    if (hasUpgrade("dv", 21)) m = m.times(1 + player.dv.count / 10)
+    if (hasUpgrade("dv", 23)) m = m.times(1 + Object.keys(DEVOLUTION).filter(id => getBuyableAmount("dv", id).gte(DEVOLUTION_MAX)).length / 2)
     return m
 }
 
@@ -237,10 +237,10 @@ function devolve() {
 //  REGRESSIONS: devolve under a handicap and reach the goal for a lasting reward
 // ------------------------------------------------------------
 const REGRESSIONS = {
-    81: { name: "Blind Cave Fish", text: "The body plan does nothing.", goal: new Decimal(1e100), reward: "Vestiges x2." },
-    82: { name: "Parasite", text: "DNA gain is raised to the 0.85.", goal: new Decimal(1e100), reward: "Every node costs half as much." },
-    83: { name: "Flightless", text: "Traits do nothing.", goal: new Decimal(1e100), reward: "Vestiges come from DNA's digits to the 3.5 instead of cubed." },
-    84: { name: "Neoteny", text: "Act 2 runs at a fifth of its speed.", goal: new Decimal(1e120), reward: "Act 2 runs twice as fast." },
+    81: { name: "Blind Cave Fish", text: "The body plan does nothing.", goal: new Decimal(1e150), reward: "Vestiges x2." },
+    82: { name: "Parasite", text: "DNA gain is raised to the 0.85.", goal: new Decimal(1e170), reward: "Every node costs half as much." },
+    83: { name: "Flightless", text: "Traits do nothing.", goal: new Decimal(1e150), reward: "Vestiges come from DNA's digits to the 3.5 instead of cubed." },
+    84: { name: "Neoteny", text: "Act 2 runs at a fifth of its speed.", goal: new Decimal(1e200), reward: "Act 2 runs twice as fast." },
 }
 
 function inRegression(id) {
@@ -407,10 +407,10 @@ addLayer("dv", {
         // Recapitulation: Act 2 plays itself (unless the Autopilot already does)
         if (hasUpgrade("dv", 22) && lifeUnlocked() && player.lt.genesis >= 2 && !(typeof apOn == "function" && apOn(12))) AUTOPILOT.act2(player.dv.clock)
         // Devolve on its own once the cooldown is over and the gain has stopped growing for a minute (never in the middle of a Regression)
-        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60 && !player.dv.regression) devolve()
+        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60 && !player.dv.regression && player.lt.endings.includes("tol")) devolve()
     },
     milestones: {
-        0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own once the cooldown is over and your Vestige gain has stopped growing for a minute (see the switch below).", done() { return player.dv.count >= 5 } },
+        0: { requirementDescription: "5 devolutions", effectDescription: "Once this Loop has reached the Tree of Life, devolve on your own whenever the cooldown is over and your Vestige gain has stopped growing for a minute (see the switch below).", done() { return player.dv.count >= 5 } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#8fb3a0'>Devolution</h2><br>You have <h2 style='color:#8fb3a0'>" + formatWhole(player.dv.points) + "</h2> Vestiges, from " + formatWhole(player.dv.count) + " devolution" + (player.dv.count == 1 ? "" : "s") + "." }],
@@ -493,7 +493,7 @@ addLayer("dv", {
     },
     buyables: Object.fromEntries(Object.entries(DEVOLUTION).map(([id, d]) => [id, {
         title() { return d.name },
-        cost(x) { return Decimal.pow(3, Math.floor(id / 10) - 1).times(Decimal.pow(2, x)).div(regressionBeaten(82) ? 2 : 1).ceil() },
+        cost(x) { return Decimal.pow(3, Math.floor(id / 10) - 1).times(Decimal.pow(2, x)).times(8).div(regressionBeaten(82) ? 2 : 1).ceil() },
         display() {
             let n = getBuyableAmount("dv", this.id).toNumber()
             return "<i>" + layers[d.layer].name + "</i><br>" + d.auto + "<br>Level " + n + " / " + DEVOLUTION_MAX + (n < DEVOLUTION_MAX ? "<br>Cost: " + formatWhole(this.cost()) + " Vestiges" : "")
