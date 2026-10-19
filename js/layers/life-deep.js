@@ -198,7 +198,7 @@ function vestigeGain() {
     return new Decimal(Math.pow(player.dna.log10().toNumber() / 50, 3)).times(vestigeMult()).floor()
 }
 
-// Life needs time to forget: devolving has a cooldown in real time, so faster acts don't shorten it
+// Life needs time to forget: devolving has a 10-minute cooldown in Act 2's time, so a faster Act 2 shortens it
 const DEVOLVE_COOLDOWN = 600
 
 function canDevolve() {
@@ -320,10 +320,11 @@ addLayer("dv", {
     layerShown() { return devolutionUnlocked() },
     tooltip() { return formatWhole(player.dv.points) + " Vestiges" },
     update(diff) {
-        if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - diff)
-        // For the automatic devolve: how long since the Vestige gain last grew (in real time)
+        let act2 = diff * actSpeedCache[2]
+        if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - act2)
+        // For the automatic devolve: how long since the Vestige gain last grew (in Act 2's time)
         let g = vestigeGain()
-        if (g.gt(player.dv.peak)) { player.dv.peak = g; player.dv.stall = 0 } else player.dv.stall += diff
+        if (g.gt(player.dv.peak)) { player.dv.peak = g; player.dv.stall = 0 } else player.dv.stall += act2
     },
     automate() {
         devolutionAutomation()
@@ -339,7 +340,7 @@ addLayer("dv", {
         lore("Evolution has no direction. Blind cave fish lose their eyes, whales lose their legs, and parasites lose almost everything. Sometimes the way forward is back."),
         "blank",
         ["display-text", function() {
-            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50). After each devolution, life needs 10 minutes of real time to forget before the next.<br>" +
+            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50). After each devolution, life needs 10 minutes to forget before the next (in Act 2's time, so Act 2's speed shortens it).<br>" +
                 "Vestiges grow a mirror of the Life tree, from Predators down to Cells. Each node opens the row below it. Every level anywhere triples DNA gain (now <b>x" + format(devolutionDNA()) + "</b>), and each node's first level takes one of Act 2's choices off your hands. Nodes last through every Genesis."
         }],
         "blank",
@@ -367,7 +368,7 @@ addLayer("dv", {
             display() {
                 let g = vestigeGain()
                 if (g.lt(1)) return "Reach 1e100 DNA first."
-                if (player.dv.cooldown > 0) return "Life needs time to forget: " + formatTime(player.dv.cooldown) + " more (" + formatWhole(g) + " Vestiges waiting)."
+                if (player.dv.cooldown > 0) return "Life needs time to forget: " + formatTime(player.dv.cooldown / actSpeedCache[2]) + " more (" + formatWhole(g) + " Vestiges waiting)."
                 return "Start Act 2 over from one cell for <b>" + formatWhole(g) + "</b> Vestiges."
             },
             canClick() { return canDevolve() },

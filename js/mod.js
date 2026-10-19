@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.2",
+	num: "3.5.3",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.3</h3><br>
+		- Devolution's 10-minute cooldown now runs in Act 2's time, so Act 2's speed (Light, Tailwinds, the Singularity) shortens it.<br>
 	<h3>v3.5.2</h3><br>
 		- Fixed: with Deep Memory, a Loop kept your Deep Time upgrades but lost the bonus from every Stratum laid down (your civilization's strength, Act 3's tier regrowth and Act 5's bonus), since it barely needs any extinctions. Now Deep Memory also counts the most Strata any Loop has laid down, and never fewer than your kept Deep Time upgrades cost.<br>
 	<h3>v3.5.1</h3><br>
