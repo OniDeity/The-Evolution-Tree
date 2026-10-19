@@ -41,6 +41,11 @@ function actSpeed(act) {
     if (hasUpgrade("lt", 35)) s *= 1.5
     s *= 1 + 0.05 * getBuyableAmount("lt", 16).toNumber()
     if (act == 2 && hasMilestone("lt", 1)) s *= 1.25
+    if (act == 2 && player.dv) {
+        if (inRegression(84)) s *= 0.2
+        if (regressionBeaten(84)) s *= 2
+        if (hasUpgrade("dv", 24)) s *= 3
+    }
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")

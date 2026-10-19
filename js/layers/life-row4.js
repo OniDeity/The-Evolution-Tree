@@ -72,6 +72,7 @@ function bodyPart(kind) {
 
 function bodyPlanBonus(kind) {
     let b = new Decimal(1)
+    if (typeof inRegression == "function" && inRegression(81)) return b
     for (let t = 0; t < BODY_PLAN.length; t++) {
         let pick = player.mc.plan[t]
         if (pick && BODY_PLAN[t][pick].kind == kind) b = b.times(BODY_PLAN[t][pick].mult)

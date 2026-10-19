@@ -670,10 +670,11 @@ const AUTOPILOT = (function() {
                 layers.dv.buyables[pick].buy()
             }
             if (canDevolve() && player.lt.endings.includes("tol") && !hasMilestone("dv", 0)) devolve()
+            regressionAutomation()
         }
         if (speciesDeepUnlocked()) {
             for (let id of Object.keys(MX_UPGRADES)) if (!hasUpgrade("mx", id) && tmp.mx.upgrades[id] && tmp.mx.upgrades[id].unlocked) buyUpg("mx", id)
-            if (!player.mx.activeChallenge && !(hasUpgrade("mx", 33) || hasMilestone("er", 1)) && lineageGain().gte(1) && (!hasUpgrade("mx", 34) || player.mx.stall >= 30)) massExtinction()
+            if (!player.mx.activeChallenge && !(mxAutoUnlocked() && player.mx.auto) && lineageGain().gte(1) && (!hasUpgrade("mx", 34) || player.mx.stall >= 30)) massExtinction()
             const s = S(6)
             if (hasUpgrade("mx", 43) && !hasMilestone("er", 6) && !player.mx.activeChallenge && player.mx.runTime > 30) {
                 let next = Object.keys(BIG_FIVE).find(id => !hasChallenge("mx", id))

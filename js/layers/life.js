@@ -37,6 +37,7 @@ function dnaGain() {
     gain = gain.max(1).pow(DNA_PACING)
     // Predators: every fight is harder than the last
     if (player.pr && player.pr.activeChallenge) gain = gain.pow(1 - 0.03 * predatorLevel(player.pr.activeChallenge))
+    if (typeof inRegression == "function" && inRegression(82)) gain = gain.pow(0.85)
     return gain
 }
 
@@ -291,7 +292,7 @@ function effectiveTraitLevel(n) {
 }
 
 function traitEffect(id) {
-    if (!player.mu || !player.mu.traits) return new Decimal(1)
+    if (!player.mu || !player.mu.traits || (typeof inRegression == "function" && inRegression(83))) return new Decimal(1)
     return TRAITS[id].per(effectiveTraitLevel(player.mu.traits[id] || 0) + borrowedLevel(id)).pow(traitEnhancement(id))
 }
 

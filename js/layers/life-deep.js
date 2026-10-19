@@ -190,35 +190,104 @@ function devolutionDNA() {
 function vestigeMult() {
     let m = new Decimal(1)
     if (hasUpgrade("lt", 42)) m = m.times(2)
+    if (hasUpgrade("dv", 11)) m = m.times(2)
+    if (regressionBeaten(81)) m = m.times(2)
+    if (hasUpgrade("dv", 21)) m = m.times(1 + player.dv.count / 5)
+    if (hasUpgrade("dv", 23)) m = m.times(1 + Object.keys(DEVOLUTION).filter(id => getBuyableAmount("dv", id).gte(DEVOLUTION_MAX)).length)
     return m
 }
 
 function vestigeGain() {
     if (!devolutionUnlocked() || player.dna.lt(1e100)) return new Decimal(0)
-    return new Decimal(Math.pow(player.dna.log10().toNumber() / 50, 3)).times(vestigeMult()).floor()
+    return new Decimal(Math.pow(player.dna.log10().toNumber() / 50, regressionBeaten(83) ? 3.5 : 3)).times(vestigeMult()).floor()
 }
 
-// Life needs time to forget: devolving has a 10-minute cooldown in Act 2's time, so a faster Act 2 shortens it
-const DEVOLVE_COOLDOWN = 600
+// Life needs time to forget: devolving has a cooldown in Act 2's time, so a faster Act 2 shortens it
+function devolveCooldown() {
+    return hasUpgrade("dv", 12) ? 180 : 600
+}
 
 function canDevolve() {
     return vestigeGain().gte(1) && player.dv.cooldown <= 0
 }
 
+// Back to one cell: every Act 2 layer starts over. The Tree of Life itself stays (and, with Ancestral Memory, every milestone)
+function act2Rewind() {
+    for (let l of LIFE_LAYERS) resetKeeping(l, l == "mc" ? ["upgrades"].concat(hasUpgrade("dv", 13) ? ["milestones"] : []) : hasUpgrade("dv", 13) ? ["milestones"] : [])
+    player.dna = new Decimal(10)
+    act2HeadStarts()
+}
+
 function devolve() {
     let g = vestigeGain()
     if (!canDevolve()) return
-    player.dv.cooldown = DEVOLVE_COOLDOWN
+    checkRegression()
+    player.dv.regression = 0
+    player.dv.cooldown = devolveCooldown()
     player.dv.peak = new Decimal(0)
     player.dv.stall = 0
     player.dv.points = player.dv.points.add(g)
     player.dv.total = player.dv.total.add(g)
     player.dv.count++
     player.dv.loopCount++
-    // Back to one cell: every Act 2 layer starts over. The Tree of Life itself stays.
-    for (let l of LIFE_LAYERS) resetKeeping(l, l == "mc" ? ["upgrades"] : [])
-    player.dna = new Decimal(10)
-    act2HeadStarts()
+    act2Rewind()
+}
+
+// ------------------------------------------------------------
+//  REGRESSIONS: devolve under a handicap and reach the goal for a lasting reward
+// ------------------------------------------------------------
+const REGRESSIONS = {
+    81: { name: "Blind Cave Fish", text: "The body plan does nothing.", goal: new Decimal(1e100), reward: "Vestiges x2." },
+    82: { name: "Parasite", text: "DNA gain is raised to the 0.85.", goal: new Decimal(1e100), reward: "Every node costs half as much." },
+    83: { name: "Flightless", text: "Traits do nothing.", goal: new Decimal(1e100), reward: "Vestiges come from DNA's digits to the 3.5 instead of cubed." },
+    84: { name: "Neoteny", text: "Act 2 runs at a fifth of its speed.", goal: new Decimal(1e120), reward: "Act 2 runs twice as fast." },
+}
+
+function inRegression(id) {
+    return !!(player.dv && player.dv.regression == id)
+}
+
+function regressionBeaten(id) {
+    return !!(player.dv && player.dv.regressions.includes(String(id)))
+}
+
+function startRegression(id) {
+    player.dv.regression = id
+    player.dv.regressionTime = 0
+    act2Rewind()
+}
+
+function checkRegression() {
+    let id = player.dv.regression
+    if (id && player.dna.gte(REGRESSIONS[id].goal) && !regressionBeaten(id)) {
+        player.dv.regressions.push(String(id))
+        player.dv.regression = 0
+        doPopup("none", REGRESSIONS[id].reward, "Regression beaten: " + REGRESSIONS[id].name, 3, "#8fb3a0")
+    }
+}
+
+// For the Autopilot: buy Vestige upgrades, and try the next Regression right after a devolution;
+// give up after 30 minutes and try again 3 devolutions later
+function regressionAutomation() {
+    for (let id in DV_UPGRADES) if (!hasUpgrade("dv", id) && canAffordUpgrade("dv", id)) buyUpg("dv", id)
+    if (!hasUpgrade("dv", 14)) return
+    player.dv.failed = player.dv.failed || {}
+    let a = player.dv.regression
+    if (a) { if (player.dv.regressionTime > 1800) { player.dv.failed[a] = player.dv.count; player.dv.regression = 0 } return }
+    if (player.dv.cooldown <= 0 || player.dna.gte(1e10)) return
+    let next = Object.keys(REGRESSIONS).find(id => !regressionBeaten(id) && !(player.dv.failed[id] !== undefined && player.dv.count < player.dv.failed[id] + 3))
+    if (next) startRegression(Number(next))
+}
+
+const DV_UPGRADES = {
+    11: ["Rudiments", "Vestiges x2.", 5],
+    12: ["Reversion", "Life forgets faster: the cooldown is 3 minutes instead of 10.", 15],
+    13: ["Ancestral Memory", "Devolving (and starting a Regression) keeps every Act 2 milestone.", 40],
+    14: ["Regressions", "Unlock <b>Regressions</b>: devolve under a handicap, for a lasting reward.", 80],
+    21: ["Deep Roots", "Vestiges grow with every devolution you've done.", 150],
+    22: ["Recapitulation", "Act 2 plays itself: every reset, choice and predator, all the way to the Tree of Life.", 300],
+    23: ["Convergence", "Vestiges grow with every node at its last level.", 800],
+    24: ["Vestigial Everything", "Act 2 runs 3x as fast.", 2000],
 }
 
 // Head starts for Act 2, after a Genesis or a Devolution
@@ -314,6 +383,10 @@ addLayer("dv", {
         auto: true,
         peak: new Decimal(0),
         stall: 0,
+        clock: 0,
+        regression: 0,
+        regressionTime: 0,
+        regressions: [],
     }},
     type: "none",
     resource: "Vestiges",
@@ -321,6 +394,8 @@ addLayer("dv", {
     tooltip() { return formatWhole(player.dv.points) + " Vestiges" },
     update(diff) {
         let act2 = diff * actSpeedCache[2]
+        player.dv.clock += diff
+        if (player.dv.regression) player.dv.regressionTime += diff
         if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - act2)
         // For the automatic devolve: how long since the Vestige gain last grew (in Act 2's time)
         let g = vestigeGain()
@@ -328,8 +403,11 @@ addLayer("dv", {
     },
     automate() {
         devolutionAutomation()
-        // Devolve on its own once the cooldown is over and the gain has stopped growing for a minute
-        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60) devolve()
+        checkRegression()
+        // Recapitulation: Act 2 plays itself (unless the Autopilot already does)
+        if (hasUpgrade("dv", 22) && lifeUnlocked() && player.lt.genesis >= 2 && !(typeof apOn == "function" && apOn(12))) AUTOPILOT.act2(player.dv.clock)
+        // Devolve on its own once the cooldown is over and the gain has stopped growing for a minute (never in the middle of a Regression)
+        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60 && !player.dv.regression) devolve()
     },
     milestones: {
         0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own once the cooldown is over and your Vestige gain has stopped growing for a minute (see the switch below).", done() { return player.dv.count >= 5 } },
@@ -340,7 +418,7 @@ addLayer("dv", {
         lore("Evolution has no direction. Blind cave fish lose their eyes, whales lose their legs, and parasites lose almost everything. Sometimes the way forward is back."),
         "blank",
         ["display-text", function() {
-            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50). After each devolution, life needs 10 minutes to forget before the next (in Act 2's time, so Act 2's speed shortens it).<br>" +
+            return "<b>Devolve</b> to start Act 2 over from one cell, keeping the Tree of Life. You need 1e100 DNA; Vestiges come from its digits (cubed, over 50). After each devolution, life needs " + formatTime(devolveCooldown()) + " to forget before the next (in Act 2's time, so Act 2's speed shortens it).<br>" +
                 "Vestiges grow a mirror of the Life tree, from Predators down to Cells. Each node opens the row below it. Every level anywhere triples DNA gain (now <b>x" + format(devolutionDNA()) + "</b>), and each node's first level takes one of Act 2's choices off your hands. Nodes last through every Genesis."
         }],
         "blank",
@@ -348,13 +426,47 @@ addLayer("dv", {
         ["clickables", [1]],
         "blank",
         "milestones",
+        "upgrades",
+        "blank",
+        ["display-text", function() {
+            if (!hasUpgrade("dv", 14)) return ""
+            let a = player.dv.regression
+            return "<h3>Regressions</h3><br>Starting one sends Act 2 back to one cell (without Vestiges). Reach its goal to beat it; devolving ends it." +
+                (a ? "<br>In <b>" + REGRESSIONS[a].name + "</b>: " + format(player.dna) + " / " + format(REGRESSIONS[a].goal) + " DNA." : "")
+        }],
+        ["clickables", [8]],
+        "blank",
         ["row", [["buyable", 11]]],
         ["row", [["buyable", 21], ["buyable", 22], ["buyable", 23]]],
         ["row", [["buyable", 31], ["buyable", 32], ["buyable", 33]]],
         ["row", [["buyable", 41], ["buyable", 42]]],
         ["row", [["buyable", 51]]],
     ],
+    upgrades: Object.fromEntries(Object.entries(DV_UPGRADES).map(([id, u]) => [id, {
+        title: u[0],
+        description: u[1],
+        cost: new Decimal(u[2]),
+        currencyDisplayName: "Vestiges",
+        style: { width: "150px", height: "110px", "font-size": "9px" },
+    }])),
     clickables: {
+        ...Object.fromEntries(Object.entries(REGRESSIONS).map(([id, r]) => [id, {
+            title() { return r.name },
+            display() {
+                let n = Number(id)
+                if (regressionBeaten(n)) return "Beaten. " + r.reward
+                return r.text + "<br>Goal: " + format(r.goal) + " DNA<br>Reward: " + r.reward + (inRegression(n) ? "<br><b>Click to give up.</b>" : "")
+            },
+            unlocked() { return hasUpgrade("dv", 14) },
+            canClick() { return !regressionBeaten(Number(id)) && (!player.dv.regression || inRegression(Number(id))) },
+            onClick() {
+                let n = Number(id)
+                if (inRegression(n)) { player.dv.regression = 0; return }
+                if (!confirm("Start " + r.name + "? Act 2 goes back to one cell.")) return
+                startRegression(n)
+            },
+            style() { return { width: "160px", height: "120px", "min-height": "120px", "font-size": "9px", "background-color": regressionBeaten(Number(id)) ? "#8fb3a0" : inRegression(Number(id)) ? "#c9a26b" : undefined } },
+        }])),
         11: {
             title: "Devolving on its own",
             display() { return player.dv.auto ? "On" : "Off" },
@@ -381,7 +493,7 @@ addLayer("dv", {
     },
     buyables: Object.fromEntries(Object.entries(DEVOLUTION).map(([id, d]) => [id, {
         title() { return d.name },
-        cost(x) { return Decimal.pow(3, Math.floor(id / 10) - 1).times(Decimal.pow(2, x)) },
+        cost(x) { return Decimal.pow(3, Math.floor(id / 10) - 1).times(Decimal.pow(2, x)).div(regressionBeaten(82) ? 2 : 1).ceil() },
         display() {
             let n = getBuyableAmount("dv", this.id).toNumber()
             return "<i>" + layers[d.layer].name + "</i><br>" + d.auto + "<br>Level " + n + " / " + DEVOLUTION_MAX + (n < DEVOLUTION_MAX ? "<br>Cost: " + formatWhole(this.cost()) + " Vestiges" : "")

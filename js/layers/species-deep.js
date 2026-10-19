@@ -19,9 +19,10 @@ function speciesDeepUnlocked() {
 //  MASS EXTINCTIONS
 // ------------------------------------------------------------
 function lineageMult() {
-    // Survivors carry on: every mass extinction you've lived through adds 20%
-    let m = new Decimal(1 + player.mx.crunches / 5)
+    // Survivors carry on: every mass extinction you've lived through adds one more Lineage's worth
+    let m = new Decimal(1 + player.mx.crunches)
     if (hasUpgrade("mx", 32)) m = m.times(2)
+    if (hasUpgrade("mx", 33)) m = m.times(3)
     if (hasChallenge("mx", 31)) m = m.times(2)
     if (hasUpgrade("lt", 43)) m = m.times(2)
     if (hasMilestone("er", 7)) m = m.times(10)
@@ -32,6 +33,11 @@ function lineageMult() {
 }
 
 // Before Break the Cycle a mass extinction is worth 1 Lineage (times boosts); after it, every 154 more digits of Biomass are worth 10x
+// After 10 mass extinctions, the next ones happen on their own
+function mxAutoUnlocked() {
+    return player.mx.crunches >= 10 || hasMilestone("er", 1)
+}
+
 function lineageGain() {
     if (!speciesDeepUnlocked() || player.biomass.lt(SENTIENCE)) return new Decimal(0)
     let base = hasUpgrade("mx", 34) ? Decimal.pow(10, player.biomass.log10().sub(308).div(154)) : new Decimal(1)
@@ -76,7 +82,7 @@ const MX_UPGRADES = {
     24: ["Viruses", "Unlock <b>Viruses</b>.", 21],
     31: ["Bounce Back", "Biomass gain x(mass extinctions + 1)².", 50, () => new Decimal(player.mx.crunches + 1).pow(2), "biomass"],
     32: ["Lazarus Taxa", "Lineages x2.", 100],
-    33: ["Mass Extinction Events", "Mass extinctions happen on their own: at once, or after Break the Cycle, once your Lineage gain has stopped growing for 30 seconds.", 200],
+    33: ["Mass Extinction Events", "Lineages x3.", 200],
     34: ["Break the Cycle", "Biomass past 1.8e308 counts: every 154 more digits make a mass extinction worth 10x as many Lineages.", 500],
     41: ["Hothouse", "Every tier gets stronger with your best Lineage gain.", 2000, () => player.mx.best.add(1).pow(0.5), "tiers"],
     42: ["Adaptive Radiation, Again", "Radiations make Metabolism +0.01 stronger each.", 1e4],
@@ -170,7 +176,7 @@ addLayer("mx", {
     },
     automate() {
         if (!speciesDeepUnlocked()) return
-        if ((hasUpgrade("mx", 33) || hasMilestone("er", 1)) && player.mx.auto && !player.mx.activeChallenge) {
+        if (mxAutoUnlocked() && player.mx.auto && !player.mx.activeChallenge) {
             if (lineageGain().gte(1) && (!hasUpgrade("mx", 34) || player.mx.stall >= 30)) massExtinction()
         }
         if (player.mx.activeChallenge && canCompleteChallenge("mx", player.mx.activeChallenge)) startChallenge("mx", player.mx.activeChallenge)
@@ -188,7 +194,7 @@ addLayer("mx", {
                 "blank",
                 ["display-text", function() {
                     return "With 1.8e308 Biomass, <b>end it all</b>: Act 3 starts over from 10 Biomass, speciations and radiations included, but the Spark of Sentience stays lit. Each mass extinction pays Lineages" +
-                        (hasUpgrade("mx", 34) ? " (10x for every 154 more digits of Biomass)" : "") + ", and every one you've lived through makes the next pay 20% more." + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
+                        (hasUpgrade("mx", 34) ? " (10x for every 154 more digits of Biomass)" : "") + ", and every one you've lived through makes the next pay more (x" + formatWhole(1 + player.mx.crunches) + " now). From the 10th on, they happen on their own: at once, or after Break the Cycle, once your Lineage gain has stopped growing for 30 seconds." + "<br>This run has lasted " + formatTime(player.mx.runTime) + " of Act 3 time."
                 }],
                 "blank",
                 ["clickables", [9]],
@@ -212,7 +218,7 @@ addLayer("mx", {
         11: {
             title: "Mass extinctions on their own",
             display() { return player.mx.auto ? "On" : "Off" },
-            unlocked() { return hasUpgrade("mx", 33) || hasMilestone("er", 1) },
+            unlocked() { return mxAutoUnlocked() },
             canClick() { return true },
             onClick() { player.mx.auto = !player.mx.auto },
             style() { return { width: "180px", "min-height": "50px", height: "50px" } },
