@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.1",
+	num: "3.5.2",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.2</h3><br>
+		- Fixed: with Deep Memory, a Loop kept your Deep Time upgrades but lost the bonus from every Stratum laid down (your civilization's strength, Act 3's tier regrowth and Act 5's bonus), since it barely needs any extinctions. Now Deep Memory also counts the most Strata any Loop has laid down, and never fewer than your kept Deep Time upgrades cost.<br>
 	<h3>v3.5.1</h3><br>
 		- Fixed a softlock in Act 5: the Drifters could take your last probe (the rule that kept one safe never worked), and once they outnumbered the swarm it could never grow back. Now the last probe is always safe (home rebuilds it if it's ever lost), Drifters never crowd out more than 90% of the room your probes copy into, and being outnumbered doesn't make them hit any harder. A wiped-out swarm recovers on its own.<br>
 	<h3>v3.5 - The Last Answer</h3><br>

@@ -258,7 +258,7 @@ function spaceGlobalMult() {
     m = m.times(spaceAchievementBonus())
     if (spaceTrialDone(21)) m = m.times(1e6)
     // The eternal civilization of Act 4 keeps supplying its probes
-    m = m.times(player.ex.total.add(10).log10())
+    m = m.times(strataLaid().add(10).log10())
     return m
 }
 

@@ -160,6 +160,7 @@ function rememberLoop() {
     for (let id of ["11", "12", "21", "22", "31", "32"]) if (hasChallenge("hz", id) && !player.mm.hazards.includes(id)) player.mm.hazards.push(id)
     for (let id of PRESSURE_IDS) if (hasChallenge("pz", id) && !player.mm.pressures.includes(id)) player.mm.pressures.push(id)
     player.mm.deepTime = player.dt.upgrades.map(Number)
+    player.mm.strataBest = new Decimal(player.mm.strataBest || 0).max(strataLaid())
     player.mm.trials4 = (player.mm.trials4 || []).concat(Object.keys(player.ex.challenges).filter(id => hasChallenge("ex", id) && !(player.mm.trials4 || []).includes(id)))
     player.cn.loopBest = new Decimal(0)
     player.cn.measured = 0
@@ -511,7 +512,7 @@ const MEMORIES = {
     33: ["Quick Spark", "Every Loop starts Act 3 with 1e50 Biomass."],
     43: ["Long Lineage", "Every Loop starts with every Evolutionary milestone already bought."],
     14: ["Oral History", "Every Loop starts with Act 4's first four Extinction milestones."],
-    24: ["Deep Memory", "Every Loop starts with the Deep Time upgrades you had when the last one ended."],
+    24: ["Deep Memory", "Every Loop starts with the Deep Time upgrades you had when the last one ended, and counts the most Strata any Loop has laid down."],
     34: ["Founding Myths", "Every Loop starts with each of Act 4's Trials you've ever beaten."],
     44: ["Inherited Workshop", "Every Loop starts with every Workshop improvement."],
     15: ["Flight Plans", "Every Loop starts with Harvest's first six milestones and the Probe milestones that launch, calibrate and upgrade on their own."],
@@ -557,6 +558,7 @@ addLayer("mm", {
         deepTime: [],
         choicesOff: false,
         whole: {},
+        strataBest: new Decimal(0),
     }},
     type: "none",
     resource: "Memories",

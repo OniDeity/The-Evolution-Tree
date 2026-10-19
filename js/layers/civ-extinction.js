@@ -13,16 +13,30 @@
 const ETERNITY_PEOPLE = 150
 const ETERNITY_HEALTH = 0.9
 
+// Every Stratum laid down this Loop. With Deep Memory, a Loop also remembers the most any Loop has laid
+// down (and never counts fewer than its kept Deep Time upgrades cost)
+function strataLaid() {
+    if (!player.ex) return new Decimal(0)
+    let t = player.ex.total
+    if (player.mm && hasUpgrade("mm", 24)) {
+        t = t.max(player.mm.strataBest || 0)
+        let kept = new Decimal(0)
+        for (let id of player.dt.upgrades) if (layers.dt.upgrades[id]) kept = kept.add(layers.dt.upgrades[id].cost)
+        t = t.max(kept)
+    }
+    return t
+}
+
 // Strata are spent on Deep Time, but every Stratum you've ever laid down keeps counting here
 function strataBonus() {
     if (!player.ex) return 1
-    return 1 + player.ex.total.add(1).log10().toNumber()
+    return 1 + strataLaid().add(1).log10().toNumber()
 }
 
 // Act 3's living world grows back faster on top of all those layers of rock
 function strataTierBoost() {
     if (!player.ex) return new Decimal(1)
-    return player.ex.total.add(1).pow(2)
+    return strataLaid().add(1).pow(2)
 }
 
 function canExtinct() {
@@ -153,7 +167,7 @@ addLayer("ex", {
     },
     tabFormat: [
         ["display-text", function() {
-            return "<h2 style='color:#d9774b'>Extinction</h2><br>You have <h2 style='color:#d9774b'>" + formatWhole(player.ex.points) + "</h2> Strata to spend, and have laid down " + formatWhole(player.ex.total) + " in all.<br>" +
+            return "<h2 style='color:#d9774b'>Extinction</h2><br>You have <h2 style='color:#d9774b'>" + formatWhole(player.ex.points) + "</h2> Strata to spend, and have laid down " + formatWhole(strataLaid()) + " in all.<br>" +
                 "Every Stratum ever laid down makes your civilization stronger (<b>x" + format(strataBonus(), 2) + "</b>) and Act 3's species tiers grow back faster (<b>x" + format(strataTierBoost()) + "</b>)."
         }],
         "blank",

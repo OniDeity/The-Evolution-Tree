@@ -29,7 +29,7 @@ const LOST_SPECIES = [
     { name: "Baiji", year: "2006", lore: "The Yangtze river dolphin, nearly blind, which found its way by sound. The river got too loud.", hint: "Leave a footprint of 400.",
       done() { return footprint() >= 400 } },
     { name: "Western Black Rhino", year: "2011", lore: "Poached for its horn until none were left.", hint: "Lay down 500 Strata in all.",
-      done() { return player.ex.total.gte(500) } },
+      done() { return strataLaid().gte(500) } },
 ]
 
 function lostSpeciesFound() {
@@ -102,7 +102,7 @@ addLayer("ch", {
                 ["The last one lasted", player.ex.count ? formatTime(player.ch.lastRun) : "-"],
                 ["The shortest one lasted", player.ex.count ? formatTime(player.ch.fastest) : "-"],
                 ["Extinctions", formatWhole(player.ex.count)],
-                ["Strata laid down", formatWhole(player.ex.total)],
+                ["Strata laid down", formatWhole(strataLaid())],
                 ["Most Strata from one extinction", formatWhole(player.ex.best)],
                 ["Most people at once", formatWhole(player.ch.mostPeople)],
                 ["People lost to hunger", formatWhole(player.ch.starved)],
