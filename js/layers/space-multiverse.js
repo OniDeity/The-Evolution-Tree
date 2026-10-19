@@ -37,7 +37,7 @@ function realityMult() {
     let m = spaceMult("mv", MV_UPGRADES, "realities")
     if (hasMilestone("mv", 5)) m = m.times(2)
     if (hasMilestone("mv", 7)) m = m.times(3)
-    return m.times(hallBonus().realities).times(hasUpgrade("lt", 22) ? 1.5 : 1).times(hasUpgrade("rv", 12) ? 2 : 1)
+    return m.times(hallBonus().realities).times(hasUpgrade("lt", 22) ? 1.5 : 1).times(hasUpgrade("rv", 12) ? 2 : 1).times(entropyTrialBeaten(93) ? 3 : 1).times(inEntropyTrial(94) ? 0.01 : 1)
 }
 
 // Realities come from all the Seeds you've planted since the last collapse: the square of their digits, less 2
@@ -59,7 +59,7 @@ function mvSpeed() {
 
 function mvSeedMult() {
     if (!player.mv) return new Decimal(1)
-    return new Decimal(realityBoosts().seeds).times(hallBonus().seeds).times(gardenBonus()).times(spaceTrialDone(11) ? 2 : 1).times(hasUpgrade("lt", 22) ? 2 : 1).times(hasUpgrade("rv", 12) ? 3 : 1)
+    return new Decimal(realityBoosts().seeds).times(hallBonus().seeds).times(gardenBonus()).times(spaceTrialDone(11) ? 2 : 1).times(hasUpgrade("lt", 22) ? 2 : 1).times(hasUpgrade("rv", 12) ? 3 : 1).times(inEntropyTrial(93) ? 0.001 : 1)
 }
 
 function collapseMultiverse() {

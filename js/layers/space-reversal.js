@@ -12,10 +12,10 @@ function reversalUnlocked() {
 }
 
 // Entropy: a Reversal pays its Negentropy only once the universe has finished rewinding, in real time.
-// Every Reversal so far makes the next rewind take longer, (1 + reversals)^2 times
-const REWIND_BASE = 150
+// Every Reversal so far makes the next rewind take 2 minutes longer
+const REWIND_BASE = 120
 function rewindTime() {
-    return REWIND_BASE * Math.pow(1 + player.rv.count, 2)
+    return REWIND_BASE * (1 + player.rv.count)
 }
 
 function rewindSpeed() {
@@ -23,6 +23,7 @@ function rewindSpeed() {
     if (hasUpgrade("rv", 11)) s *= 1.5
     if (hasUpgrade("rv", 21)) s *= 1 + Math.log10(player.rv.total.toNumber() + 1) / 2
     if (hasUpgrade("rv", 31)) s *= 2
+    if (entropyTrialBeaten(92)) s *= 2
     return s
 }
 
@@ -35,6 +36,8 @@ function negentropyGain() {
     let g = new Decimal(1 + player.rv.count).times(player.mv.total.add(1).log10().add(1)).div(2)
     if (hasUpgrade("rv", 22)) g = g.times(2)
     if (hasUpgrade("lt", 46)) g = g.times(2)
+    if (entropyTrialBeaten(91)) g = g.times(2)
+    if (entropyTrialBeaten(94)) g = g.times(1 + player.rv.count / 5)
     return g.floor()
 }
 
@@ -96,6 +99,45 @@ function reversalAutomation() {
         if (a && player.un.runTime > 3600) startChallenge("tl", a)
     }
     if (hasMilestone("rv", 6) && !player.mv.heatDeath && canAffordUpgrade("mv", 65)) buyUpg("mv", 65)
+    // A Trial that hasn't reached the Heat Death in an hour is given up, and tried again 2 Reversals later
+    if (player.rv.trial && player.rv.trialTime > 3600) { player.rv.failed = player.rv.failed || {}; player.rv.failed[player.rv.trial] = player.rv.count; player.rv.trial = 0 }
+}
+
+// ------------------------------------------------------------
+//  ENTROPY TRIALS: reverse into a harder universe and reach the Heat Death for a lasting reward
+// ------------------------------------------------------------
+const ENTROPY_TRIALS = {
+    91: { name: "Big Freeze", text: "Act 5 runs at a thousandth of its speed.", reward: "Negentropy x2." },
+    92: { name: "Big Rip", text: "Multiverse upgrades do nothing (but Let There Be Light).", reward: "Rewinds go twice as fast." },
+    93: { name: "False Vacuum", text: "Seeds x0.001.", reward: "Realities x3." },
+    94: { name: "Heat Death, Twice", text: "Realities x0.01.", reward: "Negentropy grows with every Reversal you've done." },
+}
+
+function inEntropyTrial(id) {
+    return !!(player.rv && player.rv.trial == id && reversalUnlocked())
+}
+
+function entropyTrialBeaten(id) {
+    return !!(player.rv && player.rv.trials.includes(String(id)))
+}
+
+function entropyTrialsUnlocked() {
+    return !!(player.rv && player.rv.count >= 2)
+}
+
+// Reverse, and run the next universe under a Trial's rules
+function reverseInto(id) {
+    if (negentropyGain().lt(1) || rewinding()) return
+    reverse()
+    player.rv.trial = id
+    player.rv.trialTime = 0
+}
+
+// For the Autopilot: reverse into the next Trial not yet beaten (one that just failed waits 2 Reversals)
+function reverseNext() {
+    player.rv.failed = player.rv.failed || {}
+    let next = entropyTrialsUnlocked() && Object.keys(ENTROPY_TRIALS).find(id => !entropyTrialBeaten(id) && !(player.rv.failed[id] !== undefined && player.rv.count < player.rv.failed[id] + 2))
+    if (next) reverseInto(Number(next)); else reverse()
 }
 
 const RV_UPGRADES = {
@@ -117,13 +159,23 @@ addLayer("rv", {
     row: 44,
     position: 2,
     color: "#ffe599",
-    startData() { return { unlocked: true, points: new Decimal(0), total: new Decimal(0), count: 0, bestRate: 0, cycleTime: 0, lastCollapses: 0, rewind: 0, pending: new Decimal(0) } },
+    startData() { return { unlocked: true, points: new Decimal(0), total: new Decimal(0), count: 0, bestRate: 0, cycleTime: 0, lastCollapses: 0, rewind: 0, pending: new Decimal(0), trial: 0, trialTime: 0, trials: [] } },
     type: "none",
     resource: "Negentropy",
     branches: ["mv"],
     layerShown() { return reversalUnlocked() && (player.mv.heatDeath || player.rv.count > 0) },
     tooltip() { return formatWhole(player.rv.points) + " Negentropy" },
     update(diff) {
+        // A Trial is beaten by reaching the Heat Death under its rules; given up after an hour
+        if (player.rv.trial) {
+            player.rv.trialTime += diff
+            if (player.mv.heatDeath) {
+                let t = player.rv.trial
+                player.rv.trials.push(String(t))
+                player.rv.trial = 0
+                doPopup("none", ENTROPY_TRIALS[t].reward, "Entropy Trial beaten: " + ENTROPY_TRIALS[t].name, 3, "#ffe599")
+            }
+        }
         // The rewind runs in real time; its Negentropy arrives when it's done
         if (player.rv.rewind > 0) {
             player.rv.rewind -= diff * rewindSpeed()
@@ -146,7 +198,7 @@ addLayer("rv", {
         "blank",
         ["display-text", function() {
             return "After the Heat Death, <b>reverse</b> it: all of Act 5 starts over from its first probe (the multiverse too), and pays Negentropy (more for every Reversal so far, and for every Reality you've earned this time).<br>" +
-                "But entropy fights back: the Negentropy only arrives once the universe has finished rewinding, and every Reversal makes the next rewind take longer. The next one takes <b>" + formatTime(rewindTime() / rewindSpeed()) + "</b>." +
+                "But entropy fights back: the Negentropy only arrives once the universe has finished rewinding, and every Reversal makes the next rewind 2 minutes longer. The next one takes <b>" + formatTime(rewindTime() / rewindSpeed()) + "</b>." +
                 (rewinding() ? "<br><br>Rewinding: <b>" + formatTime(player.rv.rewind / rewindSpeed()) + "</b> left before <b>" + formatWhole(player.rv.pending) + "</b> Negentropy arrives." : "")
         }],
         "blank",
@@ -155,8 +207,37 @@ addLayer("rv", {
         "milestones",
         "blank",
         "upgrades",
+        "blank",
+        ["display-text", function() {
+            if (!entropyTrialsUnlocked()) return "<span style='opacity:0.7'>Entropy Trials open after 2 Reversals.</span>"
+            let a = player.rv.trial
+            return "<h3>Entropy Trials</h3><br>Reverse into a harder universe, then reach the Heat Death under its rules for a lasting reward." + (a ? "<br>In <b>" + ENTROPY_TRIALS[a].name + "</b> for " + formatTime(player.rv.trialTime) + "." : "")
+        }],
+        ["clickables", [8]],
     ],
     clickables: {
+        ...Object.fromEntries(Object.entries(ENTROPY_TRIALS).map(([id, t]) => [id - 10, {
+            title() { return t.name },
+            display() {
+                let n = Number(id)
+                if (entropyTrialBeaten(n)) return "Beaten. " + t.reward
+                if (inEntropyTrial(n)) return t.text + "<br>Reward: " + t.reward + "<br><b>Click to give up.</b>"
+                return t.text + "<br>Reward: " + t.reward + "<br>" + (negentropyGain().gte(1) && !rewinding() ? "<b>Click to reverse into it.</b>" : "Reverse into it after the next Heat Death.")
+            },
+            unlocked() { return entropyTrialsUnlocked() },
+            canClick() {
+                let n = Number(id)
+                if (entropyTrialBeaten(n)) return false
+                if (inEntropyTrial(n)) return true
+                return !player.rv.trial && negentropyGain().gte(1) && !rewinding()
+            },
+            onClick() {
+                let n = Number(id)
+                if (inEntropyTrial(n)) { player.rv.trial = 0; return }
+                reverseInto(n)
+            },
+            style() { return { width: "160px", height: "120px", "min-height": "120px", "font-size": "9px", "background-color": entropyTrialBeaten(Number(id)) ? "#c9b25a" : inEntropyTrial(Number(id)) ? "#e69138" : undefined } },
+        }])),
         91: {
             title: "Reverse",
             display() { let g = negentropyGain(); return rewinding() ? "Still rewinding..." : g.lt(1) ? "Reach the Heat Death first." : "Rewind Act 5 for <b>" + formatWhole(g) + "</b> Negentropy." },

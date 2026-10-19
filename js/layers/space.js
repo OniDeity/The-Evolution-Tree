@@ -121,6 +121,7 @@ function spaceMultRaw(layer, table, target) {
     let m = new Decimal(1)
     if (!player[layer]) return m
     if (layer == "pb" && inSpaceTrial(22)) return m
+    if (layer == "mv" && typeof inEntropyTrial == "function" && inEntropyTrial(92)) return m
     for (let id in table) {
         let u = table[id]
         if ((u.target != target && !(u.target == "all" && ["harvest", "wire", "factory"].includes(target))) || u.kind == "+" || !hasUpgrade(layer, id)) continue

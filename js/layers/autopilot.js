@@ -31,9 +31,23 @@ function apModules() {
     return AP_PLAYS.filter(id => hasUpgrade("ap", id)).length
 }
 
+// Upgrades that make the Autopilot write faster, bought with Routines
+const AP_BOOSTS = {
+    31: { title: "Macros", text: "Routines x2.", cost: 100 },
+    32: { title: "Recursion", text: "Routines grow with all the Negentropy you've ever made.", cost: 1000 },
+    33: { title: "Compiler", text: "Subroutines are stronger: x1.4 a level instead of x1.3.", cost: 3000 },
+}
+
+function subroutineMult() {
+    return Math.pow(hasUpgrade("ap", 33) ? 1.4 : 1.3, getBuyableAmount("ap", 11).toNumber())
+}
+
 function routineGain() {
     if (!autopilotUnlocked()) return 0
-    return (1 + player.lt.endings.length) * (1 + 0.5 * apModules()) / 60
+    let g = (1 + player.lt.endings.length) * (1 + 0.5 * apModules()) / 60 * subroutineMult()
+    if (hasUpgrade("ap", 31)) g *= 2
+    if (hasUpgrade("ap", 32)) g *= 1 + Math.log10(player.rv.total.toNumber() + 1) / 2
+    return g
 }
 
 // A new Loop starts the Autopilot's notes over (they're about the Loop, not the Autopilot)
@@ -707,7 +721,7 @@ const AUTOPILOT = (function() {
         }
         if (reversalUnlocked()) {
             for (let id of [11, 12, 13, 14, 21, 22, 23, 24, 31, 32]) if (!hasUpgrade("rv", id) && tmp.rv.upgrades[id].unlocked) buyUpg("rv", id)
-            if (player.mv.heatDeath && !hasUpgrade("rv", 32) && negentropyGain().gte(1) && !rewinding()) reverse()
+            if (player.mv.heatDeath && !hasUpgrade("rv", 32) && negentropyGain().gte(1) && !rewinding()) reverseNext()
         }
     }
 
@@ -776,19 +790,31 @@ addLayer("ap", {
         "blank",
         lore("Somewhere around the sixth time through, the universe stops needing you to remind it what comes next."),
         "blank",
-        ["display-text", "The Autopilot writes Routines on its own: faster for every ending this Loop has reached, and for every module it already has. Each module plays its part of the game for you, every choice and challenge included, and can be switched off below. The Autopilot survives every Genesis."],
+        ["display-text", "The Autopilot writes Routines on its own: faster for every ending this Loop has reached, for every module it already has, and for every Subroutine. Each module plays its part of the game for you, every choice and challenge included, and can be switched off below. The Autopilot survives every Genesis."],
+        "blank",
+        "buyables",
         "blank",
         "upgrades",
         "blank",
         ["clickables", [1, 2]],
     ],
-    upgrades: Object.fromEntries(Object.entries(AP_MODULES).map(([id, m]) => [id, {
+    upgrades: Object.fromEntries(Object.entries(AP_MODULES).concat(Object.entries(AP_BOOSTS)).map(([id, m]) => [id, {
         title: m.title,
         description: m.text,
         cost: new Decimal(m.cost),
         unlocked() { return id != 23 || AP_PLAYS.every(x => hasUpgrade("ap", x)) },
-        style() { return id == 23 ? { width: "260px", height: "130px" } : { width: "170px", height: "130px" } },
+        style() { return id == 23 ? { width: "260px", height: "130px" } : { width: "170px", height: id > 30 ? "100px" : "130px" } },
     }])),
+    buyables: {
+        11: {
+            title: "Subroutines",
+            cost(x) { return Decimal.pow(2, x === undefined ? getBuyableAmount("ap", 11) : x).times(40) },
+            display() { return "Routines x" + (hasUpgrade("ap", 33) ? 1.4 : 1.3) + " a level (now x" + format(subroutineMult(), 2) + ").<br>Level " + formatWhole(getBuyableAmount("ap", 11)) + "<br>Cost: " + format(this.cost()) + " Routines" },
+            canAfford() { return player.ap.points.gte(this.cost()) },
+            buy() { player.ap.points = player.ap.points.sub(this.cost()); setBuyableAmount("ap", 11, getBuyableAmount("ap", 11).add(1)) },
+            style() { return { width: "200px", height: "110px" } },
+        },
+    },
     clickables: Object.fromEntries(AP_PLAYS.map(id => [id < 20 ? id : id - 10 + 5, {
         title() { return AP_MODULES[id].title },
         display() { return player.ap.off.includes(String(id)) ? "Off" : "On" },
