@@ -457,6 +457,7 @@ addLayer("lt", {
         33: lightUpgrade("Ancient Light", "A Genesis pays twice as much Light.", 50, { unlocked() { return player.lt.genesis > 0 } }),
         34: lightUpgrade("Time Crystals", "The Singularity lasts twice as long.", 60, { unlocked() { return hasUpgrade("lt", 24) } }),
         35: lightUpgrade("Clockwork Universe", "Acts 1 to 5 run 1.5x as fast.", 80, { unlocked() { return player.lt.genesis > 0 } }),
+        36: lightUpgrade("Trade Winds", "Tailwinds are bought on their own.", 40, { unlocked() { return player.lt.genesis >= 2 } }),
         41: lightUpgrade("Genetic Memory", "Base Pairs x2.", 60, { unlocked() { return player.lt.genesis > 0 } }),
         42: lightUpgrade("Atavism", "Vestiges x2.", 90, { unlocked() { return player.lt.genesis > 0 } }),
         43: lightUpgrade("Lineage Memory", "Lineages x2.", 120, { unlocked() { return player.lt.genesis >= 2 } }),

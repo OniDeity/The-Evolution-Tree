@@ -41,6 +41,10 @@ addLayer("tw", {
     type: "none",
     branches: ["lt"],
     layerShown() { return genesisUnlocked() && tailwindsUnlocked() },
+    automate() {
+        if (!hasUpgrade("lt", 36)) return
+        for (let a in TAILWINDS) if (tmp.tw.buyables[10 + Number(a)].unlocked) layers.tw.buyables[10 + Number(a)].buyMax()
+    },
     tooltip() { return "Tailwinds: x" + [2, 3, 4, 5].map(a => format(tailwind(a), 2)).join(" / ") },
     tabFormat: [
         ["display-text", function() { return genesisHeader() }],
