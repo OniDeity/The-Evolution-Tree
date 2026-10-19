@@ -107,10 +107,10 @@ function reversalAutomation() {
 //  ENTROPY TRIALS: reverse into a harder universe and reach the Heat Death for a lasting reward
 // ------------------------------------------------------------
 const ENTROPY_TRIALS = {
-    91: { name: "Big Freeze", text: "Act 5 runs at a thousandth of its speed.", reward: "Negentropy x2." },
+    91: { name: "Big Freeze", text: "Act 5 runs a million times slower.", reward: "Negentropy x2." },
     92: { name: "Big Rip", text: "Multiverse upgrades do nothing (but Let There Be Light).", reward: "Rewinds go twice as fast." },
-    93: { name: "False Vacuum", text: "Seeds x0.001.", reward: "Realities x3." },
-    94: { name: "Heat Death, Twice", text: "Realities x0.01.", reward: "Negentropy grows with every Reversal you've done." },
+    93: { name: "False Vacuum", text: "Seeds x1e-9.", reward: "Realities x3." },
+    94: { name: "Heat Death, Twice", text: "Realities x1e-6.", reward: "Negentropy grows with every Reversal you've done." },
 }
 
 function inEntropyTrial(id) {
@@ -141,16 +141,16 @@ function reverseNext() {
 }
 
 const RV_UPGRADES = {
-    11: ["Time's Arrow", "Rewinds go 1.5x as fast.", 2],
-    12: ["Cold Start", "Seeds x3 and Realities x2.", 5],
-    13: ["Remembered Universes", "A Reversal starts with 10 universes already consumed, and every kind of physics collected.", 10],
-    14: ["Maxwell's Demon", "Matter, Wire and Hulls are made 100x as fast.", 15],
-    21: ["Order from Chaos", "Rewinds go faster with all the Negentropy you've ever made.", 30],
-    22: ["Self-Organization", "Negentropy x2.", 60],
-    23: ["Boltzmann Brains", "Yomi and Honor x1e6.", 100],
-    24: ["Arrow Reversed", "Acts 1 to 5 all run faster with all the Negentropy you've ever made.", 200],
-    31: ["The Big Bounce", "Rewinds go twice as fast.", 250],
-    32: ["Let There Be Light, Again", "The universe remembers how it began. <b>Light up a new universe.</b>", 500],
+    11: ["Time's Arrow", "Rewinds go 1.5x as fast.", 4],
+    12: ["Cold Start", "Seeds x3 and Realities x2.", 10],
+    13: ["Remembered Universes", "A Reversal starts with 10 universes already consumed, and every kind of physics collected.", 20],
+    14: ["Maxwell's Demon", "Matter, Wire and Hulls are made 100x as fast.", 30],
+    21: ["Order from Chaos", "Rewinds go faster with all the Negentropy you've ever made.", 60],
+    22: ["Self-Organization", "Negentropy x2.", 120],
+    23: ["Boltzmann Brains", "Yomi and Honor x1e6.", 200],
+    24: ["Arrow Reversed", "Acts 1 to 5 all run faster with all the Negentropy you've ever made.", 400],
+    31: ["The Big Bounce", "Rewinds go twice as fast.", 500],
+    32: ["Let There Be Light, Again", "The universe remembers how it began. <b>Light up a new universe.</b>", 1000],
 }
 
 addLayer("rv", {

@@ -12,14 +12,14 @@ function autopilotUnlocked() {
 }
 
 const AP_MODULES = {
-    11: { title: "Act 1: The Cosmos", text: "Plays Act 1: resets, upgrades, orbits, Cosmic Hazards, the branches and the Habitable Zone.", cost: 150 },
-    12: { title: "Act 2: Life", text: "Plays Act 2: cells, traits, habitats, the body plan, instincts, predators and the Tree of Life.", cost: 400 },
-    13: { title: "Act 3: Species", text: "Plays Act 3: tiers, speciations, radiations, Selection Pressures, the branches and the Spark of Sentience.", cost: 850 },
-    14: { title: "Act 4: Extinction", text: "Plays Act 4: jobs, techs, buildings, crafting, the branches, extinctions and Eternity.", cost: 1500 },
-    15: { title: "Act 5: Diaspora", text: "Plays Act 5: trust, harvest, the Drift, the Swarm, projects, universes, the multiverse and the Heat Death.", cost: 2400 },
-    21: { title: "The Deepenings", text: "Plays Act 6 inside the acts: Constants, Genetic Engineering, Devolution, Mass Extinctions, Viruses, Eras, the Ages and Reversals.", cost: 3400 },
-    22: { title: "The Loops", text: "Spends Light and Memories for you, and says \"Let there be light\" as soon as a Loop is done.", cost: 4300 },
-    23: { title: "The Last Answer", text: "\"Let there be light.\" And there was light, and it ran itself. <b>Finish Act 6.</b>", cost: 5100 },
+    11: { title: "Act 1: The Cosmos", text: "Plays Act 1: resets, upgrades, orbits, Cosmic Hazards, the branches and the Habitable Zone.", cost: 100 },
+    12: { title: "Act 2: Life", text: "Plays Act 2: cells, traits, habitats, the body plan, instincts, predators and the Tree of Life.", cost: 280 },
+    13: { title: "Act 3: Species", text: "Plays Act 3: tiers, speciations, radiations, Selection Pressures, the branches and the Spark of Sentience.", cost: 600 },
+    14: { title: "Act 4: Extinction", text: "Plays Act 4: jobs, techs, buildings, crafting, the branches, extinctions and Eternity.", cost: 1050 },
+    15: { title: "Act 5: Diaspora", text: "Plays Act 5: trust, harvest, the Drift, the Swarm, projects, universes, the multiverse and the Heat Death.", cost: 1700 },
+    21: { title: "The Deepenings", text: "Plays Act 6 inside the acts: Constants, Genetic Engineering, Devolution, Mass Extinctions, Viruses, Eras, the Ages and Reversals.", cost: 2400 },
+    22: { title: "The Loops", text: "Spends Light and Memories for you, and says \"Let there be light\" as soon as a Loop is done.", cost: 3000 },
+    23: { title: "The Last Answer", text: "\"Let there be light.\" And there was light, and it ran itself. <b>Finish Act 6.</b>", cost: 3600 },
 }
 const AP_PLAYS = [11, 12, 13, 14, 15, 21, 22]
 
@@ -33,7 +33,7 @@ function apModules() {
 
 // Upgrades that make the Autopilot write faster, bought with Routines
 const AP_BOOSTS = {
-    31: { title: "Macros", text: "Routines x2.", cost: 100 },
+    31: { title: "Macros", text: "Routines x2.", cost: 50 },
     32: { title: "Recursion", text: "Routines grow with all the Negentropy you've ever made.", cost: 1000 },
     33: { title: "Compiler", text: "Subroutines are stronger: x1.4 a level instead of x1.3.", cost: 3000 },
 }
