@@ -197,7 +197,7 @@ function spaceSpeed() {
     // Past 10,000 Seeds, more Seeds speed things up far more slowly, so Seeds and speed can't feed each other forever
     let s = player.un.totalSeeds.toNumber()
     let base = (1 + 2 * Math.sqrt(Math.min(s, 1e4))) * (s > 1e4 ? Math.pow(s / 1e4, 0.15) : 1)
-    let speed = base * (hasMilestone("un", 7) ? 2 : 1) * mvSpeed() * (hasMilestone("mv", 6) ? 2 : 1) * launchSpeed() * (inEntropyTrial(91) ? 1e-6 : 1)
+    let speed = base * (hasMilestone("un", 7) ? 2 : 1) * mvSpeed() * (hasMilestone("mv", 6) ? 2 : 1) * launchSpeed() * (inEntropyTrial(91) ? 1e-4 : 1)
     // Never infinite: an infinite step would turn probe growth into NaN
     return isFinite(speed) ? Math.min(speed, 1e300) : 1e300
 }

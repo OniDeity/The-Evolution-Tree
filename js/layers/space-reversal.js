@@ -99,18 +99,18 @@ function reversalAutomation() {
         if (a && player.un.runTime > 3600) startChallenge("tl", a)
     }
     if (hasMilestone("rv", 6) && !player.mv.heatDeath && canAffordUpgrade("mv", 65)) buyUpg("mv", 65)
-    // A Trial that hasn't reached the Heat Death in an hour is given up, and tried again 2 Reversals later
-    if (player.rv.trial && player.rv.trialTime > 3600) { player.rv.failed = player.rv.failed || {}; player.rv.failed[player.rv.trial] = player.rv.count; player.rv.trial = 0 }
+    // A Trial that hasn't reached the Heat Death in 20 minutes is given up, and tried again 2 Reversals later
+    if (player.rv.trial && player.rv.trialTime > 1200) { player.rv.failed = player.rv.failed || {}; player.rv.failed[player.rv.trial] = player.rv.count; player.rv.trial = 0 }
 }
 
 // ------------------------------------------------------------
 //  ENTROPY TRIALS: reverse into a harder universe and reach the Heat Death for a lasting reward
 // ------------------------------------------------------------
 const ENTROPY_TRIALS = {
-    91: { name: "Big Freeze", text: "Act 5 runs a million times slower.", reward: "Negentropy x2." },
+    91: { name: "Big Freeze", text: "Act 5 runs 10,000 times slower.", reward: "Negentropy x2." },
     92: { name: "Big Rip", text: "Multiverse upgrades do nothing (but Let There Be Light).", reward: "Rewinds go twice as fast." },
-    93: { name: "False Vacuum", text: "Seeds x1e-9.", reward: "Realities x3." },
-    94: { name: "Heat Death, Twice", text: "Realities x1e-6.", reward: "Negentropy grows with every Reversal you've done." },
+    93: { name: "False Vacuum", text: "Seeds x1e-6.", reward: "Realities x3." },
+    94: { name: "Heat Death, Twice", text: "Realities x1e-4.", reward: "Negentropy grows with every Reversal you've done." },
 }
 
 function inEntropyTrial(id) {
@@ -166,7 +166,7 @@ addLayer("rv", {
     layerShown() { return reversalUnlocked() && (player.mv.heatDeath || player.rv.count > 0) },
     tooltip() { return formatWhole(player.rv.points) + " Negentropy" },
     update(diff) {
-        // A Trial is beaten by reaching the Heat Death under its rules; given up after an hour
+        // A Trial is beaten by reaching the Heat Death under its rules
         if (player.rv.trial) {
             player.rv.trialTime += diff
             if (player.mv.heatDeath) {
