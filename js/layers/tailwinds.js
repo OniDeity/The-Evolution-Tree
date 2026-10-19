@@ -49,6 +49,11 @@ addLayer("tw", {
         "blank",
         ["display-text", "Spend what a finished act leaves behind to make the next act run faster: x" + TAILWIND_MULT + " a level, on top of its Light speed. A Tailwind never takes more than a tenth of what you have. Tailwinds start over with every Genesis."],
         "blank",
+        ["display-text", function() {
+            let next = [2, 3, 4, 5].find(a => !tmp.tw.buyables[10 + a].unlocked)
+            return next ? "<span style='opacity:0.7'>Reach " + ENDINGS.find(e => e.act == next - 1).name + " in this Loop to open the Act " + next + " Tailwind.</span>" : ""
+        }],
+        "blank",
         "buyables",
     ],
     buyables: Object.fromEntries(Object.keys(TAILWINDS).map(a => [10 + Number(a), {
