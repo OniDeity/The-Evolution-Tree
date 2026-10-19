@@ -18,6 +18,8 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.4</h3><br>
+		- Fixed: Directed Evolution poured every Mutation into your chosen trait, far past where extra copies count, which could leave Act 2 stuck below the 1e100 DNA devolving needs. It now stops at the soft cap and spreads the rest. Saves already caught by it have the extra copies spread out on load.<br>
 	<h3>v3.5.3</h3><br>
 		- Devolution's 10-minute cooldown now runs in Act 2's time, so Act 2's speed (Light, Tailwinds, the Singularity) shortens it.<br>
 	<h3>v3.5.2</h3><br>
