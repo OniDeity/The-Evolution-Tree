@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.4",
+	num: "3.5.5",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.5 - Less Grind</h3><br>
+		- Devolution, reworked: fewer, better devolutions (about 25 to grow the whole mirror tree, not over 100).<br>
+		- 8 Vestige upgrades: Vestiges x2, a 3-minute cooldown, keep Act 2's milestones when you devolve, Vestiges that grow with your devolutions and your maxed nodes, Act 2 3x as fast, and <b>Recapitulation</b>: Act 2 plays itself all the way to the Tree of Life.<br>
+		- 4 Regressions: devolve under a handicap (no body plan, weaker DNA, no traits, a slow Act 2) and reach the goal for a lasting reward.<br>
+		- Auto-devolve now waits until this Loop has reached the Tree of Life.<br>
+		- Mass Extinctions happen on their own from the 10th on (no longer after 200 Lineages), and every one you've lived through adds a whole Lineage's worth to the next. Mass Extinction Events is now Lineages x3.<br>
 	<h3>v3.5.4</h3><br>
 		- Fixed: Directed Evolution poured every Mutation into your chosen trait, far past where extra copies count, which could leave Act 2 stuck below the 1e100 DNA devolving needs. It now stops at the soft cap and spreads the rest. Saves already caught by it have the extra copies spread out on load.<br>
 	<h3>v3.5.3</h3><br>
