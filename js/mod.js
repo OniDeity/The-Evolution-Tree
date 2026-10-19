@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.3",
+	num: "3.5.4",
 	name: "The Last Answer",
 }
 
@@ -444,4 +444,25 @@ function fixOldSave(oldVersion){
 			if (d.done() && !player.ob.achievements.includes(id)) player.ob.achievements.push(id)
 		})
 	} catch (e) {}
+	// Before v3.5.4, Directed Evolution could pour every Mutation into one trait, far past where it counts.
+	// Spread the extra copies the way the draft does now, so Act 2 isn't left stuck below 1e100 DNA
+	// (this runs before the game is set up, so it reads the save directly)
+	let gxUp = player.gx && player.gx.upgrades ? player.gx.upgrades.map(Number) : []
+	if (versionBefore(oldVersion, "3.5.4") && player.mu && player.mu.traits && gxUp.includes(24)) {
+		let t = player.gx.target, cap = gxUp.includes(21) ? 8 : 5
+		if (t && player.mu.traits[t] > cap) {
+			let extra = player.mu.traits[t] - cap
+			player.mu.traits[t] = cap
+			for (let i = 0; i < extra; i++) {
+				let low = Object.keys(TRAITS).reduce((a, k) => (player.mu.traits[k] || 0) < (player.mu.traits[a] || 0) ? k : a)
+				player.mu.traits[low] = (player.mu.traits[low] || 0) + 1
+			}
+		}
+	}
+}
+
+function versionBefore(a, b) {
+	let x = String(a).split(".").map(Number), y = String(b).split(".").map(Number)
+	for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] || 0) != (y[i] || 0)) return (x[i] || 0) < (y[i] || 0)
+	return false
 }
