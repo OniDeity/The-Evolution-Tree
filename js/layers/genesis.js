@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv", "ap"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -123,6 +123,7 @@ function checkEndings() {
 const LOOP_GOALS = {
     2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
     4: { name: "The Space Age", text: "buy The Space Age, the last upgrade of the Space Age", done() { return hasUpgrade("ag5", 14) } },
+    6: { name: "The Last Answer", text: "buy The Last Answer, the Autopilot's last module", done() { return hasUpgrade("ap", 23) } },
     5: { name: "Let There Be Light, Again", text: "buy Let There Be Light, Again, the last Negentropy upgrade", done() { return hasUpgrade("rv", 32) } },
     3: { name: "The Phanerozoic", text: "survive all of the Big Five and reach the 10th Geological Era", done() { return bigFiveBeaten() >= 5 && player.er.count >= 10 } },
 }
@@ -163,6 +164,8 @@ function rememberLoop() {
     player.cn.measured = 0
     player.dv.loopCount = 0
     player.mx.runTime = 0
+    rememberWhole()
+    autopilotNewLoop()
 }
 
 function genesisKeeps() {
@@ -201,6 +204,29 @@ function grantMilestones(layer, ids) {
     for (let id of ids) if (!player[layer].milestones.includes(String(id))) player[layer].milestones.push(String(id))
 }
 
+// Before a Genesis wipes them: every act's milestones and challenges, for the fifth row of Memories
+function rememberWhole() {
+    player.mm.whole = {}
+    for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) {
+        let d = player[l]
+        if (!d) continue
+        player.mm.whole[l] = { milestones: (d.milestones || []).slice(), challenges: Object.assign({}, d.challenges || {}) }
+    }
+}
+
+function restoreWhole() {
+    if (!player.mm.whole) return
+    for (let a = 1; a <= 5; a++) {
+        if (!hasUpgrade("mm", 50 + a)) continue
+        for (let l of ACT_LAYERS[a]) {
+            let w = player.mm.whole[l], d = player[l]
+            if (!w || !d) continue
+            if (d.milestones) for (let id of w.milestones) if (!d.milestones.includes(id)) d.milestones.push(id)
+            if (d.challenges) for (let id in w.challenges) d.challenges[id] = Math.max(d.challenges[id] || 0, w.challenges[id])
+        }
+    }
+}
+
 // What your Memories give each new Loop to start with
 function headStarts() {
     if (hasUpgrade("mm", 11)) grantMilestones("st", [0, 1, 2])
@@ -217,6 +243,7 @@ function headStarts() {
     if (hasUpgrade("mm", 24)) for (let id of player.mm.deepTime) if (!player.dt.upgrades.includes(id)) player.dt.upgrades.push(id)
     if (hasUpgrade("mm", 15)) { grantMilestones("hv", [0, 1, 2, 3, 4, 5]); grantMilestones("pb", [1, 2, 4]) }
     if (hasUpgrade("mm", 25)) { grantMilestones("un", [0, 1, 2, 3]); grantMilestones("mv", [0, 1, 2, 3]) }
+    restoreWhole()
 }
 
 // Act 1's one-time choices, made for you once you've remembered them
@@ -267,7 +294,7 @@ addLayer("gn", {
         "blank",
         ["display-text", function() { return genesisGuide() }],
         "blank",
-        ["tree", [["lt"], ["mm", "si", "bx"]]],
+        ["tree", [["lt"], ["mm", "si", "bx", "ap"]]],
     ],
 })
 
@@ -490,6 +517,11 @@ const MEMORIES = {
     26: ["The Fossil Record", "A Genesis keeps the Fossil Record, Specimen Collection and both Field Notes."],
     36: ["The Hall of Fame", "A Genesis keeps Lost Species, the Chronicle, the Hall of Probes and the Flight Log."],
     46: ["Long Memory", "Every ending pays 2 Memories instead of 1."],
+    51: ["The Whole Cosmos", "Every Loop starts with every milestone and challenge of Act 1 you had when the last one ended."],
+    52: ["The Whole Tree", "Every Loop starts with every milestone and challenge of Act 2 you had when the last one ended."],
+    53: ["The Whole Record", "Every Loop starts with every milestone and challenge of Act 3 you had when the last one ended."],
+    54: ["The Whole History", "Every Loop starts with every milestone and challenge of Act 4 you had when the last one ended."],
+    55: ["The Whole Sky", "Every Loop starts with every milestone and challenge of Act 5 you had when the last one ended."],
 }
 
 // The perk grid, with gaps kept so every column stays under its act
@@ -497,7 +529,7 @@ function memoryGrid() {
     let rows = []
     for (let c = 1; c <= 6; c++) {
         let row = [["display-text", "<div style='display:inline-block;width:80px;font-size:12px;opacity:0.8;text-align:center'>" + MEMORY_COLUMNS[c] + "</div>"]]
-        for (let r = 1; r <= 4; r++) row.push(MEMORIES[r * 10 + c] ? ["upgrade", r * 10 + c] : ["display-text", "<div style='display:inline-block;width:128px'></div>"])
+        for (let r = 1; r <= 5; r++) row.push(MEMORIES[r * 10 + c] ? ["upgrade", r * 10 + c] : ["display-text", "<div style='display:inline-block;width:128px'></div>"])
         rows.push(["row", row])
     }
     return rows
@@ -521,6 +553,7 @@ addLayer("mm", {
         pressures: [],
         deepTime: [],
         choicesOff: false,
+        whole: {},
     }},
     type: "none",
     resource: "Memories",
@@ -552,7 +585,9 @@ addLayer("mm", {
         title: m[0],
         description: m[1],
         cost: memoryCost(Number(id)),
-        canAfford() { let above = Number(id) - 10; return above < 11 || hasUpgrade("mm", above) },
+        // A perk opens the next one along its act's row
+        canAfford() { let before = Object.keys(MEMORIES).map(Number).filter(x => x % 10 == id % 10 && x < Number(id)); return !before.length || hasUpgrade("mm", Math.max(...before)) },
+        unlocked() { return Number(id) < 50 || player.lt.genesis >= 6 },
         style: { width: "120px", height: "150px", "font-size": "9px" },
     }])),
 })

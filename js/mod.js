@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/autopilot.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.4",
-	name: "Reversal",
+	num: "3.5",
+	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5 - The Last Answer</h3><br>
+		- The end of Act 6, from Loop 6 on (Antimatter Dimensions' Automator, retold). The Autopilot writes Routines on its own, faster for every ending this Loop has reached and every module it has.<br>
+		- Eight modules: one each for Acts 1 to 5 (every reset, upgrade, choice, branch and challenge), one for the deepenings, one that runs the Loops themselves (spending Light and Memories and starting the next Loop), and the Last Answer. Every module can be switched off.<br>
+		- A fifth row of Memories: every Loop starts with every milestone and challenge of an act you had when the last one ended.<br>
+		- Loop 6's goal, and the end of Act 6: The Last Answer.<br>
+		- 5 achievements.<br>
+		- Endgame: reach the Heat Death in Loop 6, having bought The Last Answer. You can keep going after that: the Autopilot keeps Looping on its own.<br>
 	<h3>v3.4 - Reversal</h3><br>
 		- Act 6 deepens Act 5, from Loop 5 on ("The Last Question", turned around). After the Heat Death, Reverse it: all of Act 5 rewinds, the multiverse too, for Negentropy.<br>
 		- Entropy: a Reversal's Negentropy only arrives once the universe has finished rewinding (in real time), and every Reversal makes the next rewind take longer. Negentropy upgrades speed rewinds up.<br>
@@ -280,7 +287,10 @@ let winText = `Bacteria fed fish, fish fed amphibians, and so on up the pyramid,
 	The fourth time, the civilization did not stop at Eternity. Tools became fields, fields became factories, factories became networks, and the networks reached for the sky.<br><br>
 	<b>You've finished Loop 4.</b><br><br>
 	The fifth time, the swarm reached the Heat Death and refused it. It ran the universe backwards, again and again, each time a little older, until it remembered exactly how the light had begun.<br><br>
-	<b>You've finished Loop 5.</b> More of Act 6 is coming soon...`
+	<b>You've finished Loop 5.</b><br><br>
+	The sixth time, nobody had to say anything at all. The universe knew its own way by heart: the first stars, the first cells, the long climb, the fire, the sky, the dark, and the light again. It had been asked, long ago, how to make the light come back. The last answer was simple. You show it, again and again, until it remembers.<br><br>
+	<b>Act 6: Genesis is complete.</b><br><br>
+	<b>Thank you for playing The Evolution Tree.</b> The Autopilot will keep Looping if you keep going.`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -386,7 +396,7 @@ function cosmicEra() {
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.lt.genesis >= 5 && canGenesis()
+	return player.lt.genesis >= 6 && canGenesis()
 }
 
 
