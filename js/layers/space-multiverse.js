@@ -392,7 +392,7 @@ function jump(n) {
     if (o == "honor") player.dr.honor = player.dr.honor.add(new Decimal(spaceCache.honor || 0).times(minute))
     if (o == "yomi") player.sq.yomi = player.sq.yomi.add(player.sq.yomi.times(0.1))
     if (o == "compute") player.sq.compute = Decimal.min(memoryCap(), player.sq.compute.add(memoryCap().times(0.25)))
-    if (o == "ambush") player.pb.probes = player.pb.probes.times(hasMilestone("wh", 1) ? 0.98 : 0.95)
+    if (o == "ambush") player.pb.probes = player.pb.probes.times(hasMilestone("wh", 1) ? 0.98 : 0.95).max(Decimal.min(1, player.pb.probes))
     player.wh.last = o
     player.wh.charts++
     player.wh.holes = []

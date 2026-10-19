@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5",
+	num: "3.5.1",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.1</h3><br>
+		- Fixed a softlock in Act 5: the Drifters could take your last probe (the rule that kept one safe never worked), and once they outnumbered the swarm it could never grow back. Now the last probe is always safe (home rebuilds it if it's ever lost), Drifters never crowd out more than 90% of the room your probes copy into, and being outnumbered doesn't make them hit any harder. A wiped-out swarm recovers on its own.<br>
 	<h3>v3.5 - The Last Answer</h3><br>
 		- The end of Act 6, from Loop 6 on (Antimatter Dimensions' Automator, retold). The Autopilot writes Routines on its own, faster for every ending this Loop has reached and every module it has.<br>
 		- Eight modules: one each for Acts 1 to 5 (every reset, upgrade, choice, branch and challenge), one for the deepenings, one that runs the Loops themselves (spending Light and Memories and starting the next Loop), and the Last Answer. Every module can be switched off.<br>

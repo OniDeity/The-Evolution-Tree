@@ -146,7 +146,8 @@ function armorPower() {
 
 function attackRate() {
     if (player.pb.probes.lte(0)) return new Decimal(0)
-    return player.dr.drifters.div(player.pb.probes).times(SPACE_TUNE.attack).div(armorPower().log10().add(1))
+    // Once outnumbered, more Drifters don't hit any harder: a ruined swarm can always rebuild
+    return Decimal.min(player.dr.drifters.div(player.pb.probes), 1).times(SPACE_TUNE.attack).div(armorPower().log10().add(1))
 }
 
 function honorMult() {
@@ -161,14 +162,14 @@ function driftTick(dt) {
     let p = player.pb.probes, d = player.dr.drifters
     // Some probes drift away and join the Drifters
     // The Drifters can never take your last probe
-    let drifted = Decimal.min(p.times(driftRate()).times(dt), p.times(0.5), p.sub(1).max(0))
+    let drifted = Decimal.min(Decimal.min(p.times(driftRate()).times(dt), p.times(0.5)), p.sub(1).max(0))
     // Drifters copy themselves, and your probes destroy them
     let w = combatRate(), r = drifterCopyRate()
     let after = d.times(Decimal.exp(r.sub(w).times(dt)))
     let destroyed = d.times(Decimal.min(1, w.times(dt)))
     after = after.add(drifted).max(0)
     // ...and they destroy your probes
-    let lost = Decimal.min(p.times(attackRate()).times(dt), p.times(0.5), p.sub(drifted).sub(1).max(0))
+    let lost = Decimal.min(Decimal.min(p.times(attackRate()).times(dt), p.times(0.5)), p.sub(drifted).sub(1).max(0))
     player.pb.probes = p.sub(drifted).sub(lost).max(0)
     player.dr.drifters = after
     player.dr.destroyed = player.dr.destroyed.add(destroyed)

@@ -541,11 +541,18 @@ function launchProbe() {
     player.pb.probes = player.pb.probes.add(1)
 }
 
+// Drifters crowd your probes, but never out of all the room: a tenth of it is always left to copy into
+function crowding() {
+    return Decimal.min(player.dr.drifters, probeRoom().times(0.9))
+}
+
 function probeTick(dt) {
+    // Home always rebuilds a lone probe, so the swarm can never be wiped out for good (outside the Lone Probe Trial's own rules)
+    if (player.pb.probes.lt(1) && spaceUnlocked()) player.pb.probes = new Decimal(1)
     let p = player.pb.probes
     if (p.gt(0)) {
         // Copying slows as the probes fill the room their explored systems give them
-        let fill = Decimal.min(1, p.add(player.dr.drifters).div(probeRoom().max(1))).toNumber()
+        let fill = Decimal.min(1, p.add(crowding()).div(probeRoom().max(1))).toNumber()
         let r0 = replicationRate()
         let r = r0.times(1 - fill)
         let h = hazardRate()
@@ -553,7 +560,7 @@ function probeTick(dt) {
         let next = p.times(Decimal.exp(r.sub(h).times(dt)))
         // A long step can't overshoot: the swarm settles where copying (slowed by the room left) balances hazards
         if (r0.gt(h)) {
-            let settle = probeRoom().times(Decimal.sub(1, h.div(r0))).sub(player.dr.drifters).max(1)
+            let settle = probeRoom().times(Decimal.sub(1, h.div(r0))).sub(crowding()).max(1)
             next = p.lte(settle) ? Decimal.min(next, settle) : Decimal.max(next, settle)
         }
         // Hazards can thin the swarm out, but never destroy the last probe
