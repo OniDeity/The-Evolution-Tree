@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/tailwinds.js", "layers/constants.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.4",
+	num: "3.4.1",
 	name: "Reversal",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.4.1</h3><br>
+		- New Act 6 layer, Tailwinds (in the Genesis tree, from Loop 1 on): spend what a finished act leaves behind to make the next one run faster. Energy speeds up Act 2, DNA Act 3, Biomass Act 4 and Strata Act 5 (x1.25 a level). A Tailwind never takes more than a tenth of what you have, and they start over with every Genesis.<br>
+		- Fixed: the Reversal milestone that collapses the multiverse on its own could stall for good, waiting on a record rate from an earlier cycle.<br>
 	<h3>v3.4 - Reversal</h3><br>
 		- Act 6 deepens Act 5, from Loop 5 on ("The Last Question", turned around). After the Heat Death, Reverse it: all of Act 5 rewinds, the multiverse too, for Negentropy.<br>
 		- Entropy: a Reversal's Negentropy only arrives once the universe has finished rewinding (in real time), and every Reversal makes the next rewind take longer. Negentropy upgrades speed rewinds up.<br>
