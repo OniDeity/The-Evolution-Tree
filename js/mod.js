@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/constants.js", "layers/autopilot.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/tailwinds.js", "layers/constants.js", "layers/autopilot.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -24,6 +24,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- A fifth row of Memories: every Loop starts with every milestone and challenge of an act you had when the last one ended.<br>
 		- Loop 6's goal, and the end of Act 6: The Last Answer.<br>
 		- 5 achievements.<br>
+		- New Act 6 layer, Tailwinds (in the Genesis tree, from Loop 1 on): spend what a finished act leaves behind to make the next one run faster. Energy speeds up Act 2, DNA Act 3, Biomass Act 4 and Strata Act 5 (x1.25 a level). A Tailwind never takes more than a tenth of what you have, and they start over with every Genesis.<br>
 		- Endgame: reach the Heat Death in Loop 6, having bought The Last Answer. You can keep going after that: the Autopilot keeps Looping on its own.<br>
 	<h3>v3.4 - Reversal</h3><br>
 		- Act 6 deepens Act 5, from Loop 5 on ("The Last Question", turned around). After the Heat Death, Reverse it: all of Act 5 rewinds, the multiverse too, for Negentropy.<br>

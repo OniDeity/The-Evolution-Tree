@@ -45,6 +45,7 @@ function actSpeed(act) {
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")
     s *= negentropyAllSpeed()
+    s *= tailwind(act)
     return s
 }
 
@@ -166,6 +167,7 @@ function rememberLoop() {
     player.mx.runTime = 0
     rememberWhole()
     autopilotNewLoop()
+    player.rv.bestRate = 0
 }
 
 function genesisKeeps() {
@@ -294,7 +296,7 @@ addLayer("gn", {
         "blank",
         ["display-text", function() { return genesisGuide() }],
         "blank",
-        ["tree", [["lt"], ["mm", "si", "bx", "ap"]]],
+        ["tree", [["lt"], ["mm", "si", "bx", "tw", "ap"]]],
     ],
 })
 

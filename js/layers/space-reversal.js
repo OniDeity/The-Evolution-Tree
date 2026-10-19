@@ -87,7 +87,8 @@ function reversalAutomation() {
     // Collapse once Realities would come in at least as fast as the best so far this cycle
     if (hasMilestone("rv", 3) && multiverseUnlocked()) {
         let g = realityGain(), t = Math.max(1, player.rv.cycleTime)
-        if (g.gte(1) && t > 60 && g.div(t).gte(player.rv.bestRate * 0.8)) { player.rv.bestRate = Math.max(player.rv.bestRate, g.div(t).toNumber()); collapseMultiverse(); player.rv.bestRate *= 0.9 }
+        // (or after half an hour regardless, so a record from an old cycle can never stall it)
+        if (g.gte(1) && t > 60 && (g.div(t).gte(player.rv.bestRate * 0.8) || t > 1800)) { player.rv.bestRate = Math.max(player.rv.bestRate, g.div(t).toNumber()); collapseMultiverse(); player.rv.bestRate *= 0.9 }
     }
     if (hasMilestone("rv", 5)) {
         let a = player.tl.activeChallenge

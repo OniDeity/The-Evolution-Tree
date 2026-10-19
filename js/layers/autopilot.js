@@ -717,6 +717,7 @@ const AUTOPILOT = (function() {
         for (let id in MEMORIES) if (!hasUpgrade("mm", id) && tmp.mm.upgrades[id] && tmp.mm.upgrades[id].unlocked && canAffordUpgrade("mm", id)) buyUpg("mm", id)
         for (let id of LIGHT_UPS) if (!hasUpgrade("lt", id) && tmp.lt.upgrades[id] && tmp.lt.upgrades[id].unlocked) buyUpg("lt", id)
         for (let l of BRANCH_LIST) if (branchesOpen(BRANCH_ACT[l])) { let b = layers.bx.buyables[keepId(l)]; if (b.canAfford()) b.buy() }
+        for (let a in TAILWINDS) { let b = layers.tw.buyables[10 + Number(a)]; if (tmp.tw.buyables[10 + Number(a)].unlocked) b.buyMax() }
         // Speeds, the Singularity and Radiance: best value for Light, favouring the acts that take longest
         for (let i = 0; i < 20; i++) {
             let opts = []
