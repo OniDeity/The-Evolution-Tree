@@ -528,8 +528,8 @@ const MEMORIES = {
 function memoryGrid() {
     let rows = []
     for (let c = 1; c <= 6; c++) {
-        let row = [["display-text", "<div style='display:inline-block;width:80px;font-size:12px;opacity:0.8;text-align:center'>" + MEMORY_COLUMNS[c] + "</div>"]]
-        for (let r = 1; r <= 5; r++) row.push(MEMORIES[r * 10 + c] ? ["upgrade", r * 10 + c] : ["display-text", "<div style='display:inline-block;width:128px'></div>"])
+        let row = [["display-text", "<div style='display:inline-block;width:60px;font-size:11px;opacity:0.8;text-align:center'>" + MEMORY_COLUMNS[c] + "</div>"]]
+        for (let r = 1; r <= 5; r++) row.push(MEMORIES[r * 10 + c] ? ["upgrade", r * 10 + c] : ["display-text", "<div style='display:inline-block;width:108px'></div>"])
         rows.push(["row", row])
     }
     return rows
@@ -588,7 +588,7 @@ addLayer("mm", {
         // A perk opens the next one along its act's row
         canAfford() { let before = Object.keys(MEMORIES).map(Number).filter(x => x % 10 == id % 10 && x < Number(id)); return !before.length || hasUpgrade("mm", Math.max(...before)) },
         unlocked() { return Number(id) < 50 || player.lt.genesis >= 6 },
-        style: { width: "120px", height: "150px", "font-size": "9px" },
+        style: { width: "100px", height: "165px", "font-size": "8.5px" },
     }])),
 })
 
