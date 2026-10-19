@@ -26,6 +26,8 @@ let changelog = `<h1>Changelog:</h1><br>
 		- 5 achievements.<br>
 		- New Light upgrade, Trade Winds (from Loop 2 on): Tailwinds are bought on their own.<br>
 		- Endgame: reach the Heat Death in Loop 6, having bought The Last Answer. You can keep going after that: the Autopilot keeps Looping on its own.<br>
+	<h3>v3.4.2</h3><br>
+		- Fixed: the Tailwinds tab showed nothing once a Tailwind opened.<br>
 	<h3>v3.4.1</h3><br>
 		- New Act 6 layer, Tailwinds (in the Genesis tree, from Loop 1 on): spend what a finished act leaves behind to make the next one run faster. Energy speeds up Act 2, DNA Act 3, Biomass Act 4 and Strata Act 5 (x1.25 a level). A Tailwind never takes more than a tenth of what you have, and they start over with every Genesis.<br>
 		- Fixed: the Reversal milestone that collapses the multiverse on its own could stall for good, waiting on a record rate from an earlier cycle.<br>
