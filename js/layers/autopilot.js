@@ -439,6 +439,8 @@ const AUTOPILOT = (function() {
             if (gameFights) return
             let id = player.pr.activeChallenge
             if (canCompleteChallenge("pr", id)) { startChallenge("pr", id); return }
+            // A fight it didn't start (or a new one) is judged from now, not from the last fight's notes
+            if (s.chalId != id) { s.chalId = id; s.chalBest = 0; s.chalGain = t }
             let d = L10(player.dna)
             if (d > (s.chalBest || 0) + 0.5) { s.chalBest = d; s.chalGain = t }
             // Give up if DNA hasn't grown in 8 minutes
