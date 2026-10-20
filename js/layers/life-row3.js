@@ -540,13 +540,23 @@ addLayer("hb", {
     automate() {
         if ((!hasMilestone("hb", 5) && !devolved("hb")) || player.hb.abandon) return
         let shoreReady = hasUpgrade("ad", 13) && player.ge.best.gte(8)
-        if (shoreReady && !reachedLand()) {
-            // Save up for the Shoreline once it's next to a colony; until then, settle toward it
-            if ([501, 503, 505].some(id => nextToColony(id))) {
-                for (let id of [503, 501, 505]) if (canColonize(id)) { player.hb.grid[id] = true; return }
+        if (!reachedLand()) {
+            // Before land, settle only toward the Shoreline, and keep colonists free for it
+            if (![501, 503, 505].some(id => nextToColony(id))) {
+                for (let id of [403, 402, 404, 401, 405]) if (canColonize(id)) { player.hb.grid[id] = true; return }
                 return
             }
-            for (let id of [403, 402, 404, 401, 405]) if (canColonize(id)) { player.hb.grid[id] = true; return }
+            if (!shoreReady) return
+            for (let id of [503, 501, 505]) if (canColonize(id)) { player.hb.grid[id] = true; return }
+            // Short of colonists: abandon tiles off the way to the Shoreline until there are enough
+            let path = [303, 403, 402, 404, 401, 405]
+            for (let k = 0; k < 30 && ![503, 501, 505].some(id => canColonize(id)); k++) {
+                let id = Object.keys(player.hb.grid).map(Number).find(x => player.hb.grid[x] && !path.includes(x) && abandonBlocker(x) == "")
+                if (id === undefined) break
+                player.hb.grid[id] = false
+            }
+            for (let id of [503, 501, 505]) if (canColonize(id)) { player.hb.grid[id] = true; return }
+            return
         }
         for (let type of ["shore", "reef", "open", "vent", "tide", "deep"]) {
             for (let id in player.hb.grid) if (habitatType(Number(id)) == type && canColonize(Number(id))) { player.hb.grid[id] = true; return }
