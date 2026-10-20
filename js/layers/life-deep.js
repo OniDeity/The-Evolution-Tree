@@ -370,12 +370,13 @@ function bestRoutine() {
     return best
 }
 
-// Fight the predator with the easiest goal once DNA is well past it; leave if a fight stalls for 10 minutes
+// Fight the predator with the easiest goal once DNA is well past it; leave if a fight lasts 10 real minutes
+// (real time: a fast Act 2 would otherwise give up a winnable fight in seconds)
 function autoPredators() {
     let id = player.pr.activeChallenge
     if (id) {
         if (canCompleteChallenge("pr", id)) { startChallenge("pr", id); return }
-        if (player.pr.runTime > 600) startChallenge("pr", id)
+        if (player.dv.fightTime > 600) startChallenge("pr", id)
         return
     }
     let open = [11, 12, 21].filter(i => (player.pr.challenges[i] || 0) < 3)
@@ -404,6 +405,7 @@ addLayer("dv", {
         peak: new Decimal(0),
         stall: 0,
         clock: 0,
+        fightTime: 0,
         regression: 0,
         regressionTime: 0,
         regressions: [],
@@ -415,6 +417,7 @@ addLayer("dv", {
     update(diff) {
         let act2 = diff * actSpeedCache[2]
         player.dv.clock += diff
+        if (player.pr && player.pr.activeChallenge) player.dv.fightTime += diff; else player.dv.fightTime = 0
         if (player.dv.regression) player.dv.regressionTime += diff
         if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - act2)
         // For the automatic devolve: how long since the Vestige gain last grew (in Act 2's time)
