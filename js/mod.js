@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.8",
+	num: "3.5.9",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.9</h3><br>
+		- An invalid number (NaN) no longer freezes the game: the broken value is put back to 0 and the game carries on, with a notice. Offspring in particular fall back to where births and deaths balance.<br>
 	<h3>v3.5.8</h3><br>
 		- Fixed: with Ancestral Memory, Act 2 could get stuck before reaching land. The habitat milestone spent every colonist on reefs and open ocean, leaving none for the Shoreline. Before land it now settles only toward the Shoreline, and abandons off-path tiles if it's short.<br>
 	<h3>v3.5.7 - Performance</h3><br>
