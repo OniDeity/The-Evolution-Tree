@@ -92,22 +92,45 @@ function setupTempData(layerData, tmpData, funcsData) {
 }
 
 
+// Refresh one layer's cached values (after changing something mid-tick), without rebuilding every layer
+function updateLayerTemp(layer) {
+	updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
+	tmp[layer].resetGain = getResetGain(layer)
+	tmp[layer].nextAt = getNextAt(layer)
+	tmp[layer].nextAtDisp = getNextAt(layer, true)
+	tmp[layer].canReset = canReset(layer)
+}
+
+let notifyTick = 0
+let tempTick = 0
+
 function updateTemp() {
 	if (tmp === undefined)
 		setupTemp()
 
 	// Display-only text (descriptions, styles and so on) is only refreshed for the tab you're looking at.
 	// With hundreds of upgrades, rebuilding every layer's text every tick was most of the game's CPU time.
-	for (let layer in funcs) updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
+	// Layers you aren't looking at are refreshed every other tick (half of them each tick): a twentieth of a second
+	// late at most, and half the work
+	tempTick = 1 - tempTick
+	let n = 0
+	for (let layer in funcs) {
+		n++
+		if (layer == player.tab || layer == player.navTab || n % 2 == tempTick || !tmp[layer].layerShown && tmp[layer].layerShown !== false) updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
+	}
 
+	// The glow that says a layer has something to buy only needs checking a few times a second
+	notifyTick = (notifyTick + 1) % 5
 	for (layer in layers){
 		tmp[layer].resetGain = getResetGain(layer)
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].canReset = canReset(layer)
 		tmp[layer].trueGlowColor = tmp[layer].glowColor
-		tmp[layer].notify = shouldNotify(layer)
-		tmp[layer].prestigeNotify = prestigeNotify(layer)
+		if (notifyTick == 0 || tmp[layer].notify === undefined) {
+			tmp[layer].notify = shouldNotify(layer)
+			tmp[layer].prestigeNotify = prestigeNotify(layer)
+		}
 		if (tmp[layer].passiveGeneration === true) tmp[layer].passiveGeneration = 1 // new Decimal(true) = decimalZero
 
 	}

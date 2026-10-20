@@ -50,7 +50,9 @@ function pressuresBeaten() {
     return player.pz ? PRESSURE_IDS.filter(id => hasChallenge("pz", id)).length : 0
 }
 
-// Instincts run every tick: tiers from the top down, then the rest
+let instinctTick = 0
+
+// Instincts: tiers from the top down, then the rest
 function runInstincts() {
     // Hold off while the Spark of Sentience is ready, so instincts can't spend or reset it away
     if (!player.ti.sentient && player.biomass.gte(SENTIENCE)) return
@@ -90,7 +92,9 @@ addLayer("pz", {
     },
     automate() {
         if (!speciesUnlocked()) return
-        runInstincts()
+        // Instincts act 5 times a second rather than every tick: just as quick for a player, a quarter of the work
+        instinctTick = (instinctTick + 1) % 4
+        if (instinctTick == 0) runInstincts()
         if (hasMilestone("pz", 0)) for (let l of ["ti", "me"]) for (let id in layers[l].upgrades) if (!isNaN(id)) buyUpg(l, id)
     },
     milestones: {

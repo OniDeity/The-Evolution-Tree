@@ -84,7 +84,7 @@ const AUTOPILOT = (function() {
                 if (staticPay && !auto) {
                     if (tmp[l].canBuyMax && (!prePass || !canReset(l))) continue
                     buyUpg(l, id)
-                    if (hasUpgrade(l, id) && tmp[l].canBuyMax) { updateTemp(); if (canReset(l)) doReset(l) }
+                    if (hasUpgrade(l, id) && tmp[l].canBuyMax) { updateLayerTemp(l); if (canReset(l)) doReset(l) }
                     continue
                 }
                 buyUpg(l, id)
@@ -163,7 +163,7 @@ const AUTOPILOT = (function() {
         // Fusion: turn the plasma down for the reset, then back up
         if (player.at.unlocked && player.gr.unlocked && canReset("fu") && !(player.hz.activeChallenge && player.fu.unlocked)) {
             const p = player.fu.points, k = hasMilestone("fu", 4) ? Infinity : 1.5
-            player.fu.temp = 1; updateTemp()
+            player.fu.temp = 1; updateLayerTemp("fu")
             if (!player.fu.unlocked || tmp.fu.resetGain.gte(p.max(1).times(k))) doReset("fu")
             player.fu.temp = 10
         }
@@ -254,7 +254,7 @@ const AUTOPILOT = (function() {
         if (player.at.unlocked && !s.spin) { s.spin = 1; player.p.spin = "boson" }
         // The Habitable Zone
         if (hasUpgrade("pl", 22) && !hasUpgrade("pl", 23) && player.pl.points.gte(10) && a1EndingReady()) {
-            if (player.pl.orbits.hab < 5) { arrangeOrbits(); updateTemp() }
+            if (player.pl.orbits.hab < 5) { arrangeOrbits(); updateLayerTemp("pl") }
             if (tmp.pl.upgrades[23].unlocked && layers.pl.upgrades[23].canAfford()) buyUpg("pl", 23)
         }
         a1Row4()
@@ -307,7 +307,7 @@ const AUTOPILOT = (function() {
             let id = longer ? 12 : 11
             if (!layers.re.buyables[id].canAfford()) break
             layers.re.buyables[id].buy()
-            updateTemp()
+            updateLayerTemp("re")
         }
     }
 
@@ -466,7 +466,6 @@ const AUTOPILOT = (function() {
     }
 
     function act2(t) {
-        updateTemp()
         a2Rows12()
         a2Branches()
         a2Row3()

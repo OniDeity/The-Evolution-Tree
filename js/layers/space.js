@@ -579,7 +579,6 @@ function probeTick(dt) {
 }
 
 function spaceTick(dt) {
-    SPACE_MEMO = {}
     probeTick(dt)
     // Drift starts again in every universe once the probes pass the Milky Way; the Swarm keeps thinking throughout
     if (driftStarted()) { player.dr.started = true; if (driftActive()) driftTick(dt); swarmTick(dt) }
@@ -611,14 +610,16 @@ addLayer("pb", {
     tooltip() { return format(player.pb.probes) + " probes" },
     update(diff) {
         if (!spaceUnlocked()) return
+        // Upgrade multipliers are worked out once a tick, not once a step
+        SPACE_MEMO = {}
         // Catch anything that went NaN since the last tick, before it spreads
         spaceRescue(spaceSnapshot())
         keepReplicating()
         diff *= spaceSpeed()
         let snap = spaceSnapshot()
-        // Long ticks run in steps of at most 10 seconds, but never more than 50 steps a tick (400 for a long offline tick):
-        // late in Act 5 the game runs so fast that more would freeze the browser. Probe growth is exact over any step.
-        let steps = Math.min(diff > 3600 * spaceSpeed() ? 400 : 50, Math.max(1, Math.ceil(diff / 10)))
+        // Long ticks run in steps of at most 10 seconds, but never more than 8 steps a tick (400 for a long offline tick):
+        // late in Act 5 the game runs so fast that more would only slow the browser down. Probe growth is exact over any step.
+        let steps = Math.min(diff > 3600 * spaceSpeed() ? 400 : 8, Math.max(1, Math.ceil(diff / 10)))
         for (let i = 0; i < steps; i++) spaceTick(diff / steps)
         spaceRescue(snap)
     },
