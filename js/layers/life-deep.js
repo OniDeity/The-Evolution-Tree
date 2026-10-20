@@ -406,6 +406,7 @@ addLayer("dv", {
         stall: 0,
         clock: 0,
         fightTime: 0,
+        realStall: 0,
         regression: 0,
         regressionTime: 0,
         regressions: [],
@@ -422,7 +423,7 @@ addLayer("dv", {
         if (player.dv.cooldown > 0) player.dv.cooldown = Math.max(0, player.dv.cooldown - act2)
         // For the automatic devolve: how long since the Vestige gain last grew (in Act 2's time)
         let g = vestigeGain()
-        if (g.gt(player.dv.peak)) { player.dv.peak = g; player.dv.stall = 0 } else player.dv.stall += act2
+        if (g.gt(player.dv.peak)) { player.dv.peak = g; player.dv.stall = 0; player.dv.realStall = 0 } else { player.dv.stall += act2; player.dv.realStall += diff }
     },
     automate() {
         devolutionAutomation()
@@ -430,10 +431,10 @@ addLayer("dv", {
         // Recapitulation: Act 2 plays itself (unless the Autopilot already does)
         if (hasUpgrade("dv", 22) && lifeUnlocked() && player.lt.genesis >= 2 && !(typeof apOn == "function" && apOn(12))) AUTOPILOT.act2(player.dv.clock)
         // Devolve on its own once the cooldown is over and the gain has stopped growing for a minute (never in the middle of a Regression)
-        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60 && !player.dv.regression && player.lt.endings.includes("tol")) devolve()
+        if (hasMilestone("dv", 0) && player.dv.auto && canDevolve() && player.dv.stall >= 60 && !player.dv.regression && (player.lt.endings.includes("tol") || player.dv.realStall >= 300)) devolve()
     },
     milestones: {
-        0: { requirementDescription: "5 devolutions", effectDescription: "Once this Loop has reached the Tree of Life, devolve on your own whenever the cooldown is over and your Vestige gain has stopped growing for a minute (see the switch below).", done() { return player.dv.count >= 5 } },
+        0: { requirementDescription: "5 devolutions", effectDescription: "Devolve on your own whenever the cooldown is over and your Vestige gain has stopped growing for a minute (before this Loop's Tree of Life, only once it has stalled for 5 real minutes). See the switch below.", done() { return player.dv.count >= 5 } },
     },
     tabFormat: [
         ["display-text", function() { return "<h2 style='color:#8fb3a0'>Devolution</h2><br>You have <h2 style='color:#8fb3a0'>" + formatWhole(player.dv.points) + "</h2> Vestiges, from " + formatWhole(player.dv.count) + " devolution" + (player.dv.count == 1 ? "" : "s") + "." }],

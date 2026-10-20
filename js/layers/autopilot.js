@@ -693,7 +693,7 @@ const AUTOPILOT = (function() {
                 if (pick === null || !layers.dv.buyables[pick].canAfford()) break
                 layers.dv.buyables[pick].buy()
             }
-            if (canDevolve() && player.lt.endings.includes("tol") && !hasMilestone("dv", 0)) devolve()
+            if (canDevolve() && (player.lt.endings.includes("tol") || player.dv.realStall >= 300) && !hasMilestone("dv", 0)) devolve()
             regressionAutomation()
         }
         // v3.6: the deeper tiers and the Dark Ages
