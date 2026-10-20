@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.7",
+	num: "3.5.8",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.8</h3><br>
+		- Fixed: with Ancestral Memory, Act 2 could get stuck before reaching land. The habitat milestone spent every colonist on reefs and open ocean, leaving none for the Shoreline. Before land it now settles only toward the Shoreline, and abandons off-path tiles if it's short.<br>
 	<h3>v3.5.7 - Performance</h3><br>
 		- The game does much less work each tick (about 3x less mid-Act 6, about 10x less at the end), with nothing taken out: Act 5 runs in fewer, exact steps, its multipliers are worked out once a tick, off-screen layers refresh every other tick, Act 3's instincts act 5 times a second and the glow that says a layer has something to buy updates 4 times a second.<br>
 		- Fixed: with a very fast Act 4, Planned Obsolescence (and the Autopilot) could make a new civilization go extinct over and over before it ever grew. Stalls are now judged at no more than 60x real time.<br>
