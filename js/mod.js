@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.5",
+	num: "3.5.6",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.6 - Less Waiting</h3><br>
+		- Reversals: rewinds now grow by 2 minutes a Reversal (instead of quadratically, up to over an hour).<br>
+		- 4 Entropy Trials (after 2 Reversals): reverse into a harder universe and reach the Heat Death under its rules, for Negentropy x2, rewinds twice as fast, Realities x3, or Negentropy that grows with every Reversal. A Trial left unbeaten for 20 minutes is given up.<br>
+		- Negentropy upgrades cost twice as much.<br>
+		- The Autopilot: <b>Subroutines</b>, a buyable that makes Routines x1.3 a level, and three Routine upgrades (Macros, Recursion, Compiler). Modules cost about 30% less.<br>
 	<h3>v3.5.5 - Less Grind</h3><br>
 		- Devolution, reworked: fewer, better devolutions (about 25 to grow the whole mirror tree, not over 100).<br>
 		- 8 Vestige upgrades: Vestiges x2, a 3-minute cooldown, keep Act 2's milestones when you devolve, Vestiges that grow with your devolutions and your maxed nodes, Act 2 3x as fast, and <b>Recapitulation</b>: Act 2 plays itself all the way to the Tree of Life.<br>
