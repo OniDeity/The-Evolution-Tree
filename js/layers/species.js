@@ -159,7 +159,7 @@ addLayer("species", {
         "blank",
         ["display-text", function() { return sentienceGoalText() }],
         "blank",
-        ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"], ["mx", "vi", "er"]]],
+        ["tree", [["sc", "sf"], ["ti", "ix"], ["cf", "me", "sn", "cv"], ["cu", "ar", "pz"], ["mx", "vi", "er", "pg"]]],
     ],
 })
 

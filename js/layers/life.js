@@ -89,7 +89,7 @@ addLayer("life", {
         "blank",
         ["display-text", function() { return "<h2 style='color:#7ed957'>Act 2: Life</h2><br>You have <h2 style='color:#7ed957;text-shadow:0 0 10px #7ed957'>" + format(player.dna) + "</h2> DNA (+" + format(dnaGain()) + "/sec)" }],
         "blank",
-        ["tree", [["fo", "gx", "bd", "dv", "fn"], ["c", "ph"], ["gt", "mu", "re", "eg"], ["ge", "ad", "hb", "oc"], ["mc", "in", "pr", "sy"], ["hs", "ho", "te", "se"]]],
+        ["tree", [["fo", "gx", "bd", "dv", "ab", "fn"], ["c", "ph"], ["gt", "mu", "re", "eg"], ["ge", "ad", "hb", "oc"], ["mc", "in", "pr", "sy"], ["hs", "ho", "te", "se"]]],
     ],
 })
 

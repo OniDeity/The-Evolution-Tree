@@ -679,12 +679,14 @@ const AUTOPILOT = (function() {
         if (devolutionUnlocked()) {
             for (let i = 0; i < 20; i++) {
                 let next = DV_ORDER.find(id => getBuyableAmount("dv", id).eq(0) && dvNodeUnlocked(id))
-                let pick = next || DV_ORDER.filter(id => getBuyableAmount("dv", id).lt(DEVOLUTION_MAX)).reduce((a, id) => a === null || layers.dv.buyables[id].cost().lt(layers.dv.buyables[a].cost()) ? id : a, null)
+                let pick = next || DV_ORDER.filter(id => getBuyableAmount("dv", id).lt(devolutionMax())).reduce((a, id) => a === null || layers.dv.buyables[id].cost().lt(layers.dv.buyables[a].cost()) ? id : a, null)
                 if (pick === null || !layers.dv.buyables[pick].canAfford()) break
                 layers.dv.buyables[pick].buy()
             }
             if (canDevolve() && player.lt.endings.includes("tol") && !hasMilestone("dv", 0)) devolve()
             regressionAutomation()
+            tierAutomation("ab")
+            if (supercontinentUnlocked()) tierAutomation("pg")
         }
         if (speciesDeepUnlocked()) {
             for (let id of Object.keys(MX_UPGRADES)) if (!hasUpgrade("mx", id) && tmp.mx.upgrades[id] && tmp.mx.upgrades[id].unlocked) buyUpg("mx", id)

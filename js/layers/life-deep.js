@@ -165,6 +165,10 @@ const DEVOLUTION = {
     51: { layer: "c", name: "The Last Common Ancestor", auto: "Act 2 starts with every Cell upgrade but the Cambrian Explosion. <b>Back to one cell.</b>" },
 }
 const DEVOLUTION_MAX = 5
+// Deep Nodes (Abiogenesis) lets every node go to level 10
+function devolutionMax() {
+    return tierUp("ab", 22) ? 10 : DEVOLUTION_MAX
+}
 const DEFAULT_BODY_PLAN = ["a", "a", "b", "b", "a", "a"]
 
 function devolutionUnlocked() {
@@ -193,17 +197,23 @@ function vestigeMult() {
     if (hasUpgrade("dv", 11)) m = m.times(2)
     if (regressionBeaten(81)) m = m.times(2)
     if (hasUpgrade("dv", 21)) m = m.times(1 + player.dv.count / 10)
-    if (hasUpgrade("dv", 23)) m = m.times(1 + Object.keys(DEVOLUTION).filter(id => getBuyableAmount("dv", id).gte(DEVOLUTION_MAX)).length / 2)
+    if (hasUpgrade("dv", 23)) m = m.times(1 + Object.keys(DEVOLUTION).filter(id => getBuyableAmount("dv", id).gte(devolutionMax())).length / 2)
+    if (tierUp("ab", 11)) m = m.times(3)
+    if (tierIn("ab", 81)) m = m.times(0.1)
     return m
 }
 
 function vestigeGain() {
     if (!devolutionUnlocked() || player.dna.lt(1e100)) return new Decimal(0)
-    return new Decimal(Math.pow(player.dna.log10().toNumber() / 50, regressionBeaten(83) ? 3.5 : 3)).times(vestigeMult()).floor()
+    let g = new Decimal(Math.pow(player.dna.log10().toNumber() / 50, regressionBeaten(83) ? 3.5 : 3)).times(vestigeMult())
+    if (tierBeaten("ab", 83)) g = g.pow(1.1)
+    return g.floor()
 }
 
 // Life needs time to forget: devolving has a cooldown in Act 2's time, so a faster Act 2 shortens it
 function devolveCooldown() {
+    if (tierIn("ab", 82)) return 600
+    if (tierBeaten("ab", 82)) return 60
     return hasUpgrade("dv", 12) ? 180 : 600
 }
 
@@ -213,7 +223,17 @@ function canDevolve() {
 
 // Back to one cell: every Act 2 layer starts over. The Tree of Life itself stays (and, with Ancestral Memory, every milestone)
 function act2Rewind() {
-    for (let l of LIFE_LAYERS) resetKeeping(l, l == "mc" ? ["upgrades"].concat(hasUpgrade("dv", 13) ? ["milestones"] : []) : hasUpgrade("dv", 13) ? ["milestones"] : [])
+    let traits = deepCopy(player.mu.traits)
+    for (let l of LIFE_LAYERS) {
+        let keep = hasUpgrade("dv", 13) ? ["milestones"] : []
+        if (l == "mc") keep.push("upgrades")
+        // Abiogenesis keeps: RNA World (Cell, Heritage and Adaptation upgrades), Chirality (the body plan)
+        if (tierUp("ab", 13) && ["c", "ge", "ad"].includes(l)) keep.push("upgrades")
+        if (tierUp("ab", 14) && l == "mc") keep.push("plan")
+        resetKeeping(l, keep)
+    }
+    // Chirality: a quarter of every trait's copies stay
+    if (tierUp("ab", 14)) for (let k in traits) player.mu.traits[k] = Math.floor(traits[k] / 4)
     player.dna = new Decimal(10)
     act2HeadStarts()
 }
@@ -248,7 +268,7 @@ function inRegression(id) {
 }
 
 function regressionBeaten(id) {
-    return !!(player.dv && player.dv.regressions.includes(String(id)))
+    return !!(player.dv && player.dv.regressions.includes(String(id)) && !tierIn("ab", 83))
 }
 
 function startRegression(id) {
@@ -496,10 +516,10 @@ addLayer("dv", {
         cost(x) { return Decimal.pow(3, Math.floor(id / 10) - 1).times(Decimal.pow(2, x)).times(8).div(regressionBeaten(82) ? 2 : 1).ceil() },
         display() {
             let n = getBuyableAmount("dv", this.id).toNumber()
-            return "<i>" + layers[d.layer].name + "</i><br>" + d.auto + "<br>Level " + n + " / " + DEVOLUTION_MAX + (n < DEVOLUTION_MAX ? "<br>Cost: " + formatWhole(this.cost()) + " Vestiges" : "")
+            return "<i>" + layers[d.layer].name + "</i><br>" + d.auto + "<br>Level " + n + " / " + devolutionMax() + (n < devolutionMax() ? "<br>Cost: " + formatWhole(this.cost()) + " Vestiges" : "")
         },
         unlocked() { return true },
-        canAfford() { return dvNodeUnlocked(Number(id)) && getBuyableAmount("dv", this.id).lt(DEVOLUTION_MAX) && player.dv.points.gte(this.cost()) },
+        canAfford() { return dvNodeUnlocked(Number(id)) && getBuyableAmount("dv", this.id).lt(devolutionMax()) && player.dv.points.gte(this.cost()) },
         buy() {
             player.dv.points = player.dv.points.sub(this.cost())
             setBuyableAmount("dv", this.id, getBuyableAmount("dv", this.id).add(1))

@@ -3,7 +3,7 @@ let modInfo = {
 	id: "evolutiontree",
 	author: "OniDeity",
 	pointsName: "energy",
-	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/tailwinds.js", "layers/constants.js", "layers/autopilot.js", "layers/achievements.js", "tree.js"],
+	modFiles: ["layers/cosmos.js", "layers/cosmos-row3.js", "layers/cosmos-branches.js", "layers/cosmos-row4.js", "layers/life.js", "layers/life-row3.js", "layers/life-row4.js", "layers/life-side.js", "layers/life-branches.js", "layers/life-row5.js", "layers/life-deep.js", "layers/species.js", "layers/species-branches.js", "layers/species-extra.js", "layers/species-deep.js", "layers/civ.js", "layers/civ-extinction.js", "layers/civ-branches.js", "layers/civ-side.js", "layers/civ-deep.js", "layers/space.js", "layers/space-drift.js", "layers/space-universe.js", "layers/space-multiverse.js", "layers/space-reversal.js", "layers/space-side.js", "layers/genesis.js", "layers/branch-memory.js", "layers/tailwinds.js", "layers/constants.js", "layers/autopilot.js", "layers/deep-tiers.js", "layers/achievements.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",

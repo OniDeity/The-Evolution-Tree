@@ -26,6 +26,9 @@ function lineageMult() {
     if (hasChallenge("mx", 31)) m = m.times(2)
     if (hasUpgrade("lt", 43)) m = m.times(2)
     if (hasMilestone("er", 7)) m = m.times(10)
+    if (tierUp("pg", 22)) m = m.times(player.pg.total.add(1).pow(2))
+    if (tierIn("pg", 81)) m = m.times(0.01)
+    if (tierBeaten("pg", 83)) m = m.times(10)
     m = m.times(eonEffect("lineages"))
     // Every era you've closed makes Lineages 5x as plentiful
     if (player.er) m = m.times(Decimal.pow(5, player.er.count))
@@ -50,9 +53,17 @@ function inExtinction(id) {
 
 // Wipe Act 3 back to a handful of survivors. The Spark of Sentience stays lit.
 function extinctionWipe() {
+    // Supercontinent keeps: Living Fossils (Metabolism and a tenth of every tier), Index Fossils (speciations and radiations)
+    let meta = getBuyableAmount("me", 11), tiers = [], sn = player.sn.points, ar = player.ar.points
+    for (let t = 1; t <= 8; t++) tiers[t] = [player.ti.amounts[t], getBuyableAmount("ti", 10 + t)]
     speciesReset(2)
     player.ar.points = new Decimal(hasUpgrade("mx", 14) ? 1 : 0)
     if (hasUpgrade("mx", 13)) player.sn.points = new Decimal(2)
+    if (tierUp("pg", 13)) {
+        setBuyableAmount("me", 11, meta)
+        for (let t = 1; t <= 8; t++) { player.ti.amounts[t] = tiers[t][0].div(10).floor(); setBuyableAmount("ti", 10 + t, tiers[t][1].div(10).floor()) }
+    }
+    if (tierUp("pg", 14)) { player.sn.points = player.sn.points.max(sn); player.ar.points = player.ar.points.max(ar) }
     player.mx.runTime = 0
     player.mx.peak = new Decimal(0)
     player.mx.stall = 0
@@ -274,6 +285,7 @@ function virusInterval() {
 }
 
 function virusEffect() {
+    if (tierIn("pg", 83)) return new Decimal(1)
     if (!player.vi || !virusesUnlocked()) return new Decimal(1)
     return player.vi.viruses.max(1).log10().add(1).pow(2)
 }
@@ -346,6 +358,8 @@ function eonGain() {
     if (!erasUnlocked() || player.mx.points.lt(1e6)) return new Decimal(0)
     let g = player.mx.points.log10().sub(5).pow(2).floor()
     g = g.times(eonUpgradeMult())
+    if (tierUp("pg", 11)) g = g.times(2)
+    if (tierBeaten("pg", 82)) g = g.times(3)
     return g.floor()
 }
 

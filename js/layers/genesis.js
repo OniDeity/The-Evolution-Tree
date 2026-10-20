@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv", "ap"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv", "ap", "ab", "pg"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -45,8 +45,11 @@ function actSpeed(act) {
         if (inRegression(84)) s *= 0.2
         if (regressionBeaten(84)) s *= 2
         if (hasUpgrade("dv", 24)) s *= 3
+        if (tierUp("ab", 23)) s *= Math.sqrt(1 + player.ab.total.toNumber())
     }
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
+    if (act == 3 && tierIn("pg", 82)) s *= 0.01
+    if (act == 3 && tierUp("pg", 23)) s *= Math.sqrt(1 + player.pg.total.toNumber())
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")
     s *= negentropyAllSpeed()
@@ -127,11 +130,11 @@ function checkEndings() {
 // ------------------------------------------------------------
 // Each Loop opens the next act's deepening, and its Genesis also needs that deepening's goal
 const LOOP_GOALS = {
-    2: { name: "Fully Vestigial", text: "every Devolution node at level 5", done() { return devolutionLevels() >= 50 } },
+    2: { name: "The First Cell", text: "buy The First Cell, the last Abiogenesis upgrade", done() { return tierUp("ab", 24) } },
     4: { name: "The Space Age", text: "buy The Space Age, the last upgrade of the Space Age", done() { return hasUpgrade("ag5", 14) } },
     6: { name: "The Last Answer", text: "buy The Last Answer, the Autopilot's last module", done() { return hasUpgrade("ap", 23) } },
     5: { name: "Let There Be Light, Again", text: "buy Let There Be Light, Again, the last Negentropy upgrade", done() { return hasUpgrade("rv", 32) } },
-    3: { name: "The Phanerozoic", text: "survive all of the Big Five and reach the 10th Geological Era", done() { return bigFiveBeaten() >= 5 && player.er.count >= 10 } },
+    3: { name: "The Great Unconformity", text: "buy The Great Unconformity, the last Supercontinent upgrade", done() { return tierUp("pg", 24) } },
 }
 
 function loopGoal() {
