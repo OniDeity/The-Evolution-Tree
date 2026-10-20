@@ -57,7 +57,9 @@ function strataGain() {
 // Wipes the civilization back to a handful of apes around a fire. Deep Time decides what survives.
 function civReset() {
     for (let k in player.sm.res) player.sm.res[k] = 0
-    for (let b of BUILDINGS) setBuyableAmount("sm", b.id, new Decimal(0))
+    // Remembered Cities (the Stellar Age): a quarter of every building stays
+    let quarter = player.ag6 && hasUpgrade("ag6", 14)
+    for (let b of BUILDINGS) setBuyableAmount("sm", b.id, quarter ? getBuyableAmount("sm", b.id).div(4).floor() : new Decimal(0))
     player.vg.people = 0
     player.vg.growth = 0
     player.vg.starve = 0

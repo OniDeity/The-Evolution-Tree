@@ -38,13 +38,21 @@ const AP_BOOSTS = {
     33: { title: "Compiler", text: "Subroutines are stronger: x1.4 a level instead of x1.3.", cost: 3000 },
 }
 
+function subroutineBase() {
+    return (hasUpgrade("ap", 33) ? 1.4 : 1.3) + (tierBeaten("kr", 83) ? 0.1 : 0)
+}
+
 function subroutineMult() {
-    return Math.pow(hasUpgrade("ap", 33) ? 1.4 : 1.3, getBuyableAmount("ap", 11).toNumber())
+    return Math.pow(subroutineBase(), getBuyableAmount("ap", 11).toNumber())
 }
 
 function routineGain() {
     if (!autopilotUnlocked()) return 0
-    let g = (1 + player.lt.endings.length) * (1 + 0.5 * apModules()) / 60 * subroutineMult()
+    let perModule = tierIn("kr", 82) ? 0 : tierBeaten("kr", 82) ? 1 : 0.5
+    let g = (1 + player.lt.endings.length) * (1 + perModule * apModules()) / 60 * subroutineMult()
+    if (tierUp("kr", 11)) g *= 3
+    if (tierUp("kr", 22)) g *= 1 + player.kr.total.toNumber()
+    if (tierIn("kr", 81)) g *= 0.1
     if (hasUpgrade("ap", 31)) g *= 2
     if (hasUpgrade("ap", 32)) g *= 1 + Math.log10(player.rv.total.toNumber() + 1) / 2
     return g
@@ -685,9 +693,10 @@ const AUTOPILOT = (function() {
             }
             if (canDevolve() && player.lt.endings.includes("tol") && !hasMilestone("dv", 0)) devolve()
             regressionAutomation()
-            tierAutomation("ab")
-            if (supercontinentUnlocked()) tierAutomation("pg")
         }
+        // v3.6: the deeper tiers and the Dark Ages
+        for (let l in DEEP_TIERS) tierAutomation(l)
+        darkAgeAutomation()
         if (speciesDeepUnlocked()) {
             for (let id of Object.keys(MX_UPGRADES)) if (!hasUpgrade("mx", id) && tmp.mx.upgrades[id] && tmp.mx.upgrades[id].unlocked) buyUpg("mx", id)
             if (!player.mx.activeChallenge && !(mxAutoUnlocked() && player.mx.auto) && lineageGain().gte(1) && (!hasUpgrade("mx", 34) || player.mx.stall >= 30)) massExtinction()
@@ -804,14 +813,14 @@ addLayer("ap", {
         title: m.title,
         description: m.text,
         cost: new Decimal(m.cost),
-        unlocked() { return id != 23 || AP_PLAYS.every(x => hasUpgrade("ap", x)) },
+        unlocked() { return id != 23 || (AP_PLAYS.every(x => hasUpgrade("ap", x)) && tierUp("kr", 24)) },
         style() { return id == 23 ? { width: "260px", height: "130px" } : { width: "170px", height: id > 30 ? "100px" : "130px" } },
     }])),
     buyables: {
         11: {
             title: "Subroutines",
-            cost(x) { return Decimal.pow(2, x === undefined ? getBuyableAmount("ap", 11) : x).times(40) },
-            display() { return "Routines x" + (hasUpgrade("ap", 33) ? 1.4 : 1.3) + " a level (now x" + format(subroutineMult(), 2) + ").<br>Level " + formatWhole(getBuyableAmount("ap", 11)) + "<br>Cost: " + format(this.cost()) + " Routines" },
+            cost(x) { return Decimal.pow(2, x === undefined ? getBuyableAmount("ap", 11) : x).times(40).div(tierUp("kr", 14) ? 2 : 1).times(tierIn("kr", 83) ? 10 : 1) },
+            display() { return "Routines x" + format(subroutineBase(), 1) + " a level (now x" + format(subroutineMult(), 2) + ").<br>Level " + formatWhole(getBuyableAmount("ap", 11)) + "<br>Cost: " + format(this.cost()) + " Routines" },
             canAfford() { return player.ap.points.gte(this.cost()) },
             buy() { player.ap.points = player.ap.points.sub(this.cost()); setBuyableAmount("ap", 11, getBuyableAmount("ap", 11).add(1)) },
             style() { return { width: "200px", height: "110px" } },

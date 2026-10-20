@@ -238,3 +238,100 @@ deepTier({
         83: { name: "Sterile Seas", text: "Viruses do nothing.", reward: "Lineages x10." },
     },
 })
+
+// ------------------------------------------------------------
+//  ACT 5: COSMIC CYCLES. Once the light is lit again, let the whole cycle of Reversals begin anew
+// ------------------------------------------------------------
+function cyclesUnlocked() {
+    return reversalUnlocked() && (hasUpgrade("rv", 32) || player.cy.count > 0 || player.cy.total.gt(0))
+}
+
+function aeonGain() {
+    if (!reversalUnlocked() || !hasUpgrade("rv", 32)) return new Decimal(0)
+    let g = new Decimal(Math.pow(player.rv.total.add(1).log10().toNumber(), 2))
+    if (tierUp("cy", 21)) g = g.times(2)
+    if (tierBeaten("cy", 81)) g = g.times(2)
+    return g.floor()
+}
+
+deepTier({
+    id: "cy", name: "Cosmic Cycles", symbol: "Cy", currency: "Aeons", verb: "cycle", color: "#f9cb9c",
+    row: 45, position: 2, branches: ["rv"],
+    shown: cyclesUnlocked,
+    gain: aeonGain,
+    need() { return "Buy Let There Be Light, Again first." },
+    what: "Begin the cycle again",
+    warn: "Negentropy, its upgrades and your count of Reversals start over (Entropy Trials stay).",
+    goal() { return hasUpgrade("rv", 32) },
+    goalText: "buy Let There Be Light, Again once more",
+    lore: "Bang, expansion, heat death, reversal, bang. Maybe it has always been this way, and every universe is the echo of the one before.",
+    text: "<b>A new cycle</b> starts the Reversals over: Negentropy, its upgrades and your count of Reversals (Entropy Trials stay, and so do Reversal milestones with Conformal Cycles). You need Let There Be Light, Again; Aeons come from the digits of all the Negentropy you've made since the last cycle.",
+    reset() {
+        resetKeeping("rv", tierUp("cy", 12) ? ["trials", "milestones"] : ["trials"])
+    },
+    upgrades: {
+        11: ["Oscillating Universe", "Negentropy x3.", 1],
+        12: ["Conformal Cycles", "A new cycle keeps every Reversal milestone.", 2],
+        13: ["Eternal Inflation", "Reversals keep every universe you've consumed, every kind of physics and every Project.", 4],
+        14: ["Quantum Foam", "Rewinds go 3x as fast.", 8],
+        21: ["Big Crunch", "Aeons x2.", 15],
+        22: ["Big Bounce", "Negentropy grows with every Aeon you've ever made.", 30],
+        23: ["Tolman's Paradox", "Act 5 runs faster with every Aeon you've ever made.", 60],
+        24: ["Eternal Return", "The same universe, forever, and never quite the same. <b>Loop 5's goal.</b>", 150],
+    },
+    challenges: {
+        81: { name: "Long Night", text: "Rewinds go 5x slower.", reward: "Aeons x2." },
+        82: { name: "Closed Universe", text: "Negentropy x0.2.", reward: "Negentropy x3." },
+        83: { name: "Lost Light", text: "Entropy Trials' rewards do nothing.", reward: "Rewinds go twice as fast." },
+    },
+})
+
+// ------------------------------------------------------------
+//  ACT 6: THE KERNEL. Reboot the Autopilot, keeping what it learned
+// ------------------------------------------------------------
+function kernelUnlocked() {
+    return autopilotUnlocked() && (hasUpgrade("ap", 22) || player.kr.count > 0 || player.kr.total.gt(0))
+}
+
+function threadGain() {
+    if (!autopilotUnlocked() || !hasUpgrade("ap", 22) || player.ap.total.lt(1e4)) return new Decimal(0)
+    let g = new Decimal(Math.pow(player.ap.total.log10().toNumber() - 2, 2))
+    if (tierUp("kr", 21)) g = g.times(2)
+    if (tierBeaten("kr", 81)) g = g.times(2)
+    return g.floor()
+}
+
+deepTier({
+    id: "kr", name: "Kernel", symbol: "Kr", currency: "Threads", verb: "reboot", color: "#a4c2f4",
+    row: 51, position: 5, branches: ["ap"],
+    shown: kernelUnlocked,
+    gain: threadGain,
+    need() { return "Buy The Loops and write 10,000 Routines in all." },
+    what: "Reboot the Autopilot",
+    warn: "Routines, Subroutines and the Routine upgrades start over (modules stay).",
+    goal() { return player.ap.total.gte(1e4) },
+    goalText: "write 10,000 Routines",
+    lore: "Underneath every routine, something has to decide what runs next. Rewrite that, and everything above it runs better.",
+    text: "<b>A reboot</b> starts the Autopilot's writing over: Routines, Subroutines and Macros, Recursion and Compiler (modules stay). You need The Loops and 10,000 Routines written; Threads come from their digits. The Last Answer needs The Halting Problem.",
+    reset() {
+        player.ap.points = new Decimal(0)
+        player.ap.total = new Decimal(0)
+        setBuyableAmount("ap", 11, tierUp("kr", 13) ? getBuyableAmount("ap", 11).div(2).floor() : new Decimal(0))
+        if (!tierUp("kr", 12)) player.ap.upgrades = player.ap.upgrades.filter(id => Number(id) < 30)
+    },
+    upgrades: {
+        11: ["Threads", "Routines x3.", 1],
+        12: ["Persistent Storage", "A reboot keeps Macros, Recursion and Compiler.", 2],
+        13: ["Cache", "A reboot keeps half your Subroutines.", 4],
+        14: ["Pipelining", "Subroutines cost half as much.", 8],
+        21: ["Hyperthreading", "Threads x2.", 15],
+        22: ["Just in Time", "Routines grow with every Thread you've ever made.", 30],
+        23: ["Overclock", "Acts 1 to 5 run faster with every Thread you've ever made.", 60],
+        24: ["The Halting Problem", "Whether a program ever stops can't be decided in general. This one will. <b>The Last Answer needs it.</b>", 150],
+    },
+    challenges: {
+        81: { name: "Infinite Loop", text: "Routines x0.1.", reward: "Threads x2." },
+        82: { name: "Race Condition", text: "Modules don't make Routines faster.", reward: "Every module makes Routines +100% instead of +50%." },
+        83: { name: "Memory Leak", text: "Subroutines cost 10x as much.", reward: "Subroutines are x0.1 stronger a level." },
+    },
+})

@@ -26,7 +26,7 @@ for (let a in ACT_LAYERS) for (let l of ACT_LAYERS[a]) LAYER_ACT[l] = Number(a)
 // keep their own pace, so a faster act never makes them harder
 const SPEED_EXEMPT = ["nu", "ps", "sw", "ph", "oc", "ho", "hs", "te", "ix", "cv", "tr", "sg"]
 
-const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "rv", "ap", "ab", "pg"]
+const GENESIS_LAYERS = ["gn", "lt", "mm", "si", "bx", "cn", "gx", "dv", "mx", "vi", "er", "ig", "ag1", "ag2", "ag3", "ag4", "ag5", "ag6", "ag7", "rv", "ap", "ab", "pg", "cy", "kr"]
 
 function genesisUnlocked() {
     return !!(player.lt && (player.lt.genesis > 0 || (player.mv && player.mv.heatDeath)))
@@ -48,12 +48,15 @@ function actSpeed(act) {
         if (tierUp("ab", 23)) s *= Math.sqrt(1 + player.ab.total.toNumber())
     }
     if (act == 3 && hasUpgrade("er", 21)) s *= 2
+    if (act == 4 && player.ag7 && hasUpgrade("ag7", 13)) s *= 1 + Math.log10(player.ag7.points.toNumber() + 1)
     if (act == 3 && tierIn("pg", 82)) s *= 0.01
     if (act == 3 && tierUp("pg", 23)) s *= Math.sqrt(1 + player.pg.total.toNumber())
     s *= singularityFactor()
     if (act == 1) s *= constantEffect("tick")
     s *= negentropyAllSpeed()
     s *= tailwind(act)
+    if (act == 5 && tierUp("cy", 23)) s *= Math.sqrt(1 + player.cy.total.toNumber())
+    if (tierUp("kr", 23)) s *= 1 + Math.log10(player.kr.total.toNumber() + 1)
     return s
 }
 
@@ -131,9 +134,9 @@ function checkEndings() {
 // Each Loop opens the next act's deepening, and its Genesis also needs that deepening's goal
 const LOOP_GOALS = {
     2: { name: "The First Cell", text: "buy The First Cell, the last Abiogenesis upgrade", done() { return tierUp("ab", 24) } },
-    4: { name: "The Space Age", text: "buy The Space Age, the last upgrade of the Space Age", done() { return hasUpgrade("ag5", 14) } },
+    4: { name: "The Galactic Age", text: "buy The Galactic Age, the last upgrade of the Galactic Age", done() { return hasUpgrade("ag7", 14) } },
     6: { name: "The Last Answer", text: "buy The Last Answer, the Autopilot's last module", done() { return hasUpgrade("ap", 23) } },
-    5: { name: "Let There Be Light, Again", text: "buy Let There Be Light, Again, the last Negentropy upgrade", done() { return hasUpgrade("rv", 32) } },
+    5: { name: "Eternal Return", text: "buy Eternal Return, the last Cosmic Cycles upgrade", done() { return tierUp("cy", 24) } },
     3: { name: "The Great Unconformity", text: "buy The Great Unconformity, the last Supercontinent upgrade", done() { return tierUp("pg", 24) } },
 }
 
@@ -305,7 +308,7 @@ addLayer("gn", {
         "blank",
         ["display-text", function() { return genesisGuide() }],
         "blank",
-        ["tree", [["lt"], ["mm", "si", "bx", "tw", "ap"]]],
+        ["tree", [["lt"], ["mm", "si", "bx", "tw"], ["ap", "kr"]]],
     ],
 })
 

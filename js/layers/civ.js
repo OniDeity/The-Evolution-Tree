@@ -532,7 +532,7 @@ addLayer("extinction", {
                 "You have <h2 style='color:#d9774b;text-shadow:0 0 10px #d9774b'>" + formatWhole(player.ex.points) + "</h2> Strata"
         }],
         "blank",
-        ["tree", [["ls", "ch"], ["sm", "tr"], ["br", "vg", "kn", "wk"], ["wn", "ex", "dt"], ["ig", "ag1", "ag2"], ["ag3", "ag4", "ag5"]]],
+        ["tree", [["ls", "ch"], ["sm", "tr"], ["br", "vg", "kn", "wk"], ["wn", "ex", "dt"], ["ig", "ag1", "ag2", "ag3"], ["ag4", "ag5", "ag6", "ag7"]]],
     ],
 })
 

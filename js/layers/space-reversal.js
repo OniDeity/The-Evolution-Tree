@@ -24,6 +24,9 @@ function rewindSpeed() {
     if (hasUpgrade("rv", 21)) s *= 1 + Math.log10(player.rv.total.toNumber() + 1) / 2
     if (hasUpgrade("rv", 31)) s *= 2
     if (entropyTrialBeaten(92)) s *= 2
+    if (tierUp("cy", 14)) s *= 3
+    if (tierIn("cy", 81)) s *= 0.2
+    if (tierBeaten("cy", 83)) s *= 2
     return s
 }
 
@@ -37,6 +40,10 @@ function negentropyGain() {
     if (hasUpgrade("rv", 22)) g = g.times(2)
     if (hasUpgrade("lt", 46)) g = g.times(2)
     if (entropyTrialBeaten(91)) g = g.times(2)
+    if (tierUp("cy", 11)) g = g.times(3)
+    if (tierUp("cy", 22)) g = g.times(player.cy.total.add(1))
+    if (tierIn("cy", 82)) g = g.times(0.2)
+    if (tierBeaten("cy", 82)) g = g.times(3)
     if (entropyTrialBeaten(94)) g = g.times(1 + player.rv.count / 5)
     return g.floor()
 }
@@ -58,6 +65,8 @@ function negentropyAllSpeed() {
 function reverse() {
     let g = negentropyGain()
     if (g.lt(1) || rewinding()) return
+    // Eternal Inflation (Cosmic Cycles): universes, physics and Projects survive the rewind
+    let inflation = tierUp("cy", 13) ? { count: player.un.count, collected: deepCopy(player.un.collected), pj: player.pj.upgrades.slice() } : null
     player.rv.pending = g
     player.rv.rewind = rewindTime()
     player.rv.count++
@@ -79,6 +88,7 @@ function reverse() {
     resetKeeping("pb", hasMilestone("rv", 2) ? ["milestones", "upgrades", "autoLaunch", "autoTrust", "trustSplit"] : ["autoLaunch"])
     resetKeeping("hv", hasMilestone("rv", 2) ? ["milestones", "upgrades", "auto"] : ["auto"])
     if (hasUpgrade("rv", 13)) { player.un.count = 10; for (let k of PHYSICS_KEYS) player.un.collected[k] = true }
+    if (inflation) { player.un.count = Math.max(player.un.count, inflation.count); Object.assign(player.un.collected, inflation.collected); player.pj.upgrades = inflation.pj }
     keepReplicating()
 }
 
@@ -118,7 +128,7 @@ function inEntropyTrial(id) {
 }
 
 function entropyTrialBeaten(id) {
-    return !!(player.rv && player.rv.trials.includes(String(id)))
+    return !!(player.rv && player.rv.trials.includes(String(id)) && !tierIn("cy", 83))
 }
 
 function entropyTrialsUnlocked() {

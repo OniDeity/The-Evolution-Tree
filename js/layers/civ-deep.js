@@ -34,6 +34,13 @@ const AGES = [
     { id: "ag5", name: "Space", currency: "Launches", color: "#b4a7d6", from: "ag4", fromName: "Data", req: 100,
       lore: "The first footprints on another world. The cradle is finally too small.",
       upgrades: [["Reusable Rockets", "Launches x3."], ["Orbital Servers", "Gain 10% of your Data gain every second."], ["Space Elevators", "Act 5 runs faster with your Launches."], ["The Space Age", "Every Age's currency x10. One civilization, five Ages, and the sky."]] },
+    // v3.6: two more Ages, past the sky
+    { id: "ag6", name: "Stellar", currency: "Dyson Swarms", color: "#f6b26b", from: "ag5", fromName: "Launches", req: 100,
+      lore: "A shell of mirrors around the sun, catching every photon it gives off. The civilization finally has power to spare.",
+      upgrades: [["Solar Sails", "Dyson Swarms x3."], ["Starlifting", "Gain 10% of your Launch gain every second."], ["Kardashev II", "Your civilization gets stronger with Dyson Swarms."], ["Remembered Cities", "Extinctions keep a quarter of every building."]] },
+    { id: "ag7", name: "Galactic", currency: "Starlanes", color: "#8e7cc3", from: "ag6", fromName: "Dyson Swarms", req: 100,
+      lore: "Lanes of traffic between the stars, a hundred thousand years long. The galaxy becomes one place.",
+      upgrades: [["Warp Lanes", "Starlanes x3."], ["Galactic Archive", "Gain 10% of your Dyson Swarm gain every second."], ["Kardashev III", "Act 4 runs faster with your Starlanes."], ["The Galactic Age", "Every Age's currency x10 again. Seven Ages, and a galaxy. <b>Loop 4's goal.</b>"]] },
 ]
 const AGE_IDS = AGES.map(a => a.id)
 
@@ -48,6 +55,7 @@ function ageCurrency(id) {
 // Every Age's currency makes Ingenuity grow faster (the square root of what you have)
 function ageIngenuityMult() {
     let m = new Decimal(1)
+    if (inDarkAge(83)) return m
     for (let id of AGE_IDS) m = m.times(player[id].points.add(1).sqrt())
     return m
 }
@@ -56,7 +64,7 @@ function ageIngenuityMult() {
 function ageCivBoost() {
     if (!player.ig || !progressUnlocked()) return 1
     let m = 1
-    for (let [n, id] of AGE_IDS.slice(0, 4).entries()) if (hasUpgrade(id, 13)) m *= 1 + Math.log10(player[id].points.toNumber() + 1) / 2
+    for (let id of ["ag1", "ag2", "ag3", "ag4", "ag6"]) if (hasUpgrade(id, 13)) m *= 1 + Math.log10(player[id].points.toNumber() + 1) / 2
     return m
 }
 
@@ -68,10 +76,14 @@ function launchSpeed() {
 function ingenuityGain() {
     if (!progressUnlocked()) return new Decimal(0)
     let g = new Decimal(player.vg.people / 10).times(techCount() + 1)
-    g = g.times(1 + 0.1 * getBuyableAmount("ig", 11).toNumber())
-    g = g.times(Decimal.pow(2, getBuyableAmount("ig", 12)))
+    if (!inDarkAge(82)) {
+        g = g.times(1 + 0.1 * getBuyableAmount("ig", 11).toNumber())
+        g = g.times(Decimal.pow(darkAgeBeaten(82) ? 3 : 2, getBuyableAmount("ig", 12)))
+    }
     g = g.times(ageIngenuityMult())
     if (hasUpgrade("lt", 45)) g = g.times(3)
+    if (inDarkAge(81)) g = g.times(0.01)
+    if (darkAgeBeaten(81)) g = g.times(10)
     return g
 }
 
@@ -88,6 +100,8 @@ function ageGainMult(id) {
     let m = new Decimal(1)
     if (hasUpgrade(id, 11)) m = m.times(3)
     if (hasUpgrade("ag5", 14)) m = m.times(10)
+    if (hasUpgrade("ag7", 14)) m = m.times(10)
+    if (darkAgeBeaten(83)) m = m.times(3)
     return m
 }
 
@@ -127,9 +141,47 @@ for (let [k, a] of AGES.entries()) {
         upgrades: Object.fromEntries(a.upgrades.map((u, n) => [11 + n, {
             title: u[0],
             description: u[1],
-            cost: new Decimal(k == 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
+            cost: new Decimal(k >= 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
         }])),
     })
+}
+
+// ------------------------------------------------------------
+//  DARK AGES (v3.6): start every Age over under harder rules, and win something lasting by reaching the Space Age
+// ------------------------------------------------------------
+const DARK_AGES = {
+    81: { name: "Dark Age", text: "Ingenuity x0.01.", reward: "Ingenuity x10." },
+    82: { name: "Plague", text: "Accelerators and Multipliers do nothing.", reward: "Multipliers make Ingenuity x3 instead of x2." },
+    83: { name: "Isolation", text: "The Ages' currencies don't make Ingenuity grow faster.", reward: "Every Age's currency x3." },
+}
+
+function inDarkAge(id) {
+    return !!(player.ig && player.ig.dark == id)
+}
+
+function darkAgeBeaten(id) {
+    return !!(player.ig && (player.ig.darkBeaten || []).includes(String(id)))
+}
+
+function darkAgesUnlocked() {
+    return progressUnlocked() && player.ag6 && player.ag6.unlocked
+}
+
+function startDarkAge(id) {
+    ageReset(AGE_IDS.length)
+    setBuyableAmount("ig", 11, new Decimal(0))
+    setBuyableAmount("ig", 12, new Decimal(0))
+    player.ig.dark = id
+    player.ig.darkTime = 0
+}
+
+// For the Autopilot: one Dark Age at a time once the Stellar Age is open, given up after 30 minutes
+function darkAgeAutomation() {
+    if (!darkAgesUnlocked()) return
+    let d = player.ig
+    if (d.dark) { if (d.darkTime > 1800) { d.darkFailed = d.darkFailed || {}; d.darkFailed[d.dark] = player.ag6.total.toNumber(); d.dark = 0 } return }
+    let next = Object.keys(DARK_AGES).find(id => !darkAgeBeaten(id) && !(d.darkFailed && d.darkFailed[id] !== undefined && player.ag6.total.toNumber() < d.darkFailed[id] * 10 + 10))
+    if (next && player.ag6.points.gte(10)) startDarkAge(Number(next))
 }
 
 addLayer("ig", {
@@ -138,13 +190,23 @@ addLayer("ig", {
     row: 59,
     position: 0,
     color: "#e6b85c",
-    startData() { return { unlocked: true, points: new Decimal(0), total: new Decimal(0), stall: 0, lastTechs: 0 } },
+    startData() { return { unlocked: true, points: new Decimal(0), total: new Decimal(0), stall: 0, lastTechs: 0, dark: 0, darkTime: 0, darkBeaten: [] } },
     type: "none",
     resource: "Ingenuity",
     layerShown() { return progressUnlocked() },
     tooltip() { return format(player.ig.points) + " Ingenuity" },
     update(diff) {
         if (!progressUnlocked()) return
+        // A Dark Age is won by reaching the Space Age again under its rules
+        if (player.ig.dark) {
+            player.ig.darkTime += diff
+            if (player.ag5.points.gte(1)) {
+                let id = player.ig.dark
+                player.ig.darkBeaten.push(String(id))
+                player.ig.dark = 0
+                doPopup("none", DARK_AGES[id].reward, "Dark Age survived: " + DARK_AGES[id].name, 3, "#e6b85c")
+            }
+        }
         let g = ingenuityGain().times(diff * actSpeedCache[4])
         player.ig.points = player.ig.points.add(g)
         player.ig.total = player.ig.total.add(g)
@@ -175,7 +237,31 @@ addLayer("ig", {
         ["display-text", function() { return "Ingenuity comes from your people and your techs (" + player.vg.people + " people, " + techCount() + " techs), and every Age's currency multiplies it. Your civilization is <b>x" + format(ageCivBoost(), 2) + "</b> stronger from the Ages." }],
         "blank",
         "buyables",
+        "blank",
+        ["display-text", function() {
+            if (!darkAgesUnlocked()) return ""
+            let a = player.ig.dark
+            return "<h3>Dark Ages</h3><br>Starting one sends every Age and your Accelerators and Multipliers back to nothing (Age upgrades stay); reach the Space Age again under its rules for a lasting reward." + (a ? "<br>In <b>" + DARK_AGES[a].name + "</b> for " + formatTime(player.ig.darkTime) + "." : "")
+        }],
+        ["clickables", [8]],
     ],
+    clickables: Object.fromEntries(Object.entries(DARK_AGES).map(([id, h]) => [id, {
+        title() { return h.name },
+        display() {
+            let n = Number(id)
+            if (darkAgeBeaten(n)) return "Survived. " + h.reward
+            return h.text + "<br>Reward: " + h.reward + (inDarkAge(n) ? "<br><b>Click to give up.</b>" : "")
+        },
+        unlocked() { return darkAgesUnlocked() },
+        canClick() { let n = Number(id); return !darkAgeBeaten(n) && (!player.ig.dark || inDarkAge(n)) },
+        onClick() {
+            let n = Number(id)
+            if (inDarkAge(n)) { player.ig.dark = 0; return }
+            if (!confirm("Start " + h.name + "? Every Age, Accelerator and Multiplier starts over.")) return
+            startDarkAge(n)
+        },
+        style() { let n = Number(id); return { width: "160px", height: "110px", "min-height": "110px", "font-size": "9px", "background-color": darkAgeBeaten(n) ? "#e6b85c" : inDarkAge(n) ? "#e69138" : undefined } },
+    }])),
     buyables: {
         11: {
             title: "Accelerator",
