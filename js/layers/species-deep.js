@@ -55,13 +55,14 @@ function inExtinction(id) {
 function extinctionWipe() {
     // Supercontinent keeps: Living Fossils (Metabolism and a tenth of every tier), Index Fossils (speciations and radiations)
     let meta = getBuyableAmount("me", 11), tiers = [], sn = player.sn.points, ar = player.ar.points
-    for (let t = 1; t <= 8; t++) tiers[t] = [player.ti.amounts[t], getBuyableAmount("ti", 10 + t)]
+    for (let t = 1; t <= 8; t++) tiers[t] = [player.ti.amounts[t]]
     speciesReset(2)
     player.ar.points = new Decimal(hasUpgrade("mx", 14) ? 1 : 0)
     if (hasUpgrade("mx", 13)) player.sn.points = new Decimal(2)
     if (tierUp("pg", 13)) {
         setBuyableAmount("me", 11, meta)
-        for (let t = 1; t <= 8; t++) { player.ti.amounts[t] = tiers[t][0].div(10).floor(); setBuyableAmount("ti", 10 + t, tiers[t][1].div(10).floor()) }
+        // A tenth of every tier lives on; prices start over, so the survivors can be built on straight away
+        for (let t = 1; t <= 8; t++) player.ti.amounts[t] = tiers[t][0].div(10).floor()
     }
     if (tierUp("pg", 14)) { player.sn.points = player.sn.points.max(sn); player.ar.points = player.ar.points.max(ar) }
     player.mx.runTime = 0
