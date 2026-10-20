@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.9",
+	num: "3.5.9.1",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.9.1</h3><br>
+		- Fixed: with Recapitulation, a predator fight could be given up the moment it started (judged against the last fight), which could keep Act 2 from ever getting going again.<br>
 	<h3>v3.5.9</h3><br>
 		- An invalid number (NaN) no longer freezes the game: the broken value is put back to 0 and the game carries on, with a notice. Offspring in particular fall back to where births and deaths balance.<br>
 	<h3>v3.5.8</h3><br>
