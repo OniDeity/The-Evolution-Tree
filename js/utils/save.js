@@ -235,6 +235,7 @@ function setupModInfo() {
 function fixNaNs() {
 	NaNcheck(player);
 }
+var NaNrepaired = {}
 function NaNcheck(data) {
 	for (item in data) {
 		if (data[item] == null) {
@@ -243,11 +244,12 @@ function NaNcheck(data) {
 			NaNcheck(data[item]);
 		}
 		else if (data[item] !== data[item] || checkDecimalNaN(data[item])) {
-			if (!NaNalert) {
-				clearInterval(interval);
-				NaNalert = true;
-				alert("Invalid value found in player, named '" + item + "'. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
-				return
+			// Instead of freezing the game, put the broken value back to 0 and carry on (and say so, once per value)
+			data[item] = data[item] instanceof Decimal ? new Decimal(0) : 0
+			console.warn("Invalid value '" + item + "' was reset to 0")
+			if (!NaNrepaired[item]) {
+				NaNrepaired[item] = true
+				if (typeof doPopup == "function") doPopup("none", "'" + item + "' became an invalid number and was reset to 0. If you can, send the creator your save!", "Fixed a broken value", 5, "#e06666")
 			}
 		}
 		else if (data[item] instanceof Decimal) {
