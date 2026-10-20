@@ -36,7 +36,7 @@ function tierStart(l, id) {
 }
 
 // For the Autopilot (and anyone who'd rather not): buy upgrades, prestige once the gain is worth it,
-// and try the next challenge right after a prestige; give up after 30 minutes, try again 2 prestiges later
+// and try the next challenge right after a prestige; give up after an hour, try again 2 prestiges later
 function tierAutomation(l) {
     let c = DEEP_TIERS[l]
     if (!c.shown()) return
@@ -44,7 +44,7 @@ function tierAutomation(l) {
     let d = player[l]
     d.failed = d.failed || {}
     if (d.challenge) {
-        if (d.time > 1800) { d.failed[d.challenge] = d.count; d.challenge = 0 }
+        if (d.time > 3600) { d.failed[d.challenge] = d.count; d.challenge = 0 }
         return
     }
     let g = c.gain()
@@ -196,7 +196,7 @@ function supercontinentUnlocked() {
 
 function cratonGain() {
     if (!erasUnlocked() || player.er.count < 10) return new Decimal(0)
-    let g = new Decimal(Math.pow(player.er.total.add(1).log10().toNumber(), 2))
+    let g = new Decimal(Math.pow(player.er.total.add(1).log10().toNumber(), 2)).times(2)
     if (tierUp("pg", 21)) g = g.times(2)
     if (tierBeaten("pg", 81)) g = g.times(2)
     return g.floor()

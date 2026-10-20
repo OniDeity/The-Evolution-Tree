@@ -716,7 +716,7 @@ const AUTOPILOT = (function() {
             if (erasUnlocked()) {
                 for (let id of [11, 12, 13, 14, 21, 22, 23, 24]) if (!hasUpgrade("er", id)) buyUpg("er", id)
                 let g = eonGain()
-                if (g.gte(1) && g.gte(player.er.total.times(0.5)) && !player.mx.activeChallenge) closeEra()
+                if (g.gte(1) && g.gte(player.er.total.times(player.er.count < 10 ? 0.1 : 0.5)) && !player.mx.activeChallenge) closeEra()
             }
         }
         if (progressUnlocked()) {
