@@ -518,6 +518,8 @@ addLayer("re", {
             let fade = Math.exp(-x.toNumber())
             next = o.times(fade).add(eq.times(1 - fade))
         }
+        // Never let an invalid number through: fall back to where births and deaths balance
+        if (isNaN(next.mag) || isNaN(next.layer)) next = isNaN(eq.mag) ? new Decimal(0) : eq
         player.re.offspring = next.max(0)
     },
     tabFormat: [
