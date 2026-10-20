@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.6",
+	num: "3.5.7",
 	name: "The Last Answer",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.5.7 - Performance</h3><br>
+		- The game does much less work each tick (about 3x less mid-Act 6, about 10x less at the end), with nothing taken out: Act 5 runs in fewer, exact steps, its multipliers are worked out once a tick, off-screen layers refresh every other tick, Act 3's instincts act 5 times a second and the glow that says a layer has something to buy updates 4 times a second.<br>
+		- Fixed: with a very fast Act 4, Planned Obsolescence (and the Autopilot) could make a new civilization go extinct over and over before it ever grew. Stalls are now judged at no more than 60x real time.<br>
 	<h3>v3.5.6 - Less Waiting</h3><br>
 		- Reversals: rewinds now grow by 2 minutes a Reversal (instead of quadratically, up to over an hour).<br>
 		- 4 Entropy Trials (after 2 Reversals): reverse into a harder universe and reach the Heat Death under its rules, for Negentropy x2, rewinds twice as fast, Realities x3, or Negentropy that grows with every Reversal. A Trial left unbeaten for 20 minutes is given up.<br>

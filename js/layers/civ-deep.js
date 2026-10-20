@@ -148,8 +148,9 @@ addLayer("ig", {
         let g = ingenuityGain().times(diff * actSpeedCache[4])
         player.ig.points = player.ig.points.add(g)
         player.ig.total = player.ig.total.add(g)
-        // How long research has stalled (in Act 4 time), for Planned Obsolescence
-        if (techCount() != player.ig.lastTechs) { player.ig.lastTechs = techCount(); player.ig.stall = 0 } else player.ig.stall += diff * actSpeedCache[4]
+        // How long research has stalled (in Act 4 time, though never more than 60x real time, so a very fast Act 4
+        // still gives a new civilization a few real seconds to get going), for Planned Obsolescence
+        if (techCount() != player.ig.lastTechs) { player.ig.lastTechs = techCount(); player.ig.stall = 0 } else player.ig.stall += diff * Math.min(actSpeedCache[4], 60)
     },
     automate() {
         if (!progressUnlocked()) return

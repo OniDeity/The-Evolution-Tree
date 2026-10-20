@@ -576,7 +576,8 @@ const AUTOPILOT = (function() {
         if (tmp.wn.layerShown) for (let k of WONDER_KEYS) if (hasTech(WONDERS[k].unlock)) { let c = wonderStepCost(k, 1); if (Object.keys(c).every(r => c[r] <= civRes(r) * 0.2)) buildWonder(k, 1) }
         if (tmp.dt.layerShown) for (let id of [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44]) if (!hasUpgrade("dt", id) && player.ex.points.gte(layers.dt.upgrades[id].cost)) buyUpg("dt", id)
         // Extinction once research and the population have both stalled for 5 minutes (Act 4 time)
-        let sp = actSpeedCache[4]
+        // (never more than 60x real time, so a very fast Act 4 still gives a new civilization a few real seconds)
+        let sp = Math.min(actSpeedCache[4], 60)
         if (s.run === undefined) { s.run = t; s.tech = t; s.people = t; s.techs = 0; s.peak = 0 }
         if (techCount() > s.techs) { s.techs = techCount(); s.tech = t }
         if (player.vg.people > s.peak) { s.peak = player.vg.people; s.people = t }
