@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.2",
+	num: "3.6.3",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.3</h3><br>
+		- Fixed: the Autopilot's Act 5 could stay in a Trial forever (for instance Lone Probe) if the Trial was started before it took over; it now gives up any Trial that hasn't been won in an hour.<br>
+		- Kernel upgrades cost less (about 1.5x their old prices), and The Halting Problem 400 Threads.<br>
 	<h3>v3.6.2</h3><br>
 		- Pacing toward 50 hours for Act 6: each Loop's goal costs more (The First Cell 250 Protocells, The Great Unconformity 400 Cratons, The Galactic Age 5,000 Starlanes, Eternal Return 500 Aeons). Kernel upgrades cost 3x as much, The Halting Problem 800 Threads, and Just in Time grows with the square root of your Threads.<br>
 		- The automation for the new tiers (the Autopilot's Deepenings) also takes a gain that has stopped growing, so a pricey goal can't stall it; it keeps reversing once Cosmic Cycles are open; Eras close for smaller gains on the way to the 10th; and tier challenges are given up after an hour instead of 30 minutes.<br>

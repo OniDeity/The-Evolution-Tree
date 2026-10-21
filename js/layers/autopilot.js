@@ -662,7 +662,11 @@ const AUTOPILOT = (function() {
         if (tmp.tl.layerShown && !hasMilestone("rv", 5)) {
             let a = player.tl.activeChallenge
             if (!a) { let next = Object.keys(SPACE_TRIALS).find(id => !hasChallenge("tl", id)); if (next && player.un.runTime > 120 && !s.trialsTried) { s.trial = t; startChallenge("tl", Number(next)) } }
-            else if (t - (s.trial || t) > 3600) { startChallenge("tl", a); s.trialsTried = 1 }
+            else {
+                // Time any Trial in progress, even one it didn't start itself
+                if (s.trialId != a) { s.trialId = a; s.trial = t }
+                if (t - s.trial > 3600) { startChallenge("tl", a); s.trialsTried = 1 }
+            }
         }
     }
 
