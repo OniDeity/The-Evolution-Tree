@@ -48,7 +48,11 @@ function tierAutomation(l) {
         return
     }
     let g = c.gain()
-    if (g.gte(1) && g.gte(d.total.times(0.5))) {
+    // How long the gain has stopped growing (real time): a stalled gain is worth taking even when it's small
+    let now = player.lt.loopTime
+    if (g.gt(d.peak || 0) || d.peakAt === undefined || d.peakAt > now) { d.peak = g; d.peakAt = now }
+    if (g.gte(1) && (g.gte(d.total.times(0.5)) || (g.gte(d.total.times(0.1)) && now - d.peakAt >= 300))) {
+        d.peak = new Decimal(0); d.peakAt = now
         tierPrestige(l)
         let next = Object.keys(c.challenges).find(id => !tierBeaten(l, id) && !(d.failed[id] !== undefined && d.count < d.failed[id] + 2) && d.count >= 2)
         if (next) tierStart(l, Number(next))
