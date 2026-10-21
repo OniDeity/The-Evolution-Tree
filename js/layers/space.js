@@ -557,6 +557,9 @@ function probeTick(dt) {
         let r0 = replicationRate()
         let r = r0.times(1 - fill)
         let h = hazardRate()
+        // A tiny swarm spread through a huge explored space is hard to hit: hazards can't cancel more than
+        // half its copying, so it always gets going (exploration can otherwise outrun it and freeze it in place)
+        if (p.lt(probeRoom().times(1e-3))) h = Decimal.min(h, r.times(0.5))
         let lost = p.times(h).times(dt)
         let next = p.times(Decimal.exp(r.sub(h).times(dt)))
         // A long step can't overshoot: the swarm settles where copying (slowed by the room left) balances hazards

@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6",
+	num: "3.6.1",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.1</h3><br>
+		- Fixed: in late Loops, exploration could outrun a brand-new swarm of 2 or 3 probes so fast that hazards matched their copying, freezing Act 5 for good. A tiny swarm (under a thousandth of its room) now always keeps at least half its copying.<br>
 	<h3>v3.6 - Deeper</h3><br>
 		- Every act's deepening gets one more tier on top, with its own currency, 8 upgrades (several of them keep what the reset below would wipe) and 3 challenges. Each Loop's goal moves to the new tier, so Act 6 is back toward 50 hours, spent on tiers and challenges.<br>
 		- Loop 2, <b>Abiogenesis</b>: once the mirror tree is grown, start life over from chemistry for Protocells. Keep Cell, Heritage and Adaptation upgrades, the body plan and a quarter of your Mutations through devolutions; nodes up to level 10. Goal: The First Cell.<br>
