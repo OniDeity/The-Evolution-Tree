@@ -734,7 +734,7 @@ const AUTOPILOT = (function() {
         }
         if (reversalUnlocked()) {
             for (let id of [11, 12, 13, 14, 21, 22, 23, 24, 31, 32]) if (!hasUpgrade("rv", id) && tmp.rv.upgrades[id].unlocked) buyUpg("rv", id)
-            if (player.mv.heatDeath && !hasUpgrade("rv", 32) && negentropyGain().gte(1) && !rewinding()) reverseNext()
+            if (player.mv.heatDeath && (!hasUpgrade("rv", 32) || cyclesUnlocked()) && negentropyGain().gte(1) && !rewinding()) reverseNext()
         }
     }
 
