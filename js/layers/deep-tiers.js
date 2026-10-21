@@ -324,14 +324,14 @@ deepTier({
         if (!tierUp("kr", 12)) player.ap.upgrades = player.ap.upgrades.filter(id => Number(id) < 30)
     },
     upgrades: {
-        11: ["Threads", "Routines x3.", 3],
-        12: ["Persistent Storage", "A reboot keeps Macros, Recursion and Compiler.", 6],
-        13: ["Cache", "A reboot keeps half your Subroutines.", 12],
-        14: ["Pipelining", "Subroutines cost half as much.", 24],
-        21: ["Hyperthreading", "Threads x2.", 45],
-        22: ["Just in Time", "Routines grow with every Thread you've ever made.", 90],
-        23: ["Overclock", "Acts 1 to 5 run faster with every Thread you've ever made.", 180],
-        24: ["The Halting Problem", "Whether a program ever stops can't be decided in general. This one will. <b>The Last Answer needs it.</b>", 800],
+        11: ["Threads", "Routines x3.", 2],
+        12: ["Persistent Storage", "A reboot keeps Macros, Recursion and Compiler.", 3],
+        13: ["Cache", "A reboot keeps half your Subroutines.", 6],
+        14: ["Pipelining", "Subroutines cost half as much.", 12],
+        21: ["Hyperthreading", "Threads x2.", 22],
+        22: ["Just in Time", "Routines grow with every Thread you've ever made.", 45],
+        23: ["Overclock", "Acts 1 to 5 run faster with every Thread you've ever made.", 90],
+        24: ["The Halting Problem", "Whether a program ever stops can't be decided in general. This one will. <b>The Last Answer needs it.</b>", 400],
     },
     challenges: {
         81: { name: "Infinite Loop", text: "Routines x0.1.", reward: "Threads x2." },
