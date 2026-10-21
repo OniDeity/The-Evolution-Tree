@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.1",
+	num: "3.6.2",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.2</h3><br>
+		- Pacing toward 50 hours for Act 6: each Loop's goal costs more (The First Cell 250 Protocells, The Great Unconformity 400 Cratons, The Galactic Age 5,000 Starlanes, Eternal Return 500 Aeons). Kernel upgrades cost 3x as much, The Halting Problem 800 Threads, and Just in Time grows with the square root of your Threads.<br>
+		- The automation for the new tiers (the Autopilot's Deepenings) also takes a gain that has stopped growing, so a pricey goal can't stall it; it keeps reversing once Cosmic Cycles are open; Eras close for smaller gains on the way to the 10th; and tier challenges are given up after an hour instead of 30 minutes.<br>
 	<h3>v3.6.1</h3><br>
 		- Fixed: in late Loops, exploration could outrun a brand-new swarm of 2 or 3 probes so fast that hazards matched their copying, freezing Act 5 for good. A tiny swarm (under a thousandth of its room) now always keeps at least half its copying.<br>
 	<h3>v3.6 - Deeper</h3><br>
