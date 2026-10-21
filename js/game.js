@@ -397,9 +397,13 @@ function hardReset(resetOptions) {
 
 var ticking = false
 
+var nanTick = 0
+var lightSkip = false
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
 	if (ticking) return;
+	// Light mode: tick 10 times a second instead of 20 (every tick still covers all the time that passed)
+	if (options.lightMode) { lightSkip = !lightSkip; if (lightSkip) return }
 	if (tmp.gameEnded&&!player.keepGoing) return;
 	ticking = true
 	let now = Date.now()
@@ -425,7 +429,9 @@ var interval = setInterval(function() {
 	updateWidth()
 	updateTabFormats()
 	gameLoop(diff)
-	fixNaNs()
+	// The invalid-number safety net walks the whole save, so it runs twice a second rather than every tick
+	nanTick = (nanTick + 1) % 10
+	if (nanTick == 0) fixNaNs()
 	adjustPopupTime(trueDiff)
 	updateParticles(trueDiff)
 	ticking = false

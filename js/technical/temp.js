@@ -110,13 +110,13 @@ function updateTemp() {
 
 	// Display-only text (descriptions, styles and so on) is only refreshed for the tab you're looking at.
 	// With hundreds of upgrades, rebuilding every layer's text every tick was most of the game's CPU time.
-	// Layers you aren't looking at are refreshed every other tick (half of them each tick): a twentieth of a second
-	// late at most, and half the work
-	tempTick = 1 - tempTick
+	// Layers you aren't looking at are refreshed every third tick (a third of them each tick): at most 0.15
+	// seconds late, and a third of the work
+	tempTick = (tempTick + 1) % 3
 	let n = 0
 	for (let layer in funcs) {
 		n++
-		if (layer == player.tab || layer == player.navTab || n % 2 == tempTick || !tmp[layer].layerShown && tmp[layer].layerShown !== false) updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
+		if (layer == player.tab || layer == player.navTab || n % 3 == tempTick || !tmp[layer].layerShown && tmp[layer].layerShown !== false) updateTempData(layers[layer], tmp[layer], funcs[layer], undefined, layer != player.tab)
 	}
 
 	// The glow that says a layer has something to buy only needs checking a few times a second

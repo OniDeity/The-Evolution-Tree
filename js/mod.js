@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.3",
+	num: "3.6.4",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.4</h3><br>
+		- Less lag: the invalid-number safety net runs twice a second instead of every tick, and layers you aren't looking at refresh every third tick.<br>
+		- New setting, <b>Light Mode</b> (in Settings): the game ticks 10 times a second instead of 20, for about a third less work. Nothing plays differently.<br>
 	<h3>v3.6.3</h3><br>
 		- Fixed: the Autopilot's Act 5 could stay in a Trial forever (for instance Lone Probe) if the Trial was started before it took over; it now gives up any Trial that hasn't been won in an hour.<br>
 		- Kernel upgrades cost less (about 1.5x their old prices), and The Halting Problem 400 Threads.<br>
