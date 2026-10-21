@@ -35,10 +35,10 @@ const AGES = [
       lore: "The first footprints on another world. The cradle is finally too small.",
       upgrades: [["Reusable Rockets", "Launches x3."], ["Orbital Servers", "Gain 10% of your Data gain every second."], ["Space Elevators", "Act 5 runs faster with your Launches."], ["The Space Age", "Every Age's currency x10. One civilization, five Ages, and the sky."]] },
     // v3.6: two more Ages, past the sky
-    { id: "ag6", name: "Stellar", currency: "Dyson Swarms", color: "#f6b26b", from: "ag5", fromName: "Launches", req: 100,
+    { id: "ag6", name: "Stellar", currency: "Dyson Swarms", color: "#f6b26b", from: "ag5", fromName: "Launches", req: 1e4,
       lore: "A shell of mirrors around the sun, catching every photon it gives off. The civilization finally has power to spare.",
       upgrades: [["Solar Sails", "Dyson Swarms x3."], ["Starlifting", "Gain 10% of your Launch gain every second."], ["Kardashev II", "Your civilization gets stronger with Dyson Swarms."], ["Remembered Cities", "Extinctions keep a quarter of every building."]] },
-    { id: "ag7", name: "Galactic", currency: "Starlanes", color: "#8e7cc3", from: "ag6", fromName: "Dyson Swarms", req: 100,
+    { id: "ag7", name: "Galactic", currency: "Starlanes", color: "#8e7cc3", from: "ag6", fromName: "Dyson Swarms", req: 1e4,
       lore: "Lanes of traffic between the stars, a hundred thousand years long. The galaxy becomes one place.",
       upgrades: [["Warp Lanes", "Starlanes x3."], ["Galactic Archive", "Gain 10% of your Dyson Swarm gain every second."], ["Kardashev III", "Act 4 runs faster with your Starlanes."], ["The Galactic Age", "Every Age's currency x10 again. Seven Ages, and a galaxy. <b>Loop 4's goal.</b>"]] },
 ]
@@ -141,13 +141,13 @@ for (let [k, a] of AGES.entries()) {
         upgrades: Object.fromEntries(a.upgrades.map((u, n) => [11 + n, {
             title: u[0],
             description: u[1],
-            cost: new Decimal(k >= 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
+            cost: new Decimal(k >= 5 ? [1, 25, 250, 2500][n] : k == 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
         }])),
     })
 }
 
 // ------------------------------------------------------------
-//  DARK AGES (v3.6): start every Age over under harder rules, and win something lasting by reaching the Space Age
+//  DARK AGES (v3.6): start every Age over under harder rules, and win something lasting by reaching the Stellar Age
 // ------------------------------------------------------------
 const DARK_AGES = {
     81: { name: "Dark Age", text: "Ingenuity x0.01.", reward: "Ingenuity x10." },
@@ -197,10 +197,10 @@ addLayer("ig", {
     tooltip() { return format(player.ig.points) + " Ingenuity" },
     update(diff) {
         if (!progressUnlocked()) return
-        // A Dark Age is won by reaching the Space Age again under its rules
+        // A Dark Age is won by reaching the Stellar Age again under its rules
         if (player.ig.dark) {
             player.ig.darkTime += diff
-            if (player.ag5.points.gte(1)) {
+            if (player.ag6.points.gte(1)) {
                 let id = player.ig.dark
                 player.ig.darkBeaten.push(String(id))
                 player.ig.dark = 0
@@ -241,7 +241,7 @@ addLayer("ig", {
         ["display-text", function() {
             if (!darkAgesUnlocked()) return ""
             let a = player.ig.dark
-            return "<h3>Dark Ages</h3><br>Starting one sends every Age and your Accelerators and Multipliers back to nothing (Age upgrades stay); reach the Space Age again under its rules for a lasting reward." + (a ? "<br>In <b>" + DARK_AGES[a].name + "</b> for " + formatTime(player.ig.darkTime) + "." : "")
+            return "<h3>Dark Ages</h3><br>Starting one sends every Age and your Accelerators and Multipliers back to nothing (Age upgrades stay); reach the Stellar Age again under its rules for a lasting reward." + (a ? "<br>In <b>" + DARK_AGES[a].name + "</b> for " + formatTime(player.ig.darkTime) + "." : "")
         }],
         ["clickables", [8]],
     ],

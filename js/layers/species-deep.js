@@ -20,7 +20,7 @@ function speciesDeepUnlocked() {
 // ------------------------------------------------------------
 function lineageMult() {
     // Survivors carry on: every mass extinction you've lived through adds one more Lineage's worth
-    let m = new Decimal(1 + player.mx.crunches)
+    let m = new Decimal(1 + player.mx.crunches).times(10)
     if (hasUpgrade("mx", 32)) m = m.times(2)
     if (hasUpgrade("mx", 33)) m = m.times(3)
     if (hasChallenge("mx", 31)) m = m.times(2)
@@ -358,7 +358,7 @@ function erasUnlocked() {
 function eonGain() {
     if (!erasUnlocked() || player.mx.points.lt(1e6)) return new Decimal(0)
     let g = player.mx.points.log10().sub(5).pow(2).floor()
-    g = g.times(eonUpgradeMult())
+    g = g.times(eonUpgradeMult()).times(2)
     if (tierUp("pg", 11)) g = g.times(2)
     if (tierBeaten("pg", 82)) g = g.times(3)
     return g.floor()
