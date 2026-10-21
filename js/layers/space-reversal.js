@@ -105,8 +105,10 @@ function reversalAutomation() {
     }
     if (hasMilestone("rv", 5)) {
         let a = player.tl.activeChallenge
-        if (!a && tmp.tl.layerShown) { let next = Object.keys(SPACE_TRIALS).find(id => !hasChallenge("tl", id)); if (next && player.un.runTime > 120) startChallenge("tl", Number(next)) }
-        if (a && player.un.runTime > 3600) startChallenge("tl", a)
+        // Timed in real time (Loop time): a very fast Act 5 passes an hour of its own time in a single tick
+        let now = player.lt.loopTime
+        if (!a && tmp.tl.layerShown && now - (player.rv.tlLeft || -1e9) > 600) { let next = Object.keys(SPACE_TRIALS).find(id => !hasChallenge("tl", id)); if (next && player.un.runTime > 120) { startChallenge("tl", Number(next)); player.rv.tlStart = now } }
+        if (a && now - (player.rv.tlStart === undefined || player.rv.tlStart > now ? (player.rv.tlStart = now) : player.rv.tlStart) > 3600) { startChallenge("tl", a); player.rv.tlLeft = now }
     }
     if (hasMilestone("rv", 6) && !player.mv.heatDeath && canAffordUpgrade("mv", 65)) buyUpg("mv", 65)
     // A Trial that hasn't reached the Heat Death in 20 minutes is given up, and tried again 2 Reversals later

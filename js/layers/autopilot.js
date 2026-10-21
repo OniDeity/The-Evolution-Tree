@@ -629,7 +629,7 @@ const AUTOPILOT = (function() {
             for (let i = 0; i < 5 && player.sq.compute.gte(tournamentCost()); i++) runTournament(predictedBest())
         }
         if (beyondVirgo()) {
-            for (let p of PROJECTS) if (projectAvailable(p) && !hasUpgrade("pj", p.id)) buyUpg("pj", p.id)
+            for (let p of PROJECTS) if (projectAvailable(p) && !hasUpgrade("pj", p.id) && projectSafe(p)) buyUpg("pj", p.id)
             for (let id in UN_UPGRADES) buyUpg("un", id)
             let fresh = player.un.offered.find(k => !player.un.collected[k] && k != "quiet")
             if (fresh) player.un.next = fresh

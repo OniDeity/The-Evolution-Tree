@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.4",
+	num: "3.6.5",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.5</h3><br>
+		- Fixed three ways a very fast Act 5 (late Loops) could get stuck at the edge of the Milky Way:<br>
+		- The Reversal milestone that fights Trials on its own timed them in Act 5's time, which passes an hour in a single tick at those speeds, so it started and abandoned a Trial (wiping the universe) every tick. It now times them in real time, and waits 10 minutes before trying again.<br>
+		- Drift and Drifter attacks could each take half the swarm in one step, which at huge steps meant all of it. Now at most 5% each a step (normal play is unchanged).<br>
+		- Automatic Project purchases never spend more than a tenth of your probes.<br>
 	<h3>v3.6.4</h3><br>
 		- Less lag: the invalid-number safety net runs twice a second instead of every tick, and layers you aren't looking at refresh every third tick.<br>
 		- New setting, <b>Light Mode</b> (in Settings): the game ticks 10 times a second instead of 20, for about a third less work. Nothing plays differently.<br>

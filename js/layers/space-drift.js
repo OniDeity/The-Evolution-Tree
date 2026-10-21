@@ -162,14 +162,15 @@ function driftTick(dt) {
     let p = player.pb.probes, d = player.dr.drifters
     // Some probes drift away and join the Drifters
     // The Drifters can never take your last probe
-    let drifted = Decimal.min(Decimal.min(p.times(driftRate()).times(dt), p.times(0.5)), p.sub(1).max(0))
+    // (at most 5% of the swarm a step: at the huge steps of a very fast Act 5, more would wipe it out every tick)
+    let drifted = Decimal.min(Decimal.min(p.times(driftRate()).times(dt), p.times(0.05)), p.sub(1).max(0))
     // Drifters copy themselves, and your probes destroy them
     let w = combatRate(), r = drifterCopyRate()
     let after = d.times(Decimal.exp(r.sub(w).times(dt)))
     let destroyed = d.times(Decimal.min(1, w.times(dt)))
     after = after.add(drifted).max(0)
     // ...and they destroy your probes
-    let lost = Decimal.min(Decimal.min(p.times(attackRate()).times(dt), p.times(0.5)), p.sub(drifted).sub(1).max(0))
+    let lost = Decimal.min(Decimal.min(p.times(attackRate()).times(dt), p.times(0.05)), p.sub(drifted).sub(1).max(0))
     player.pb.probes = p.sub(drifted).sub(lost).max(0)
     player.dr.drifters = after
     player.dr.destroyed = player.dr.destroyed.add(destroyed)

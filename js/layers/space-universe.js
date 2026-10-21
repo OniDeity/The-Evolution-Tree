@@ -87,6 +87,11 @@ function projectCosts(p) {
     return p.currencies.map(c => [c, projectCost(c, p.digits)])
 }
 
+// Automatic purchases never spend more than a tenth of your probes on a project, so the swarm keeps going
+function projectSafe(p) {
+    return projectCosts(p).every(([c, v]) => c != "probes" || player.pb.probes.gte(v.times(10)))
+}
+
 function projectAvailable(p) {
     return player.pb.explored.max(1).log10().toNumber() >= p.digits
 }
@@ -118,7 +123,7 @@ addLayer("pj", {
     tooltip() { return projectsDone() + " / " + PROJECTS.length + " projects" },
     automate() {
         if (!tmp.pj.layerShown || !hasMilestone("un", 3) || !player.pj.auto) return
-        for (let p of PROJECTS) if (projectAvailable(p) && !hasUpgrade("pj", p.id)) buyUpg("pj", p.id)
+        for (let p of PROJECTS) if (projectAvailable(p) && !hasUpgrade("pj", p.id) && projectSafe(p)) buyUpg("pj", p.id)
     },
     tabFormat: [
         ["display-text", function() {
