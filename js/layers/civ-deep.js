@@ -141,7 +141,7 @@ for (let [k, a] of AGES.entries()) {
         upgrades: Object.fromEntries(a.upgrades.map((u, n) => [11 + n, {
             title: u[0],
             description: u[1],
-            cost: new Decimal(k >= 5 ? [1, 25, 250, 2500][n] : k == 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
+            cost: new Decimal(k == 6 ? [1, 25, 250, 5000][n] : k == 5 ? [1, 25, 250, 2500][n] : k == 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
         }])),
     })
 }

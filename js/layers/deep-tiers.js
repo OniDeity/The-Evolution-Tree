@@ -178,7 +178,7 @@ deepTier({
         21: ["Hydrothermal Vents", "Protocells x2.", 15],
         22: ["Deep Nodes", "Nodes go up to level 10 (each level still triples DNA).", 30],
         23: ["Panspermia", "Act 2 runs faster with every Protocell you've ever made.", 60],
-        24: ["The First Cell", "Life, from nothing at all. <b>Loop 2's goal.</b>", 150],
+        24: ["The First Cell", "Life, from nothing at all. <b>Loop 2's goal.</b>", 250],
     },
     challenges: {
         81: { name: "Cold Soup", text: "Vestiges x0.1.", reward: "Protocells x2." },
@@ -230,7 +230,7 @@ deepTier({
         21: ["Plate Tectonics", "Cratons x2.", 15],
         22: ["Snowball Earth", "Lineages grow with every Craton you've ever made.", 30],
         23: ["Rodinia", "Act 3 runs faster with every Craton you've ever made.", 60],
-        24: ["The Great Unconformity", "A billion years missing from the rock, and life none the worse for it. <b>Loop 3's goal.</b>", 150],
+        24: ["The Great Unconformity", "A billion years missing from the rock, and life none the worse for it. <b>Loop 3's goal.</b>", 400],
     },
     challenges: {
         81: { name: "Ice Age", text: "Lineages x0.01.", reward: "Cratons x2." },
@@ -277,7 +277,7 @@ deepTier({
         21: ["Big Crunch", "Aeons x2.", 15],
         22: ["Big Bounce", "Negentropy grows with every Aeon you've ever made.", 30],
         23: ["Tolman's Paradox", "Act 5 runs faster with every Aeon you've ever made.", 60],
-        24: ["Eternal Return", "The same universe, forever, and never quite the same. <b>Loop 5's goal.</b>", 150],
+        24: ["Eternal Return", "The same universe, forever, and never quite the same. <b>Loop 5's goal.</b>", 500],
     },
     challenges: {
         81: { name: "Long Night", text: "Rewinds go 5x slower.", reward: "Aeons x2." },
@@ -320,14 +320,14 @@ deepTier({
         if (!tierUp("kr", 12)) player.ap.upgrades = player.ap.upgrades.filter(id => Number(id) < 30)
     },
     upgrades: {
-        11: ["Threads", "Routines x3.", 1],
-        12: ["Persistent Storage", "A reboot keeps Macros, Recursion and Compiler.", 2],
-        13: ["Cache", "A reboot keeps half your Subroutines.", 4],
-        14: ["Pipelining", "Subroutines cost half as much.", 8],
-        21: ["Hyperthreading", "Threads x2.", 15],
-        22: ["Just in Time", "Routines grow with every Thread you've ever made.", 30],
-        23: ["Overclock", "Acts 1 to 5 run faster with every Thread you've ever made.", 60],
-        24: ["The Halting Problem", "Whether a program ever stops can't be decided in general. This one will. <b>The Last Answer needs it.</b>", 150],
+        11: ["Threads", "Routines x3.", 3],
+        12: ["Persistent Storage", "A reboot keeps Macros, Recursion and Compiler.", 6],
+        13: ["Cache", "A reboot keeps half your Subroutines.", 12],
+        14: ["Pipelining", "Subroutines cost half as much.", 24],
+        21: ["Hyperthreading", "Threads x2.", 45],
+        22: ["Just in Time", "Routines grow with every Thread you've ever made.", 90],
+        23: ["Overclock", "Acts 1 to 5 run faster with every Thread you've ever made.", 180],
+        24: ["The Halting Problem", "Whether a program ever stops can't be decided in general. This one will. <b>The Last Answer needs it.</b>", 800],
     },
     challenges: {
         81: { name: "Infinite Loop", text: "Routines x0.1.", reward: "Threads x2." },

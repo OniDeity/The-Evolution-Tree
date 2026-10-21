@@ -51,7 +51,7 @@ function routineGain() {
     let perModule = tierIn("kr", 82) ? 0 : tierBeaten("kr", 82) ? 1 : 0.5
     let g = (1 + player.lt.endings.length) * (1 + perModule * apModules()) / 60 * subroutineMult()
     if (tierUp("kr", 11)) g *= 3
-    if (tierUp("kr", 22)) g *= 1 + player.kr.total.toNumber()
+    if (tierUp("kr", 22)) g *= Math.sqrt(1 + player.kr.total.toNumber())
     if (tierIn("kr", 81)) g *= 0.1
     if (hasUpgrade("ap", 31)) g *= 2
     if (hasUpgrade("ap", 32)) g *= 1 + Math.log10(player.rv.total.toNumber() + 1) / 2
