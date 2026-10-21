@@ -13,11 +13,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.5.9.2",
-	name: "The Last Answer",
+	num: "3.6",
+	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6 - Deeper</h3><br>
+		- Every act's deepening gets one more tier on top, with its own currency, 8 upgrades (several of them keep what the reset below would wipe) and 3 challenges. Each Loop's goal moves to the new tier, so Act 6 is back toward 50 hours, spent on tiers and challenges.<br>
+		- Loop 2, <b>Abiogenesis</b>: once the mirror tree is grown, start life over from chemistry for Protocells. Keep Cell, Heritage and Adaptation upgrades, the body plan and a quarter of your Mutations through devolutions; nodes up to level 10. Goal: The First Cell.<br>
+		- Loop 3, <b>Supercontinents</b>: after ten eras, bring the continents together for Cratons. Mass extinctions can keep Metabolism, a tenth of every tier, and your speciations and radiations. Goal: The Great Unconformity.<br>
+		- Loop 4, two more Ages: <b>Stellar</b> (Dyson Swarms) and <b>Galactic</b> (Starlanes), and 3 <b>Dark Ages</b> challenges. Extinctions can keep a quarter of every building. Goal: The Galactic Age.<br>
+		- Loop 5, <b>Cosmic Cycles</b>: once the light is lit again, begin the Reversals anew for Aeons. Reversals can keep universes, physics and Projects. Goal: Eternal Return.<br>
+		- Loop 6, <b>the Kernel</b>: reboot the Autopilot for Threads, keeping Routine upgrades and Subroutines. The Last Answer needs The Halting Problem.<br>
+		- Mass extinctions pay 10x the Lineages and eras 2x the Eons, so Loop 3's Geological Eras go faster.<br>
+		- Auto-devolve (before the Tree of Life) kicks in once Act 2 has stalled for 5 real minutes, so a weak mirror tree can't stall a Loop.<br>
 	<h3>v3.5.9.2</h3><br>
 		- Fixed: Vestigial Claws gave up a predator fight after 10 minutes of Act 2 time, which a fast Act 2 passes in seconds, so winnable fights were abandoned just short of their goal. It now waits 10 real minutes.<br>
 	<h3>v3.5.9.1</h3><br>
