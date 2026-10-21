@@ -18,7 +18,7 @@ const AP_MODULES = {
     14: { title: "Act 4: Extinction", text: "Plays Act 4: jobs, techs, buildings, crafting, the branches, extinctions and Eternity.", cost: 1050 },
     15: { title: "Act 5: Diaspora", text: "Plays Act 5: trust, harvest, the Drift, the Swarm, projects, universes, the multiverse and the Heat Death.", cost: 1700 },
     21: { title: "The Deepenings", text: "Plays Act 6 inside the acts: Constants, Genetic Engineering, Devolution, Mass Extinctions, Viruses, Eras, the Ages and Reversals.", cost: 2400 },
-    22: { title: "The Loops", text: "Spends Light and Memories for you, and says \"Let there be light\" as soon as a Loop is done.", cost: 3000 },
+    22: { title: "The Loops", text: "Spends Light and Memories for you, and says \"Let there be light\" as soon as a Loop is done. Subroutines buy themselves too.", cost: 3000 },
     23: { title: "The Last Answer", text: "\"Let there be light.\" And there was light, and it ran itself. <b>Finish Act 6.</b>", cost: 3600 },
 }
 const AP_PLAYS = [11, 12, 13, 14, 15, 21, 22]
@@ -799,6 +799,8 @@ addLayer("ap", {
         player.ap.points = player.ap.points.add(g)
         player.ap.total = player.ap.total.add(g)
         autopilotTick(diff)
+        // With The Loops automated, Subroutines buy themselves (never more than a tenth of your Routines at a time)
+        if (hasUpgrade("ap", 22)) for (let i = 0; i < 20 && player.ap.points.gte(layers.ap.buyables[11].cost().times(10)); i++) layers.ap.buyables[11].buy()
     },
     tabFormat: [
         ["display-text", function() { return genesisHeader() }],
