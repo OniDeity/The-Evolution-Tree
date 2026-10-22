@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.6",
+	num: "3.6.7",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.7</h3><br>
+		- Every new tier gets a fourth challenge: all three of its handicaps at once. Beating it gives x3 to the tier's currency, and each Loop's goal now needs it.<br>
+		- Loop 2: <b>Hadean Earth</b> (Abiogenesis). Loop 3: <b>Snowball Earth</b> (Supercontinents). Loop 4: <b>The Long Night</b> (Dark Ages). Loop 5: <b>Big Bounce</b> (Cosmic Cycles). Loop 6: <b>Kernel Panic</b> (Kernel).<br>
 	<h3>v3.6.6</h3><br>
 		- Once The Loops is automated, Subroutines buy themselves after every Kernel reset (never spending more than a tenth of your Routines on one level).<br>
 	<h3>v3.6.5</h3><br>
