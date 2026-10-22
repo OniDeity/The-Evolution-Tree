@@ -13,11 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "3.6.5",
+	num: "3.6.6",
 	name: "Deeper",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v3.6.6</h3><br>
+		- Once The Loops is automated, Subroutines buy themselves after every Kernel reset (never spending more than a tenth of your Routines on one level).<br>
 	<h3>v3.6.5</h3><br>
 		- Fixed three ways a very fast Act 5 (late Loops) could get stuck at the edge of the Milky Way:<br>
 		- The Reversal milestone that fights Trials on its own timed them in Act 5's time, which passes an hour in a single tick at those speeds, so it started and abandoned a Trial (wiping the universe) every tick. It now times them in real time, and waits 10 minutes before trying again.<br>
