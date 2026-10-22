@@ -11,8 +11,9 @@ function tierUp(l, id) {
     return !!(player[l] && hasUpgrade(l, id))
 }
 
+// The fourth challenge (84) is the first three at once
 function tierIn(l, id) {
-    return !!(player[l] && player[l].challenge == id)
+    return !!(player[l] && (player[l].challenge == id || (player[l].challenge == 84 && id >= 81 && id <= 83)))
 }
 
 function tierBeaten(l, id) {
@@ -104,8 +105,10 @@ function deepTier(c) {
         ],
         upgrades: Object.fromEntries(Object.entries(c.upgrades).map(([id, u]) => [id, {
             title: u[0],
-            description: u[1],
+            description: id == 24 ? u[1] + "<br>Needs " + c.challenges[84].name + " beaten." : u[1],
             cost: new Decimal(u[2]),
+            // Each Loop's goal also needs the fourth challenge beaten
+            canAfford() { return id != 24 || tierBeaten(c.id, 84) },
             style: { width: "150px", height: "110px", "font-size": "9px" },
         }])),
         clickables: {
@@ -124,16 +127,16 @@ function deepTier(c) {
                 display() {
                     let n = Number(id)
                     if (tierBeaten(c.id, n)) return "Beaten. " + h.reward
-                    return h.text + "<br>Reward: " + h.reward + (tierIn(c.id, n) ? "<br><b>Click to give up.</b>" : "")
+                    return h.text + "<br>Reward: " + h.reward + (player[c.id].challenge == n ? "<br><b>Click to give up.</b>" : "")
                 },
-                canClick() { let n = Number(id); return !tierBeaten(c.id, n) && (!player[c.id].challenge || tierIn(c.id, n)) },
+                canClick() { let n = Number(id); return !tierBeaten(c.id, n) && (!player[c.id].challenge || player[c.id].challenge == n) },
                 onClick() {
                     let n = Number(id)
-                    if (tierIn(c.id, n)) { player[c.id].challenge = 0; return }
+                    if (player[c.id].challenge == n) { player[c.id].challenge = 0; return }
                     if (!confirm("Start " + h.name + "? " + c.warn)) return
                     tierStart(c.id, n)
                 },
-                style() { let n = Number(id); return { width: "160px", height: "120px", "min-height": "120px", "font-size": "9px", "background-color": tierBeaten(c.id, n) ? c.color : tierIn(c.id, n) ? "#e69138" : undefined } },
+                style() { let n = Number(id); return { width: "160px", height: "120px", "min-height": "120px", "font-size": "9px", "background-color": tierBeaten(c.id, n) ? c.color : player[c.id].challenge == n ? "#e69138" : undefined } },
             }])),
         },
     })
@@ -151,6 +154,7 @@ function protocellGain() {
     let g = new Decimal(Math.pow(player.dv.total.log10().toNumber() - 3, 2))
     if (tierUp("ab", 21)) g = g.times(2)
     if (tierBeaten("ab", 81)) g = g.times(2)
+    if (tierBeaten("ab", 84)) g = g.times(3)
     return g.floor()
 }
 
@@ -188,6 +192,7 @@ deepTier({
         81: { name: "Cold Soup", text: "Vestiges x0.1.", reward: "Protocells x2." },
         82: { name: "No Oxygen", text: "The devolution cooldown is 10 minutes, and Reversion does nothing.", reward: "The cooldown is 1 minute." },
         83: { name: "Lonely Molecule", text: "Regressions' rewards do nothing.", reward: "Vestiges are raised to the 1.1." },
+        84: { name: "Hadean Earth", text: "Cold Soup, No Oxygen and Lonely Molecule at once.", reward: "Protocells x3. <b>Needed for The First Cell.</b>" },
     },
 })
 
@@ -203,6 +208,7 @@ function cratonGain() {
     let g = new Decimal(Math.pow(player.er.total.add(1).log10().toNumber(), 2)).times(2)
     if (tierUp("pg", 21)) g = g.times(2)
     if (tierBeaten("pg", 81)) g = g.times(2)
+    if (tierBeaten("pg", 84)) g = g.times(3)
     return g.floor()
 }
 
@@ -240,6 +246,7 @@ deepTier({
         81: { name: "Ice Age", text: "Lineages x0.01.", reward: "Cratons x2." },
         82: { name: "Volcanic Winter", text: "Act 3 runs 100x slower.", reward: "Eons x3." },
         83: { name: "Sterile Seas", text: "Viruses do nothing.", reward: "Lineages x10." },
+        84: { name: "Snowball Earth", text: "Ice Age, Volcanic Winter and Sterile Seas at once.", reward: "Cratons x3. <b>Needed for The Great Unconformity.</b>" },
     },
 })
 
@@ -255,6 +262,7 @@ function aeonGain() {
     let g = new Decimal(Math.pow(player.rv.total.add(1).log10().toNumber(), 2))
     if (tierUp("cy", 21)) g = g.times(2)
     if (tierBeaten("cy", 81)) g = g.times(2)
+    if (tierBeaten("cy", 84)) g = g.times(3)
     return g.floor()
 }
 
@@ -287,6 +295,7 @@ deepTier({
         81: { name: "Long Night", text: "Rewinds go 5x slower.", reward: "Aeons x2." },
         82: { name: "Closed Universe", text: "Negentropy x0.2.", reward: "Negentropy x3." },
         83: { name: "Lost Light", text: "Entropy Trials' rewards do nothing.", reward: "Rewinds go twice as fast." },
+        84: { name: "Big Bounce", text: "Long Night, Closed Universe and Lost Light at once.", reward: "Aeons x3. <b>Needed for Eternal Return.</b>" },
     },
 })
 
@@ -302,6 +311,7 @@ function threadGain() {
     let g = new Decimal(Math.pow(player.ap.total.log10().toNumber() - 2, 2))
     if (tierUp("kr", 21)) g = g.times(2)
     if (tierBeaten("kr", 81)) g = g.times(2)
+    if (tierBeaten("kr", 84)) g = g.times(3)
     return g.floor()
 }
 
@@ -337,5 +347,6 @@ deepTier({
         81: { name: "Infinite Loop", text: "Routines x0.1.", reward: "Threads x2." },
         82: { name: "Race Condition", text: "Modules don't make Routines faster.", reward: "Every module makes Routines +100% instead of +50%." },
         83: { name: "Memory Leak", text: "Subroutines cost 10x as much.", reward: "Subroutines are x0.1 stronger a level." },
+        84: { name: "Kernel Panic", text: "Infinite Loop, Race Condition and Memory Leak at once.", reward: "Threads x3. <b>Needed for The Halting Problem.</b>" },
     },
 })

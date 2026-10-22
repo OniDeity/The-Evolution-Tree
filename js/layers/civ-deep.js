@@ -40,7 +40,7 @@ const AGES = [
       upgrades: [["Solar Sails", "Dyson Swarms x3."], ["Starlifting", "Gain 10% of your Launch gain every second."], ["Kardashev II", "Your civilization gets stronger with Dyson Swarms."], ["Remembered Cities", "Extinctions keep a quarter of every building."]] },
     { id: "ag7", name: "Galactic", currency: "Starlanes", color: "#8e7cc3", from: "ag6", fromName: "Dyson Swarms", req: 1e4,
       lore: "Lanes of traffic between the stars, a hundred thousand years long. The galaxy becomes one place.",
-      upgrades: [["Warp Lanes", "Starlanes x3."], ["Galactic Archive", "Gain 10% of your Dyson Swarm gain every second."], ["Kardashev III", "Act 4 runs faster with your Starlanes."], ["The Galactic Age", "Every Age's currency x10 again. Seven Ages, and a galaxy. <b>Loop 4's goal.</b>"]] },
+      upgrades: [["Warp Lanes", "Starlanes x3."], ["Galactic Archive", "Gain 10% of your Dyson Swarm gain every second."], ["Kardashev III", "Act 4 runs faster with your Starlanes."], ["The Galactic Age", "Every Age's currency x10 again. Seven Ages, and a galaxy. <b>Loop 4's goal.</b><br>Needs The Long Night survived."]] },
 ]
 const AGE_IDS = AGES.map(a => a.id)
 
@@ -102,6 +102,7 @@ function ageGainMult(id) {
     if (hasUpgrade("ag5", 14)) m = m.times(10)
     if (hasUpgrade("ag7", 14)) m = m.times(10)
     if (darkAgeBeaten(83)) m = m.times(3)
+    if (darkAgeBeaten(84)) m = m.times(3)
     return m
 }
 
@@ -142,6 +143,8 @@ for (let [k, a] of AGES.entries()) {
             title: u[0],
             description: u[1],
             cost: new Decimal(k == 6 ? [1, 25, 250, 5000][n] : k == 5 ? [1, 25, 250, 2500][n] : k == 4 ? [1, 5, 25, 250][n] : Math.pow(10, n)),
+            // Loop 4's goal also needs The Long Night survived
+            canAfford() { return !(k == 6 && n == 3) || darkAgeBeaten(84) },
         }])),
     })
 }
@@ -153,10 +156,12 @@ const DARK_AGES = {
     81: { name: "Dark Age", text: "Ingenuity x0.01.", reward: "Ingenuity x10." },
     82: { name: "Plague", text: "Accelerators and Multipliers do nothing.", reward: "Multipliers make Ingenuity x3 instead of x2." },
     83: { name: "Isolation", text: "The Ages' currencies don't make Ingenuity grow faster.", reward: "Every Age's currency x3." },
+    84: { name: "The Long Night", text: "Dark Age, Plague and Isolation at once.", reward: "Every Age's currency x3 again. <b>Needed for The Galactic Age.</b>" },
 }
 
+// The fourth Dark Age (84) is the first three at once
 function inDarkAge(id) {
-    return !!(player.ig && player.ig.dark == id)
+    return !!(player.ig && (player.ig.dark == id || (player.ig.dark == 84 && id >= 81 && id <= 83)))
 }
 
 function darkAgeBeaten(id) {
@@ -250,17 +255,17 @@ addLayer("ig", {
         display() {
             let n = Number(id)
             if (darkAgeBeaten(n)) return "Survived. " + h.reward
-            return h.text + "<br>Reward: " + h.reward + (inDarkAge(n) ? "<br><b>Click to give up.</b>" : "")
+            return h.text + "<br>Reward: " + h.reward + (player.ig.dark == n ? "<br><b>Click to give up.</b>" : "")
         },
         unlocked() { return darkAgesUnlocked() },
-        canClick() { let n = Number(id); return !darkAgeBeaten(n) && (!player.ig.dark || inDarkAge(n)) },
+        canClick() { let n = Number(id); return !darkAgeBeaten(n) && (!player.ig.dark || player.ig.dark == n) },
         onClick() {
             let n = Number(id)
-            if (inDarkAge(n)) { player.ig.dark = 0; return }
+            if (player.ig.dark == n) { player.ig.dark = 0; return }
             if (!confirm("Start " + h.name + "? Every Age, Accelerator and Multiplier starts over.")) return
             startDarkAge(n)
         },
-        style() { let n = Number(id); return { width: "160px", height: "110px", "min-height": "110px", "font-size": "9px", "background-color": darkAgeBeaten(n) ? "#e6b85c" : inDarkAge(n) ? "#e69138" : undefined } },
+        style() { let n = Number(id); return { width: "160px", height: "110px", "min-height": "110px", "font-size": "9px", "background-color": darkAgeBeaten(n) ? "#e6b85c" : player.ig.dark == n ? "#e69138" : undefined } },
     }])),
     buyables: {
         11: {
