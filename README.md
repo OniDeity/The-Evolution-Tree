@@ -1,4 +1,4 @@
-# The Evolution Tree
+# The Pokémon Tree
 
 An incremental Pokémon game on [The Modding Tree](https://github.com/Acamaeda/The-Modding-Tree)
 (TMT 2.6.6.2). It follows Idle Pokémon's original plan: you're Professor Oak's field researcher.

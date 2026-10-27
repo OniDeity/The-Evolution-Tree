@@ -1,4 +1,4 @@
-/* The Evolution Tree's own pieces: sprites, cards, the map and the Pokédex. */
+/* The Pokémon Tree's own pieces: sprites, cards, the map and the Pokédex. */
 .pk-sprite { image-rendering: pixelated; vertical-align: middle; }
 .pk-seen .pk-sprite { opacity: 0.45; }
 .pk-unseen .pk-sprite { filter: brightness(0); opacity: 0.35; }

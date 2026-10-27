@@ -1,4 +1,4 @@
-# The Evolution Tree: project memory
+# The Pokémon Tree: project memory
 
 A Pokémon incremental game on The Modding Tree 2.6.6.2 (plain JS, Vue 2 from a CDN, no build
 step). It's Idle Pokémon's original plan done in TMT rather than Profectus: Professor Oak's field

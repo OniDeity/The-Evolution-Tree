@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "The Evolution Tree",
-	id: "the-evolution-tree",
+	name: "The Pokémon Tree",
+	id: "the-pokemon-tree",
 	author: "Onide",
 	pointsName: "Research Points",
 	modFiles: [
